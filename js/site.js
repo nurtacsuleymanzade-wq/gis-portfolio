@@ -1,10 +1,13 @@
+/**
+ * Site chrome: nav, lightbox, year, calm mode, lazy-load Three.js scene.
+ */
 (function () {
   "use strict";
 
   var yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
-  /* Mobile nav */
+  /* —— Mobile nav —— */
   var toggle = document.getElementById("navToggle");
   var nav = document.getElementById("siteNav");
   if (toggle && nav) {
@@ -22,7 +25,38 @@
     });
   }
 
-  /* Lightbox */
+  /* —— Calm / reduced motion —— */
+  var calmBtn = document.getElementById("calmBtn");
+  var prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function setCalm(on) {
+    document.body.classList.toggle("calm-mode", on);
+    if (calmBtn) {
+      calmBtn.setAttribute("aria-pressed", on ? "true" : "false");
+      calmBtn.textContent = on ? "Motion" : "Calm";
+    }
+    try {
+      localStorage.setItem("gis-calm", on ? "1" : "0");
+    } catch (e) { /* ignore */ }
+    window.dispatchEvent(new Event("gis-calm-toggle"));
+  }
+
+  var storedCalm = null;
+  try {
+    storedCalm = localStorage.getItem("gis-calm");
+  } catch (e) { /* ignore */ }
+
+  if (prefersReduced || storedCalm === "1") {
+    setCalm(true);
+  }
+
+  if (calmBtn) {
+    calmBtn.addEventListener("click", function () {
+      setCalm(!document.body.classList.contains("calm-mode"));
+    });
+  }
+
+  /* —— Lightbox —— */
   var lightbox = document.getElementById("lightbox");
   var lightboxImg = document.getElementById("lightboxImg");
   var lightboxCaption = document.getElementById("lightboxCaption");
@@ -62,14 +96,52 @@
   });
 
   if (lightboxClose) lightboxClose.addEventListener("click", closeLightbox);
-
   if (lightbox) {
     lightbox.addEventListener("click", function (e) {
       if (e.target === lightbox) closeLightbox();
     });
   }
-
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape") closeLightbox();
   });
+
+  /* —— Lazy-load Three.js after first paint —— */
+  function loadScene() {
+    if (document.body.classList.contains("calm-mode")) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.__gisSceneLoading) return;
+    window.__gisSceneLoading = true;
+
+    var s = document.createElement("script");
+    s.src = "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js";
+    s.async = true;
+    s.onload = function () {
+      var sceneScript = document.createElement("script");
+      sceneScript.src = "js/scene.js";
+      sceneScript.async = true;
+      document.body.appendChild(sceneScript);
+    };
+    s.onerror = function () {
+      console.warn("[site] Three.js CDN failed — static fallback remains");
+    };
+    document.body.appendChild(s);
+  }
+
+  function scheduleScene() {
+    var run = function () {
+      // Defer slightly so Leaflet / first paint win
+      setTimeout(loadScene, 80);
+    };
+    if ("requestIdleCallback" in window) {
+      requestIdleCallback(run, { timeout: 1200 });
+    } else {
+      setTimeout(run, 400);
+    }
+  }
+
+  if (document.readyState === "complete") {
+    scheduleScene();
+  } else {
+    window.addEventListener("load", scheduleScene);
+  }
 })();

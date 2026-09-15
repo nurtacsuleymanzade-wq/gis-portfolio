@@ -3,194 +3,267 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Nurtac Suleymanzade — GIS Specialist & QGIS cartographer. Professional tourism maps, academic figures, and interactive web maps for Azerbaijan and beyond." />
+  <meta name="description" content="Nurtac Suleymanzade — GIS freelancer. Immersive cartography, spatial analysis, and production mapping across desktop, cloud, and open servers." />
   <meta name="author" content="Nurtac Suleymanzade" />
-  <title>Nurtac Suleymanzade | GIS Specialist · QGIS Cartography</title>
+  <meta name="theme-color" content="#04060c" />
+  <title>Nurtac Suleymanzade · GIS · Cartography</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
+  <!-- Fixed cosmic canvas (Three.js) -->
+  <div id="scene-root" class="scene-root" aria-hidden="true">
+    <canvas id="scene-canvas"></canvas>
+    <div class="scene-fallback" id="sceneFallback"></div>
+  </div>
+
   <header class="site-header" id="top">
     <div class="container header-inner">
       <a class="logo" href="#top" aria-label="Home">
-        <span class="logo-mark" aria-hidden="true"></span>
-        <span class="logo-text">Nurtac<span class="logo-accent">.</span>GIS</span>
+        <span class="logo-orbit" aria-hidden="true"></span>
+        <span class="logo-text">Nurtac<span class="logo-dot">·</span>GIS</span>
       </a>
       <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav" aria-label="Open menu">
         <span></span><span></span><span></span>
       </button>
       <nav class="site-nav" id="siteNav" aria-label="Primary">
+        <a href="#atlas">Atlas</a>
+        <a href="#studio">Studio</a>
         <a href="#services">Services</a>
-        <a href="#portfolio">Portfolio</a>
-        <a href="#about">About</a>
+        <a href="#portfolio">Print</a>
         <a href="#contact" class="nav-cta">Contact</a>
       </nav>
     </div>
   </header>
 
+  <button type="button" class="calm-btn" id="calmBtn" aria-pressed="false" title="Reduce motion / calm the scene">
+    Calm
+  </button>
+
   <main id="main">
     <!-- HERO -->
-    <section class="hero" id="hero">
-      <div class="hero-grid" aria-hidden="true"></div>
+    <section class="hero panel" id="hero">
       <div class="container hero-inner">
-        <p class="eyebrow">GIS Specialist · Azerbaijan &amp; beyond</p>
-        <h1>Nurtac Suleymanzade</h1>
-        <p class="hero-title">QGIS cartography that clients trust</p>
+        <p class="eyebrow">GIS freelancer · Azerbaijan &amp; beyond</p>
+        <h1 class="display">Nurtac Suleymanzade</h1>
+        <p class="hero-tag">Cartography shaped by atmosphere, built on real spatial data</p>
         <p class="hero-az" lang="az">Peşəkar xəritəçəkmə və məkan təhlili</p>
         <p class="hero-lead">
-          Print-ready tourism maps, academic research figures, PyQGIS automation,
-          and interactive web maps — crafted in QGIS with real geospatial data.
+          Thematic and academic maps, automation, interactive WebGIS, and spatial analysis —
+          from desktop GIS to cloud platforms and open map servers we connect for production mapping.
         </p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="#portfolio">View portfolio</a>
-          <a class="btn btn-ghost" href="#contact">Hire me</a>
+          <a class="btn btn-primary" href="#atlas">Enter the atlas</a>
+          <a class="btn btn-ghost" href="#contact">Start a project</a>
         </div>
-        <ul class="hero-stats" aria-label="Highlights">
-          <li><strong>QGIS</strong><span>Print &amp; layout</span></li>
-          <li><strong>PyQGIS</strong><span>Automation</span></li>
-          <li><strong>WebGIS</strong><span>Interactive maps</span></li>
+        <ul class="hero-pills" aria-label="Highlights">
+          <li>Print cartography</li>
+          <li>Interactive maps</li>
+          <li>Spatial pipelines</li>
         </ul>
+      </div>
+      <div class="scroll-hint" aria-hidden="true">
+        <span>Scroll the journey</span>
+        <span class="scroll-line"></span>
+      </div>
+    </section>
+
+    <!-- INTERACTIVE ATLAS -->
+    <section class="section panel" id="atlas">
+      <div class="container">
+        <header class="section-head">
+          <p class="eyebrow">Living data</p>
+          <h2 class="display">Tourism atlas · Azerbaijan</h2>
+          <p class="section-lead">
+            Interactive choropleth by tourism object counts (ADM2), curated atlas points,
+            and Qusar district highlight. Dark basemap · Leaflet · your GeoJSON.
+          </p>
+          <p class="section-az" lang="az">İnteraktiv turizm xəritəsi — rayon səviyyəsində</p>
+        </header>
+
+        <div class="map-shell">
+          <div id="atlas-map" class="atlas-map" role="application" aria-label="Interactive tourism map of Azerbaijan"></div>
+          <div class="map-legend" id="mapLegend">
+            <p class="legend-title">n_total (tourism objects)</p>
+            <div class="legend-ramp" aria-hidden="true">
+              <span style="background:#1a2744"></span>
+              <span style="background:#2a4a6e"></span>
+              <span style="background:#3d7ea6"></span>
+              <span style="background:#5bb8c4"></span>
+              <span style="background:#c9eef0"></span>
+            </div>
+            <div class="legend-labels"><span>0</span><span>72+</span></div>
+            <ul class="legend-points">
+              <li><span class="dot natural"></span> Natural</li>
+              <li><span class="dot cultural"></span> Cultural</li>
+              <li><span class="dot lodging"></span> Lodging</li>
+              <li><span class="dot food"></span> Food</li>
+              <li><span class="dot transport"></span> Transport</li>
+              <li><span class="dot qusar"></span> Qusar highlight</li>
+            </ul>
+          </div>
+          <p class="map-status" id="mapStatus">Loading layers…</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- STUDIO / STACK -->
+    <section class="section panel" id="studio">
+      <div class="container">
+        <header class="section-head">
+          <p class="eyebrow">Tools of the trade</p>
+          <h2 class="display">Studio stack</h2>
+          <p class="section-lead">
+            Desktop + cloud + open servers we connect to for production mapping —
+            not a single-app shop.
+          </p>
+        </header>
+        <div class="stack-grid">
+          <article class="stack-card"><h3>QGIS</h3><p>Print layouts, styling, PyQGIS automation</p></article>
+          <article class="stack-card"><h3>ArcGIS Pro / Online</h3><p>Enterprise desktop &amp; cloud GIS workflows</p></article>
+          <article class="stack-card"><h3>MapInfo Pro</h3><p>Desktop cartography &amp; tabular GIS</p></article>
+          <article class="stack-card"><h3>Mapbox</h3><p>Styled vector tiles &amp; web map delivery</p></article>
+          <article class="stack-card"><h3>Leaflet</h3><p>Lightweight interactive WebGIS</p></article>
+          <article class="stack-card"><h3>PostGIS</h3><p>Spatial SQL, analysis, production databases</p></article>
+          <article class="stack-card"><h3>Google Earth Engine</h3><p>Cloud raster &amp; Earth observation pipelines</p></article>
+          <article class="stack-card"><h3>GeoServer / MapServer</h3><p>OGC services for open map servers</p></article>
+          <article class="stack-card"><h3>Python</h3><p>GeoPandas, PyQGIS, spatial scripting</p></article>
+          <article class="stack-card"><h3>GDAL / OGR</h3><p>Format translation &amp; geospatial ETL</p></article>
+        </div>
+        <p class="stack-note">
+          MCP and connectors expand automation — wiring GIS tools into repeatable production pipelines.
+        </p>
       </div>
     </section>
 
     <!-- SERVICES -->
-    <section class="section" id="services">
+    <section class="section panel" id="services">
       <div class="container">
         <header class="section-head">
           <p class="eyebrow">What I deliver</p>
-          <h2>Services</h2>
-          <p class="section-lead">Clear deliverables for tourism boards, researchers, NGOs, and agencies who need maps that look premium and stay accurate.</p>
+          <h2 class="display">Services</h2>
+          <p class="section-lead">Premium maps that stay accurate — for tourism boards, researchers, NGOs, and agencies.</p>
         </header>
         <div class="services-grid">
           <article class="service-card">
-            <div class="service-icon" aria-hidden="true">◈</div>
-            <h3>QGIS print maps</h3>
-            <p>Tourism &amp; regional posters (A3–A0), styled legends, north arrow &amp; scale, print CRS ready for press or PDF delivery.</p>
+            <h3>Thematic &amp; academic maps</h3>
+            <p>Choropleths, graduated symbols, multi-panel thesis and journal figures with consistent symbology.</p>
           </article>
           <article class="service-card">
-            <div class="service-icon" aria-hidden="true">▣</div>
-            <h3>Academic research maps</h3>
-            <p>Thesis and journal figures: choropleths, graduated symbols, density, multi-panel layouts with consistent symbology.</p>
+            <h3>Automation</h3>
+            <p>Batch exports, layout scripts, data cleaning — so the next edition is a run, not a rebuild.</p>
           </article>
           <article class="service-card">
-            <div class="service-icon" aria-hidden="true">⟳</div>
-            <h3>Automation / PyQGIS</h3>
-            <p>Repeatable map production, batch exports, data cleaning pipelines, and layout scripts so updates stay fast and consistent.</p>
-          </article>
-          <article class="service-card">
-            <div class="service-icon" aria-hidden="true">◎</div>
             <h3>Interactive web maps</h3>
-            <p>Lightweight WebGIS for clients and public portals — POI layers, basemaps, and mobile-friendly exploration.</p>
+            <p>Leaflet (and similar) portals: POI layers, choropleths, mobile-friendly exploration.</p>
+          </article>
+          <article class="service-card">
+            <h3>Spatial analysis</h3>
+            <p>Density, overlays, suitability — grounded in real vector and raster sources.</p>
+          </article>
+          <article class="service-card">
+            <h3>Buffering &amp; network</h3>
+            <p>Service areas, proximity, and network-ready workflows when the project needs them.</p>
+          </article>
+          <article class="service-card">
+            <h3>Print cartography</h3>
+            <p>A3–A0 tourism &amp; regional posters — legend, scale, CRS-ready PDF/PNG delivery.</p>
           </article>
         </div>
       </div>
     </section>
 
-    <!-- PORTFOLIO -->
-    <section class="section section-alt" id="portfolio">
+    <!-- PRINT PORTFOLIO -->
+    <section class="section panel" id="portfolio">
       <div class="container">
         <header class="section-head">
-          <p class="eyebrow">Selected work</p>
-          <h2>Portfolio</h2>
-          <p class="section-lead">
-            Sample cartography from the Azerbaijan tourism GIS project — real QGIS exports (not AI-generated imagery).
-            Click any map to enlarge.
+          <p class="eyebrow">Exports</p>
+          <h2 class="display">Print cartography samples</h2>
+          <p class="section-lead portfolio-banner">
+            Print cartography samples — being rebuilt for CRS QA. Shown smaller here as reference exports under the interactive atlas.
           </p>
         </header>
         <div class="portfolio-grid">
           <figure class="portfolio-card" data-lightbox>
-            <button type="button" class="portfolio-thumb" data-full="maps/01_Tourism_Spatial_Density_ADM2.png" data-caption="Tourism spatial distribution — Azerbaijan (ADM2 choropleth)" aria-label="Enlarge: Tourism spatial distribution Azerbaijan">
-              <img src="maps/01_Tourism_Spatial_Density_ADM2.png" alt="Choropleth map of tourism object spatial density by ADM2 district in Azerbaijan" loading="lazy" width="800" height="600" />
-              <span class="zoom-hint" aria-hidden="true">Enlarge</span>
+            <button type="button" class="portfolio-thumb" data-full="maps/01_Tourism_Spatial_Density_ADM2.png" data-caption="Tourism spatial distribution — Azerbaijan (ADM2 choropleth)" aria-label="Enlarge map 1">
+              <img src="maps/01_Tourism_Spatial_Density_ADM2.png" alt="Choropleth of tourism density by ADM2" loading="lazy" width="800" height="600" />
             </button>
             <figcaption>
-              <h3>1 · Tourism spatial distribution</h3>
-              <p lang="az">Azərbaycanda turizm obyektlərinin məkan sıxlığı</p>
-              <p class="caption-en">ADM2 choropleth of tourism point counts across Azerbaijan rayons. Sample cartography · QGIS.</p>
+              <h3>Tourism spatial density</h3>
+              <p>ADM2 choropleth · QGIS export</p>
             </figcaption>
           </figure>
-
           <figure class="portfolio-card" data-lightbox>
-            <button type="button" class="portfolio-thumb" data-full="maps/02_Academic_Lodging_vs_Cultural.png" data-caption="Academic thematic — lodging vs cultural heritage" aria-label="Enlarge: Academic thematic map">
-              <img src="maps/02_Academic_Lodging_vs_Cultural.png" alt="Academic thematic map comparing lodging infrastructure and cultural heritage sites" loading="lazy" width="800" height="1000" />
-              <span class="zoom-hint" aria-hidden="true">Enlarge</span>
+            <button type="button" class="portfolio-thumb" data-full="maps/02_Academic_Lodging_vs_Cultural.png" data-caption="Academic thematic — lodging vs cultural heritage" aria-label="Enlarge map 2">
+              <img src="maps/02_Academic_Lodging_vs_Cultural.png" alt="Lodging vs cultural thematic map" loading="lazy" width="800" height="1000" />
             </button>
             <figcaption>
-              <h3>2 · Academic thematic</h3>
-              <p lang="az">Turizm infrastrukturu: yaşayış vs mədəni irs</p>
-              <p class="caption-en">Lodging vs cultural graduated symbols with point density. Sample cartography · QGIS.</p>
+              <h3>Lodging vs cultural</h3>
+              <p>Academic thematic · QGIS export</p>
             </figcaption>
           </figure>
-
           <figure class="portfolio-card" data-lightbox>
-            <button type="button" class="portfolio-thumb" data-full="maps/03_MultiLayer_Tourism_Reference.png" data-caption="Multi-layer tourism reference map — Azerbaijan" aria-label="Enlarge: Multi-layer reference map">
-              <img src="maps/03_MultiLayer_Tourism_Reference.png" alt="Multi-layer reference map with admin boundaries, roads, hydrography and curated tourism sites" loading="lazy" width="800" height="600" />
-              <span class="zoom-hint" aria-hidden="true">Enlarge</span>
+            <button type="button" class="portfolio-thumb" data-full="maps/03_MultiLayer_Tourism_Reference.png" data-caption="Multi-layer tourism reference — Azerbaijan" aria-label="Enlarge map 3">
+              <img src="maps/03_MultiLayer_Tourism_Reference.png" alt="Multi-layer tourism reference map" loading="lazy" width="800" height="600" />
             </button>
             <figcaption>
-              <h3>3 · Multi-layer reference</h3>
-              <p lang="az">Azərbaycan turizm istinad xəritəsi</p>
-              <p class="caption-en">ADM0/1/2, major roads &amp; hydro, curated tourism atlas points. Sample cartography · QGIS.</p>
+              <h3>Multi-layer reference</h3>
+              <p>Admin · roads · hydro · atlas points</p>
             </figcaption>
           </figure>
-
           <figure class="portfolio-card" data-lightbox>
-            <button type="button" class="portfolio-thumb" data-full="maps/04_Locator_Qusar_Detail_Inset.png" data-caption="Locator + Qusar detail inset" aria-label="Enlarge: Locator and detail inset map">
-              <img src="maps/04_Locator_Qusar_Detail_Inset.png" alt="National locator map with Qusar rayon detail inset showing hypsometry and tourism features" loading="lazy" width="800" height="600" />
-              <span class="zoom-hint" aria-hidden="true">Enlarge</span>
+            <button type="button" class="portfolio-thumb" data-full="maps/04_Locator_Qusar_Detail_Inset.png" data-caption="Locator + Qusar detail inset" aria-label="Enlarge map 4">
+              <img src="maps/04_Locator_Qusar_Detail_Inset.png" alt="Locator with Qusar detail inset" loading="lazy" width="800" height="600" />
             </button>
             <figcaption>
-              <h3>4 · Locator + detail inset</h3>
-              <p lang="az">Qusar rayonu — yerləşdirici və detal inset</p>
-              <p class="caption-en">National locator with Qusar detail (hypsometry / hillshade, roads, tourism). Sample cartography · QGIS.</p>
+              <h3>Locator + Qusar inset</h3>
+              <p>National locator · detail panel</p>
             </figcaption>
           </figure>
         </div>
+        <p class="about-note"><a href="SOURCE.md">Data source note</a></p>
       </div>
     </section>
 
     <!-- ABOUT -->
-    <section class="section" id="about">
+    <section class="section panel" id="about">
       <div class="container about-grid">
         <div>
           <p class="eyebrow">About</p>
-          <h2>Maps with provenance</h2>
+          <h2 class="display">Maps with provenance</h2>
           <p>
-            I specialize in QGIS cartography for tourism, regional planning, and academic research —
-            with a focus on Azerbaijan and the South Caucasus. Every map is built from real vector and raster
-            sources (OSM / Geofabrik, geoBoundaries, SRTM, curated tourism inventories), styled for print or web.
+            I build cartography and spatial products for tourism, regional planning, and research —
+            with a focus on Azerbaijan and the South Caucasus. Layers come from real sources
+            (OSM / Geofabrik, geoBoundaries, SRTM, curated inventories), styled for print or web.
           </p>
           <p>
-            Clients get clear file packages (PNG / PDF / GeoPackage where needed), legend-ready layouts,
-            and optional automation so the next edition is a script run, not a rebuild from scratch.
-          </p>
-          <p class="about-note">
-            <a href="SOURCE.md">Data source note</a> · maps produced in QGIS
+            Clients receive clear packages (PNG / PDF / GeoPackage where needed) and optional
+            automation so updates stay fast.
           </p>
         </div>
         <aside class="about-card">
-          <h3>Focus areas</h3>
+          <h3>Focus</h3>
           <ul>
             <li>Tourism &amp; destination mapping</li>
             <li>Academic / thesis figures</li>
-            <li>District &amp; rayon reference atlases</li>
-            <li>PyQGIS batch production</li>
-            <li>Lightweight WebGIS</li>
+            <li>District &amp; rayon atlases</li>
+            <li>WebGIS &amp; spatial pipelines</li>
           </ul>
         </aside>
       </div>
     </section>
 
     <!-- CONTACT -->
-    <section class="section section-cta" id="contact">
+    <section class="section panel section-cta" id="contact">
       <div class="container contact-inner">
-        <p class="eyebrow">Let’s work together</p>
-        <h2>Contact</h2>
-        <p class="section-lead">Ready for a print map, research figure, or web map project? Reach out directly.</p>
+        <p class="eyebrow">Transmission</p>
+        <h2 class="display">Contact</h2>
+        <p class="section-lead">Print map, research figure, or interactive atlas? Reach out.</p>
         <div class="contact-links">
           <a class="contact-pill" href="mailto:nurtac.suleymanzade@gmail.com">
             <span class="pill-label">Email</span>
@@ -200,6 +273,10 @@
             <span class="pill-label">Instagram</span>
             <span class="pill-value">@nurtac.suleymanzadeh</span>
           </a>
+          <a class="contact-pill" href="https://nurtacsuleymanzade-wq.github.io/gis-portfolio/" target="_blank" rel="noopener noreferrer">
+            <span class="pill-label">GitHub Pages</span>
+            <span class="pill-value">nurtacsuleymanzade-wq.github.io/gis-portfolio</span>
+          </a>
         </div>
       </div>
     </section>
@@ -207,12 +284,11 @@
 
   <footer class="site-footer">
     <div class="container footer-inner">
-      <p>© <span id="year"></span> Nurtac Suleymanzade · GIS Specialist</p>
-      <p class="footer-attr">Maps produced in QGIS</p>
+      <p>© <span id="year"></span> Nurtac Suleymanzade · GIS</p>
+      <p class="footer-attr">Desktop · cloud · open servers</p>
     </div>
   </footer>
 
-  <!-- Lightbox -->
   <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Map preview">
     <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Close">&times;</button>
     <figure class="lightbox-figure">
@@ -221,6 +297,9 @@
     </figure>
   </div>
 
-  <script src="js/main.js" defer></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="js/site.js" defer></script>
+  <script src="js/map.js" defer></script>
+  <!-- Three.js scene lazy-loaded by site.js after first paint -->
 </body>
 </html>
