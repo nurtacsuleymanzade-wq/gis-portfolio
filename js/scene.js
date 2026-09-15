@@ -202,16 +202,34 @@
   function makeGlobe() {
     var group = new THREE.Group();
 
-    var earthTex = makeEarthTexture();
     var sphereGeo = new THREE.SphereGeometry(1.15, 64, 48);
     var sphereMat = new THREE.MeshStandardMaterial({
-      map: earthTex,
-      metalness: 0.12,
-      roughness: 0.72,
-      emissive: 0x041018,
-      emissiveIntensity: 0.22,
+      color: 0x0b1e33,
+      metalness: 0.05,
+      roughness: 0.85,
+      emissive: 0x020810,
+      emissiveIntensity: 0.08,
     });
-    group.add(new THREE.Mesh(sphereGeo, sphereMat));
+    var earthMesh = new THREE.Mesh(sphereGeo, sphereMat);
+    group.add(earthMesh);
+
+    // Real Earth (NASA Blue Marble) — local asset, no API key
+    var loader = new THREE.TextureLoader();
+    loader.load(
+      "assets/earth-day.jpg",
+      function (tex) {
+        if (THREE.SRGBColorSpace) tex.colorSpace = THREE.SRGBColorSpace;
+        else if (THREE.sRGBEncoding != null) tex.encoding = THREE.sRGBEncoding;
+        tex.anisotropy = 4;
+        sphereMat.map = tex;
+        sphereMat.color.set(0xffffff);
+        sphereMat.needsUpdate = true;
+      },
+      undefined,
+      function () {
+        console.warn("[scene] earth texture failed to load");
+      }
+    );
 
     // Soft cartographic grid
     var wireGeo = new THREE.SphereGeometry(1.162, 32, 20);
@@ -272,112 +290,7 @@
    * Procedural earth-like texture: ocean blues + land greens/tans.
    * Approximate continents; Azerbaijan region gets a slightly warmer land patch.
    */
-  function makeEarthTexture() {
-    var size = 1024;
-    var c = document.createElement("canvas");
-    c.width = c.height = size;
-    var ctx = c.getContext("2d");
 
-    // Ocean base
-    var ocean = ctx.createLinearGradient(0, 0, 0, size);
-    ocean.addColorStop(0, "#0a1a2e");
-    ocean.addColorStop(0.35, "#0d2848");
-    ocean.addColorStop(0.5, "#123a5c");
-    ocean.addColorStop(0.65, "#0d2848");
-    ocean.addColorStop(1, "#0a1a2e");
-    ctx.fillStyle = ocean;
-    ctx.fillRect(0, 0, size, size);
-
-    // Soft oceanic depth variation
-    var i;
-    for (i = 0; i < 40; i++) {
-      var ox = Math.random() * size;
-      var oy = Math.random() * size;
-      var or = (0.05 + Math.random() * 0.12) * size;
-      var og = ctx.createRadialGradient(ox, oy, 0, ox, oy, or);
-      og.addColorStop(0, "rgba(30, 90, 130, 0.35)");
-      og.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.fillStyle = og;
-      ctx.beginPath();
-      ctx.arc(ox, oy, or, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    // Land patches — rough continental silhouettes (equirectangular-ish)
-    // [cx, cy, rx, ry, color] — cy ~0.5 is equator; lon increases left→right from -180
-    var lands = [
-      // Americas-ish
-      [0.22, 0.42, 0.09, 0.22, "#2d6b3a"],
-      [0.26, 0.62, 0.07, 0.16, "#3a7a42"],
-      // Europe / Africa
-      [0.52, 0.38, 0.08, 0.1, "#4a7a45"],
-      [0.54, 0.55, 0.1, 0.18, "#6b8f3a"],
-      [0.55, 0.68, 0.08, 0.1, "#8a9a4a"],
-      // Asia
-      [0.68, 0.36, 0.16, 0.12, "#3d6e48"],
-      [0.72, 0.48, 0.14, 0.1, "#4a7840"],
-      // Australia
-      [0.82, 0.68, 0.07, 0.06, "#7a8a3a"],
-      // Azerbaijan / Caucasus region (~lon 47.5 → u≈(47.5+180)/360≈0.632, lat 40.4 → v≈(90-40.4)/180≈0.276)
-      [0.632, 0.278, 0.035, 0.028, "#5a8f4a"],
-      [0.628, 0.29, 0.02, 0.018, "#6a9a55"],
-    ];
-
-    lands.forEach(function (p) {
-      var g = ctx.createRadialGradient(
-        p[0] * size,
-        p[1] * size,
-        0,
-        p[0] * size,
-        p[1] * size,
-        p[2] * size
-      );
-      g.addColorStop(0, hexToRgba(p[4], 0.92));
-      g.addColorStop(0.55, hexToRgba(p[4], 0.55));
-      g.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.ellipse(p[0] * size, p[1] * size, p[2] * size, p[3] * size, 0, 0, Math.PI * 2);
-      ctx.fill();
-    });
-
-    // Polar ice hints
-    ctx.fillStyle = "rgba(220, 235, 245, 0.35)";
-    ctx.fillRect(0, 0, size, size * 0.06);
-    ctx.fillRect(0, size * 0.94, size, size * 0.06);
-
-    // Subtle cloud streaks
-    ctx.globalAlpha = 0.12;
-    for (i = 0; i < 18; i++) {
-      ctx.fillStyle = "#ffffff";
-      ctx.beginPath();
-      ctx.ellipse(
-        Math.random() * size,
-        Math.random() * size,
-        (0.04 + Math.random() * 0.1) * size,
-        (0.008 + Math.random() * 0.02) * size,
-        Math.random() * Math.PI,
-        0,
-        Math.PI * 2
-      );
-      ctx.fill();
-    }
-    ctx.globalAlpha = 1;
-
-    var texture = new THREE.CanvasTexture(c);
-    if (THREE.SRGBColorSpace) texture.colorSpace = THREE.SRGBColorSpace;
-    else if (THREE.sRGBEncoding) texture.encoding = THREE.sRGBEncoding;
-    texture.anisotropy = 4;
-    return texture;
-  }
-
-  function hexToRgba(hex, a) {
-    var h = hex.replace("#", "");
-    var r = parseInt(h.slice(0, 2), 16);
-    var g = parseInt(h.slice(2, 4), 16);
-    var b = parseInt(h.slice(4, 6), 16);
-    return "rgba(" + r + "," + g + "," + b + "," + a + ")";
-  }
 
   function makeAtmosphere() {
     return new THREE.Mesh(
