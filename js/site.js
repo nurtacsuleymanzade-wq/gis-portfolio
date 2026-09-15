@@ -39,6 +39,10 @@
       localStorage.setItem("gis-calm", on ? "1" : "0");
     } catch (e) { /* ignore */ }
     window.dispatchEvent(new Event("gis-calm-toggle"));
+    // If motion is re-enabled and the scene never loaded, load it now
+    if (!on && !window.__gisSceneLoaded) {
+      loadScene();
+    }
   }
 
   var storedCalm = null;
@@ -109,7 +113,7 @@
   function loadScene() {
     if (document.body.classList.contains("calm-mode")) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    if (window.__gisSceneLoading) return;
+    if (window.__gisSceneLoading || window.__gisSceneLoaded) return;
     window.__gisSceneLoading = true;
 
     var s = document.createElement("script");
@@ -119,9 +123,13 @@
       var sceneScript = document.createElement("script");
       sceneScript.src = "js/scene.js";
       sceneScript.async = true;
+      sceneScript.onload = function () {
+        window.__gisSceneLoaded = true;
+      };
       document.body.appendChild(sceneScript);
     };
     s.onerror = function () {
+      window.__gisSceneLoading = false;
       console.warn("[site] Three.js CDN failed — static fallback remains");
     };
     document.body.appendChild(s);
@@ -129,7 +137,6 @@
 
   function scheduleScene() {
     var run = function () {
-      // Defer slightly so Leaflet / first paint win
       setTimeout(loadScene, 80);
     };
     if ("requestIdleCallback" in window) {

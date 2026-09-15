@@ -15,7 +15,7 @@ These PNG exports were copied from the GIS project path:
 
 `AZERBAIJAN_GIS/portfolio/maps/`
 
-They are **real QGIS cartography** (not AI-generated map images), produced for freelancing samples. Layout CRS for print work in that project: **EPSG:32639** (WGS 84 / UTM zone 39N).
+They are **real QGIS cartography** (not AI-generated map images), produced as portfolio samples. Layout CRS for print work in that project: **EPSG:32639** (WGS 84 / UTM zone 39N).
 
 Project notes: `AZERBAIJAN_GIS/portfolio/README.md`  
 Feature provenance registry: `AZERBAIJAN_GIS/portfolio/SOURCE_REGISTRY.csv`
@@ -45,4 +45,4 @@ Maps produced in **QGIS** (layouts + PyQGIS export scripts under the portfolio p
 
 ## Honesty label on the website
 
-Gallery captions mark these maps as **sample cartography** so freelance clients understand they are portfolio examples from the Azerbaijan tourism GIS workstream.
+Gallery captions mark these maps as **sample cartography** so visitors understand they are portfolio examples from the Azerbaijan tourism GIS workstream.

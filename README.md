@@ -1,16 +1,16 @@
 # Nurtac Suleymanzade — GIS Portfolio
 
-Cinematic static portfolio for **Nurtac Suleymanzade** (GIS freelancer).  
+Cinematic static portfolio for **Nurtac Suleymanzade** (GIS Specialist · PhD student in tourism & spatial analysis).  
 Vanilla HTML / CSS / JS — **GitHub Pages** friendly. No build step, no API keys.
 
 Inspired by immersive atmospheric sites (e.g. Árstraumur energy) — adapted for **GIS / cartography**, not music.
 
 ## Features
 
-- **Three.js** full-viewport cosmic scene (starfield + stylized globe + dust), lazy-loaded after first paint; **Calm** button + `prefers-reduced-motion` fallback
-- **Leaflet** interactive atlas: ADM2 choropleth (`n_total`), tourism points, Qusar highlight, ADM0 outline — Carto Dark Matter basemap
+- **Three.js** full-viewport cosmic scene (starfield + earth-like globe + dust), lazy-loaded after first paint; scroll from hero → atlas approaches Azerbaijan; **Calm** button + `prefers-reduced-motion` fallback
+- **Leaflet** interactive atlas: ADM2 choropleth (`n_total`), tourism points, Qusar highlight, ADM0 outline — **Esri World Imagery** + Boundaries & Places (no API key)
 - **Studio stack**: QGIS, ArcGIS, MapInfo, Mapbox, Leaflet, PostGIS, Earth Engine, GeoServer/MapServer, Python, GDAL
-- Services, print gallery (CRS QA note), contact
+- Services / capabilities, print gallery, contact
 
 ## Local preview
 
@@ -24,9 +24,9 @@ python3 -m http.server 8080
 
 Verify:
 
-1. Hero shows dark cosmic background; after ~1s the 3D globe/stars appear (Chromium). Click **Calm** to freeze to CSS gradient.
-2. **Atlas** section: map tiles + rayons color by `n_total`; click a rayon for name + counts; atlas points and Qusar outline load.
-3. Stack / Services / Print / Contact sections render; lightbox opens on print thumbs.
+1. Hero shows dark cosmic background; after ~1s the 3D globe/stars appear (Chromium). Scroll toward **Atlas** — camera approaches Earth and focuses on Azerbaijan. Click **Calm** to freeze to CSS gradient.
+2. **Atlas** section: Esri imagery tiles + rayons color by `n_total` (semi-transparent); click a rayon for name + counts; atlas points and Qusar outline load. No Carto / API-key watermark.
+3. Stack / Capabilities / Print / Contact sections render; lightbox opens on print thumbs.
 4. Mobile: hamburger nav; map legend stacks under the map.
 
 ## GitHub Pages
@@ -48,8 +48,8 @@ gis-portfolio-site/
 ├── css/styles.css
 ├── js/
 │   ├── site.js      # nav, lightbox, calm, lazy Three
-│   ├── map.js       # Leaflet + GeoJSON
-│   └── scene.js     # Three.js procedural scene
+│   ├── map.js       # Leaflet + GeoJSON + Esri basemap
+│   └── scene.js     # Three.js scroll → Azerbaijan
 ├── data/
 │   ├── adm2_tourism.geojson
 │   ├── tourism_atlas.geojson
@@ -69,5 +69,5 @@ gis-portfolio-site/
 
 ## Attribution
 
-Basemap © OpenStreetMap · © CARTO. Admin / tourism layers — see `SOURCE.md`.  
+Basemap tiles © Esri (World Imagery / World Boundaries & Places). Admin / tourism layers — see `SOURCE.md`.  
 3D via [Three.js](https://threejs.org/); maps via [Leaflet](https://leafletjs.com/).

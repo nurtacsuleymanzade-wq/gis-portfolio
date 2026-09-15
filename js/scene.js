@@ -1,6 +1,7 @@
 /**
- * Procedural cosmic scene: starfield + stylized globe + dust.
- * Loaded lazily after first paint. Respects calm-mode / reduced-motion.
+ * Cosmic scene: starfield + earth-like globe + dust.
+ * Scroll from hero → #atlas drives camera toward Azerbaijan (lat 40.4, lon 47.5).
+ * Respects calm-mode / prefers-reduced-motion.
  */
 (function () {
   "use strict";
@@ -19,12 +20,27 @@
     return;
   }
 
+  // Azerbaijan focus
+  var AZ_LAT = 40.4;
+  var AZ_LON = 47.5;
+  var DEG = Math.PI / 180;
+
   var renderer, scene, camera, globe, atmosphere, stars, dust;
   var mouse = { x: 0, y: 0 };
   var target = { x: 0, y: 0 };
   var clock = new THREE.Clock();
   var running = true;
   var raf = 0;
+  var scrollProgress = 0;
+  var scrollSmoothed = 0;
+  var atlasEl = document.getElementById("atlas");
+  var heroEl = document.getElementById("hero");
+
+  // Camera / globe bookends (progress 0 → 1)
+  var CAM_FAR = { x: 0, y: 0.2, z: 5.6 };
+  var CAM_NEAR = { x: 0.05, y: 0.08, z: 2.15 };
+  var GLOBE_FAR = { x: 1.2, y: -0.1, z: -0.35 };
+  var GLOBE_NEAR = { x: 0, y: 0, z: 0 };
 
   function init() {
     var w = window.innerWidth;
@@ -43,14 +59,17 @@
     scene = new THREE.Scene();
 
     camera = new THREE.PerspectiveCamera(48, w / h, 0.1, 200);
-    camera.position.set(0, 0.15, 5.2);
+    camera.position.set(CAM_FAR.x, CAM_FAR.y, CAM_FAR.z);
 
-    scene.add(new THREE.AmbientLight(0x6a7aaa, 0.55));
-    var key = new THREE.DirectionalLight(0xb8d4ff, 1.1);
-    key.position.set(4, 2, 3);
+    scene.add(new THREE.AmbientLight(0x7a8aaa, 0.5));
+    var key = new THREE.DirectionalLight(0xe8f0ff, 1.15);
+    key.position.set(5, 2.5, 4);
     scene.add(key);
-    var rim = new THREE.DirectionalLight(0x7ec8c4, 0.45);
-    rim.position.set(-3, -1, -2);
+    var fill = new THREE.DirectionalLight(0x4a90a8, 0.4);
+    fill.position.set(-4, -1, 2);
+    scene.add(fill);
+    var rim = new THREE.DirectionalLight(0x7ec8c4, 0.35);
+    rim.position.set(-2, 1, -3);
     scene.add(rim);
 
     stars = makeStars(1800);
@@ -60,7 +79,7 @@
     scene.add(dust);
 
     globe = makeGlobe();
-    globe.position.set(1.35, -0.15, -0.4);
+    globe.position.set(GLOBE_FAR.x, GLOBE_FAR.y, GLOBE_FAR.z);
     scene.add(globe);
 
     atmosphere = makeAtmosphere();
@@ -72,6 +91,8 @@
 
     window.addEventListener("resize", onResize, { passive: true });
     window.addEventListener("pointermove", onPointer, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
 
     document.addEventListener("visibilitychange", function () {
       running = !document.hidden && !document.body.classList.contains("calm-mode");
@@ -84,6 +105,47 @@
     });
 
     loop();
+  }
+
+  /**
+   * Progress 0 at top of hero; 1 when atlas section is well into view.
+   */
+  function onScroll() {
+    if (!heroEl || !atlasEl) {
+      var y = window.scrollY || window.pageYOffset || 0;
+      var max = Math.max(1, window.innerHeight * 1.1);
+      scrollProgress = Math.min(1, Math.max(0, y / max));
+      return;
+    }
+    var heroTop = heroEl.getBoundingClientRect().top + (window.scrollY || 0);
+    var atlasRect = atlasEl.getBoundingClientRect();
+    var atlasTop = atlasRect.top + (window.scrollY || 0);
+    var start = heroTop;
+    // Reach progress 1 when atlas top is near the upper third of the viewport
+    var end = atlasTop - window.innerHeight * 0.35;
+    var range = Math.max(1, end - start);
+    var y = window.scrollY || window.pageYOffset || 0;
+    scrollProgress = Math.min(1, Math.max(0, (y - start) / range));
+  }
+
+  function easeInOutCubic(t) {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+
+  function lerp(a, b, t) {
+    return a + (b - a) * t;
+  }
+
+  /**
+   * Target globe euler so AZ_LAT/AZ_LON faces the camera (+Z look-at origin).
+   * Sphere point: x = cos(lat)*sin(lon), y = sin(lat), z = cos(lat)*cos(lon)
+   * Rotating Y by -lon then X by -lat brings that point toward +Z.
+   */
+  function azerbaijanRotation() {
+    return {
+      x: -AZ_LAT * DEG,
+      y: -AZ_LON * DEG,
+    };
   }
 
   function makeStars(count) {
@@ -140,85 +202,138 @@
   function makeGlobe() {
     var group = new THREE.Group();
 
-    var sphereGeo = new THREE.SphereGeometry(1.15, 48, 48);
+    var earthTex = makeEarthTexture();
+    var sphereGeo = new THREE.SphereGeometry(1.15, 64, 48);
     var sphereMat = new THREE.MeshStandardMaterial({
-      color: 0x0c1a2e,
-      metalness: 0.35,
-      roughness: 0.55,
-      emissive: 0x061018,
-      emissiveIntensity: 0.4,
+      map: earthTex,
+      metalness: 0.12,
+      roughness: 0.72,
+      emissive: 0x041018,
+      emissiveIntensity: 0.22,
     });
     group.add(new THREE.Mesh(sphereGeo, sphereMat));
 
-    // Stylized terrain / latitude bands (procedural “cartography” look)
-    var wireGeo = new THREE.SphereGeometry(1.165, 28, 18);
+    // Soft cartographic grid
+    var wireGeo = new THREE.SphereGeometry(1.162, 32, 20);
     var wireMat = new THREE.MeshBasicMaterial({
-      color: 0x5bb8c4,
+      color: 0x8ec8d0,
       wireframe: true,
       transparent: true,
-      opacity: 0.18,
+      opacity: 0.08,
     });
     group.add(new THREE.Mesh(wireGeo, wireMat));
 
-    // Meridians / parallels as thin rings for cartographic feel
-    var i, ring, mat;
-    mat = new THREE.MeshBasicMaterial({
-      color: 0x7ec8c4,
-      transparent: true,
-      opacity: 0.22,
-      side: THREE.DoubleSide,
-    });
-    for (i = 0; i < 6; i++) {
-      ring = new THREE.Mesh(
-        new THREE.RingGeometry(1.17, 1.178, 64),
-        mat
-      );
-      ring.rotation.x = Math.PI / 2;
-      ring.rotation.y = (i / 6) * Math.PI;
-      group.add(ring);
-    }
-
-    // Soft continent-ish blobs via canvas texture (procedural)
-    var tex = makeContinentTexture();
-    var overlay = new THREE.Mesh(
-      new THREE.SphereGeometry(1.152, 48, 48),
-      new THREE.MeshBasicMaterial({
-        map: tex,
-        transparent: true,
-        opacity: 0.55,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false,
-      })
-    );
-    group.add(overlay);
+    // Subtle marker glow near Azerbaijan (local coords before group rotation)
+    var marker = makeAzMarker();
+    group.add(marker);
 
     return group;
   }
 
-  function makeContinentTexture() {
-    var size = 512;
+  function latLonToLocal(lat, lon, radius) {
+    var phi = lat * DEG;
+    var theta = lon * DEG;
+    return new THREE.Vector3(
+      radius * Math.cos(phi) * Math.sin(theta),
+      radius * Math.sin(phi),
+      radius * Math.cos(phi) * Math.cos(theta)
+    );
+  }
+
+  function makeAzMarker() {
+    var g = new THREE.Group();
+    var pos = latLonToLocal(AZ_LAT, AZ_LON, 1.17);
+    var dot = new THREE.Mesh(
+      new THREE.SphereGeometry(0.018, 12, 12),
+      new THREE.MeshBasicMaterial({
+        color: 0x7ec8c4,
+        transparent: true,
+        opacity: 0.9,
+      })
+    );
+    dot.position.copy(pos);
+    g.add(dot);
+    var halo = new THREE.Mesh(
+      new THREE.SphereGeometry(0.045, 12, 12),
+      new THREE.MeshBasicMaterial({
+        color: 0x5bb8c4,
+        transparent: true,
+        opacity: 0.25,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+      })
+    );
+    halo.position.copy(pos);
+    g.add(halo);
+    return g;
+  }
+
+  /**
+   * Procedural earth-like texture: ocean blues + land greens/tans.
+   * Approximate continents; Azerbaijan region gets a slightly warmer land patch.
+   */
+  function makeEarthTexture() {
+    var size = 1024;
     var c = document.createElement("canvas");
     c.width = c.height = size;
     var ctx = c.getContext("2d");
-    ctx.fillStyle = "rgba(0,0,0,0)";
+
+    // Ocean base
+    var ocean = ctx.createLinearGradient(0, 0, 0, size);
+    ocean.addColorStop(0, "#0a1a2e");
+    ocean.addColorStop(0.35, "#0d2848");
+    ocean.addColorStop(0.5, "#123a5c");
+    ocean.addColorStop(0.65, "#0d2848");
+    ocean.addColorStop(1, "#0a1a2e");
+    ctx.fillStyle = ocean;
     ctx.fillRect(0, 0, size, size);
 
-    // Soft land-like patches
-    var patches = [
-      [0.28, 0.42, 0.14, 0.2],
-      [0.52, 0.38, 0.1, 0.12],
-      [0.62, 0.55, 0.18, 0.14],
-      [0.4, 0.62, 0.09, 0.1],
-      [0.75, 0.45, 0.12, 0.16],
-      [0.22, 0.58, 0.08, 0.11],
+    // Soft oceanic depth variation
+    var i;
+    for (i = 0; i < 40; i++) {
+      var ox = Math.random() * size;
+      var oy = Math.random() * size;
+      var or = (0.05 + Math.random() * 0.12) * size;
+      var og = ctx.createRadialGradient(ox, oy, 0, ox, oy, or);
+      og.addColorStop(0, "rgba(30, 90, 130, 0.35)");
+      og.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = og;
+      ctx.beginPath();
+      ctx.arc(ox, oy, or, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Land patches — rough continental silhouettes (equirectangular-ish)
+    // [cx, cy, rx, ry, color] — cy ~0.5 is equator; lon increases left→right from -180
+    var lands = [
+      // Americas-ish
+      [0.22, 0.42, 0.09, 0.22, "#2d6b3a"],
+      [0.26, 0.62, 0.07, 0.16, "#3a7a42"],
+      // Europe / Africa
+      [0.52, 0.38, 0.08, 0.1, "#4a7a45"],
+      [0.54, 0.55, 0.1, 0.18, "#6b8f3a"],
+      [0.55, 0.68, 0.08, 0.1, "#8a9a4a"],
+      // Asia
+      [0.68, 0.36, 0.16, 0.12, "#3d6e48"],
+      [0.72, 0.48, 0.14, 0.1, "#4a7840"],
+      // Australia
+      [0.82, 0.68, 0.07, 0.06, "#7a8a3a"],
+      // Azerbaijan / Caucasus region (~lon 47.5 → u≈(47.5+180)/360≈0.632, lat 40.4 → v≈(90-40.4)/180≈0.276)
+      [0.632, 0.278, 0.035, 0.028, "#5a8f4a"],
+      [0.628, 0.29, 0.02, 0.018, "#6a9a55"],
     ];
-    patches.forEach(function (p) {
+
+    lands.forEach(function (p) {
       var g = ctx.createRadialGradient(
-        p[0] * size, p[1] * size, 0,
-        p[0] * size, p[1] * size, p[2] * size
+        p[0] * size,
+        p[1] * size,
+        0,
+        p[0] * size,
+        p[1] * size,
+        p[2] * size
       );
-      g.addColorStop(0, "rgba(126, 200, 196, 0.55)");
-      g.addColorStop(0.5, "rgba(91, 140, 255, 0.25)");
+      g.addColorStop(0, hexToRgba(p[4], 0.92));
+      g.addColorStop(0.55, hexToRgba(p[4], 0.55));
       g.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = g;
       ctx.beginPath();
@@ -226,28 +341,42 @@
       ctx.fill();
     });
 
-    // Subtle grid
-    ctx.strokeStyle = "rgba(100, 160, 200, 0.12)";
-    ctx.lineWidth = 1;
-    var g;
-    for (g = 0; g < 12; g++) {
-      var y = ((g + 0.5) / 12) * size;
+    // Polar ice hints
+    ctx.fillStyle = "rgba(220, 235, 245, 0.35)";
+    ctx.fillRect(0, 0, size, size * 0.06);
+    ctx.fillRect(0, size * 0.94, size, size * 0.06);
+
+    // Subtle cloud streaks
+    ctx.globalAlpha = 0.12;
+    for (i = 0; i < 18; i++) {
+      ctx.fillStyle = "#ffffff";
       ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(size, y);
-      ctx.stroke();
+      ctx.ellipse(
+        Math.random() * size,
+        Math.random() * size,
+        (0.04 + Math.random() * 0.1) * size,
+        (0.008 + Math.random() * 0.02) * size,
+        Math.random() * Math.PI,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
     }
-    for (g = 0; g < 24; g++) {
-      var x = ((g + 0.5) / 24) * size;
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, size);
-      ctx.stroke();
-    }
+    ctx.globalAlpha = 1;
 
     var texture = new THREE.CanvasTexture(c);
-    if (THREE.SRGBColorSpace) texture.colorSpace = THREE.SRGBColorSpace; else if (THREE.sRGBEncoding) texture.encoding = THREE.sRGBEncoding;
+    if (THREE.SRGBColorSpace) texture.colorSpace = THREE.SRGBColorSpace;
+    else if (THREE.sRGBEncoding) texture.encoding = THREE.sRGBEncoding;
+    texture.anisotropy = 4;
     return texture;
+  }
+
+  function hexToRgba(hex, a) {
+    var h = hex.replace("#", "");
+    var r = parseInt(h.slice(0, 2), 16);
+    var g = parseInt(h.slice(2, 4), 16);
+    var b = parseInt(h.slice(4, 6), 16);
+    return "rgba(" + r + "," + g + "," + b + "," + a + ")";
   }
 
   function makeAtmosphere() {
@@ -256,7 +385,7 @@
       new THREE.MeshBasicMaterial({
         color: 0x5b8cff,
         transparent: true,
-        opacity: 0.07,
+        opacity: 0.08,
         side: THREE.BackSide,
         depthWrite: false,
       })
@@ -276,6 +405,7 @@
     camera.updateProjectionMatrix();
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
     renderer.setSize(w, h, false);
+    onScroll();
   }
 
   function loop() {
@@ -284,27 +414,56 @@
     raf = requestAnimationFrame(loop);
 
     var t = clock.getElapsedTime();
-    target.x += (mouse.x * 0.35 - target.x) * 0.04;
-    target.y += (mouse.y * 0.25 - target.y) * 0.04;
+    target.x += (mouse.x * 0.28 - target.x) * 0.04;
+    target.y += (mouse.y * 0.2 - target.y) * 0.04;
+
+    // Smooth scroll progress
+    scrollSmoothed += (scrollProgress - scrollSmoothed) * 0.06;
+    var p = easeInOutCubic(scrollSmoothed);
+    var az = azerbaijanRotation();
 
     if (globe) {
-      globe.rotation.y = t * 0.08;
-      globe.rotation.x = 0.25 + target.y * 0.15;
-      globe.position.x = 1.35 + target.x * 0.25;
+      // Idle spin fades out as we approach Azerbaijan
+      var spin = (1 - p) * t * 0.07;
+      var baseY = lerp(spin, az.y, p);
+      var baseX = lerp(0.18, az.x, p);
+
+      // Subtle mouse parallax fades when zoomed in
+      var parallax = 1 - p * 0.75;
+      globe.rotation.y = baseY + target.x * 0.12 * parallax;
+      globe.rotation.x = baseX + target.y * 0.1 * parallax;
+
+      globe.position.x = lerp(GLOBE_FAR.x, GLOBE_NEAR.x, p) + target.x * 0.18 * parallax;
+      globe.position.y = lerp(GLOBE_FAR.y, GLOBE_NEAR.y, p);
+      globe.position.z = lerp(GLOBE_FAR.z, GLOBE_NEAR.z, p);
+
       if (atmosphere) {
         atmosphere.position.copy(globe.position);
-        atmosphere.rotation.y = -t * 0.03;
+        atmosphere.scale.setScalar(lerp(1, 1.02, p));
       }
     }
+
     if (stars) stars.rotation.y = t * 0.008;
     if (dust) {
       dust.rotation.y = t * 0.02;
       dust.rotation.x = t * 0.01;
+      dust.material.opacity = 0.35 * (1 - p * 0.6);
     }
 
-    camera.position.x = target.x * 0.35;
-    camera.position.y = 0.15 + target.y * 0.2;
-    camera.lookAt(0.4, 0, 0);
+    camera.position.x = lerp(CAM_FAR.x, CAM_NEAR.x, p) + target.x * 0.25 * (1 - p * 0.5);
+    camera.position.y = lerp(CAM_FAR.y, CAM_NEAR.y, p) + target.y * 0.15 * (1 - p * 0.5);
+    camera.position.z = lerp(CAM_FAR.z, CAM_NEAR.z, p);
+
+    var lookX = lerp(0.35, 0, p);
+    var lookY = lerp(0, 0.02, p);
+    camera.lookAt(lookX, lookY, 0);
+
+    // Narrow FOV slightly on approach for cinematic zoom feel
+    var fov = lerp(48, 38, p);
+    if (Math.abs(camera.fov - fov) > 0.05) {
+      camera.fov = fov;
+      camera.updateProjectionMatrix();
+    }
 
     renderer.render(scene, camera);
   }

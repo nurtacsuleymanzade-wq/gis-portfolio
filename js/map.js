@@ -1,6 +1,7 @@
 /**
  * Leaflet interactive atlas — choropleth + points + Qusar + ADM0 outline.
- * Uses Carto Dark Matter (no API key). GeoJSON from ./data/
+ * Esri World Imagery basemap (no API key) + Boundaries & Places reference.
+ * GeoJSON from ./data/
  */
 (function () {
   "use strict";
@@ -21,12 +22,25 @@
     scrollWheelZoom: false,
   }).setView([40.4, 47.8], 7);
 
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    subdomains: "abcd",
-    maxZoom: 19,
-  }).addTo(map);
+  // Primary: Esri World Imagery (free ArcGIS Online tiles, no API key)
+  L.tileLayer(
+    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    {
+      attribution: "Tiles &copy; Esri",
+      maxZoom: 19,
+    }
+  ).addTo(map);
+
+  // Labels / boundaries overlay so the imagery reads like a real map
+  L.tileLayer(
+    "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+    {
+      attribution: "",
+      maxZoom: 19,
+      opacity: 0.9,
+      pane: "overlayPane",
+    }
+  ).addTo(map);
 
   // Enable scroll zoom only when map is focused / clicked
   map.on("click", function () {
@@ -124,24 +138,25 @@
       if (adm0) {
         L.geoJSON(adm0, {
           style: {
-            color: "#7ec8c4",
-            weight: 1.25,
-            opacity: 0.55,
+            color: "#f5f0e6",
+            weight: 1.5,
+            opacity: 0.75,
             fill: false,
           },
           interactive: false,
         }).addTo(map);
       }
 
+      // Semi-transparent fills so Esri imagery shows through
       var choropleth = L.geoJSON(adm2, {
         style: function (feature) {
           var n = feature.properties && feature.properties.n_total;
           return {
             fillColor: choroplethColor(n),
-            weight: 0.6,
-            opacity: 0.9,
-            color: "#0a1520",
-            fillOpacity: 0.72,
+            weight: 0.7,
+            opacity: 0.85,
+            color: "#e8f4f8",
+            fillOpacity: 0.38,
           };
         },
         onEachFeature: function (feature, layer) {
@@ -149,7 +164,7 @@
           layer.bindPopup(rayonPopup(p));
           layer.on({
             mouseover: function (e) {
-              e.target.setStyle({ weight: 1.5, color: "#c9eef0", fillOpacity: 0.85 });
+              e.target.setStyle({ weight: 1.6, color: "#ffffff", fillOpacity: 0.55 });
             },
             mouseout: function (e) {
               choropleth.resetStyle(e.target);
@@ -164,7 +179,7 @@
           weight: 2.5,
           opacity: 0.95,
           fillColor: "#f0c674",
-          fillOpacity: 0.12,
+          fillOpacity: 0.1,
         },
         onEachFeature: function (feature, layer) {
           var name = (feature.properties && feature.properties.shapeName) || "Qusar";
@@ -185,7 +200,7 @@
             color: "#04060c",
             weight: 1,
             opacity: 1,
-            fillOpacity: 0.9,
+            fillOpacity: 0.95,
           });
         },
         onEachFeature: function (feature, layer) {
@@ -201,7 +216,6 @@
 
       setStatus("Layers ready", true);
 
-      // Fix tile sizing if section was hidden / late layout
       setTimeout(function () {
         map.invalidateSize();
       }, 200);
@@ -211,7 +225,6 @@
       setStatus("Could not load GeoJSON — serve via http.server");
     });
 
-  // Invalidate when atlas scrolls into view (layout settle)
   if ("IntersectionObserver" in window) {
     var io = new IntersectionObserver(
       function (entries) {
