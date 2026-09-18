@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Healthcare facility mapping · Nurtac Suleymanzade</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+:root{--bg:#04060c;--card:#0c1220;--text:#e8eef7;--muted:#9bb0c9;--accent:#5bb8c4;--line:#1e2a3d}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
+a{color:var(--accent)} .wrap{max-width:1100px;margin:0 auto;padding:24px 18px 64px}
+.eyebrow{letter-spacing:.12em;text-transform:uppercase;font-size:12px;color:var(--muted)}
+h1{font-family:Georgia,serif;font-weight:500;font-size:clamp(1.8rem,4vw,2.6rem);margin:.2em 0 .4em}
+.lead{color:var(--muted);max-width:62ch} .meta{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 24px}
+.pill{border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:12px;color:var(--muted)}
+.map{height:520px;border-radius:16px;border:1px solid var(--line);overflow:hidden}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:20px}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:16px}
+table{width:100%;border-collapse:collapse;font-size:13px} th,td{border-bottom:1px solid var(--line);padding:8px;text-align:left}
+.nav{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:18px;font-size:14px}
+.nav a{text-decoration:none;color:var(--muted)} .nav a:hover{color:var(--text)}
+</style></head><body>
+<div class="wrap">
+<nav class="nav">
+<a href="../index.html">← Portfolio</a>
+<a href="./zoning-digitize.html">Zoning</a>
+<a href="./healthcare-mapping.html">Healthcare</a>
+<a href="./location-suitability.html">Suitability</a>
+</nav>
+<p class="eyebrow">Sample · Regional cartography</p>
+<h1>Healthcare facility mapping</h1>
+<p class="lead">Clean regional map of trauma / emergency facilities for decision-makers — illustrative West Texas-scale layout with service rings and stakeholder-ready symbology.</p>
+<div class="meta"><span class="pill">Cartography</span><span class="pill">Geocoding</span><span class="pill">Print PDF</span><span class="pill">Web map</span></div>
+
+<div id="map" class="map"></div>
+<div class="grid">
+<div class="card"><h3 style="margin-top:0">Decision-ready cartography</h3><p class="lead">Trauma centers, emergency departments and transfer distances styled for non-GIS stakeholders — clean labels, consistent symbology, editable source layers.</p></div>
+<div class="card"><h3 style="margin-top:0">Deliverables</h3><ul class="lead"><li>Facility point layer + attributes</li><li>Service-area rings (illustrative)</li><li>Print PDF / web map package</li></ul></div>
+</div>
+<script>
+const map=L.map('map').setView([31.9,-102.3],7);
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',{attribution:'Tiles © Esri'}).addTo(map);
+const sites=[
+{n:'Regional Trauma Center A',c:[31.997, -102.078],t:'Level I'},
+{n:'Emergency Campus B',c:[32.25, -101.45],t:'ED'},
+{n:'Community Hospital C',c:[31.45, -102.35],t:'ED'},
+{n:'Critical Access D',c:[31.15, -103.15],t:'CAH'},
+{n:'Transfer Hub E',c:[32.55, -100.85],t:'Level II'}
+];
+sites.forEach(s=>{
+ L.circle(s.c,{radius:45000,color:'#5bb8c4',fillColor:'#5bb8c4',fillOpacity:.08,weight:1}).addTo(map);
+ L.circleMarker(s.c,{radius:8,color:'#fff',weight:1,fillColor:s.t.includes('Level')?'#e74c3c':'#3498db',fillOpacity:.95})
+  .addTo(map).bindPopup('<b>'+s.n+'</b><br>'+s.t);
+});
+</script>
+
+<p style="margin-top:28px;color:var(--muted);font-size:13px">Demo sample for Upwork proposals · Nurtac Suleymanzade · GIS Specialist · PhD student · <a href="mailto:nurtac.suleymanzade@gmail.com">nurtac.suleymanzade@gmail.com</a></p>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</body></html>
