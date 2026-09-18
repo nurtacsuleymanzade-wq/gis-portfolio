@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Location suitability & opportunity score · Nurtac Suleymanzade</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+:root{--bg:#04060c;--card:#0c1220;--text:#e8eef7;--muted:#9bb0c9;--accent:#5bb8c4;--line:#1e2a3d}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
+a{color:var(--accent)} .wrap{max-width:1100px;margin:0 auto;padding:24px 18px 64px}
+.eyebrow{letter-spacing:.12em;text-transform:uppercase;font-size:12px;color:var(--muted)}
+h1{font-family:Georgia,serif;font-weight:500;font-size:clamp(1.8rem,4vw,2.6rem);margin:.2em 0 .4em}
+.lead{color:var(--muted);max-width:62ch} .meta{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 24px}
+.pill{border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:12px;color:var(--muted)}
+.map{height:520px;border-radius:16px;border:1px solid var(--line);overflow:hidden}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:20px}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:16px}
+table{width:100%;border-collapse:collapse;font-size:13px} th,td{border-bottom:1px solid var(--line);padding:8px;text-align:left}
+.nav{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:18px;font-size:14px}
+.nav a{text-decoration:none;color:var(--muted)} .nav a:hover{color:var(--text)}
+</style></head><body>
+<div class="wrap">
+<nav class="nav">
+<a href="../index.html">← Portfolio</a>
+<a href="./zoning-digitize.html">Zoning</a>
+<a href="./healthcare-mapping.html">Healthcare</a>
+<a href="./location-suitability.html">Suitability</a>
+</nav>
+<p class="eyebrow">Sample · Site selection</p>
+<h1>Location suitability & opportunity score</h1>
+<p class="lead">Interactive screening map that ranks candidate sites with a transparent opportunity score — population proxy, competition, and corridor access.</p>
+<div class="meta"><span class="pill">Leaflet</span><span class="pill">Spatial analysis</span><span class="pill">Heatmap</span><span class="pill">MCDA-ready</span></div>
+
+<div id="map" class="map"></div>
+<div class="card">
+<h3 style="margin-top:0">Opportunity score prototype</h3>
+<p class="lead">Site-selection demo combining population density proxy, competitor proximity and corridor access into a simple 0–100 opportunity score. Built for interactive screening before a full MCDA model.</p>
+<table><thead><tr><th>Site</th><th>Score</th><th>Drivers</th></tr></thead>
+<tbody>
+<tr><td>North Corridor</td><td>86</td><td>High density · low competition</td></tr>
+<tr><td>Campus Edge</td><td>74</td><td>Strong foot traffic proxy</td></tr>
+<tr><td>Industrial Fringe</td><td>51</td><td>Access good · demand weaker</td></tr>
+<tr><td>Downtown Core</td><td>42</td><td>Saturated competitors</td></tr>
+</tbody></table>
+</div>
+<script>
+const map=L.map('map').setView([40.72,-74.0],12);
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',{attribution:'Tiles © Esri'}).addTo(map);
+// note: Carto dark often needs no key for light use; if watermark appears Esri fallback
+const heat=[
+[40.73,-73.99,0.9],[40.735,-74.00,0.8],[40.74,-73.985,0.7],[40.725,-74.01,0.6],[40.71,-73.995,0.5],[40.745,-74.02,0.4]
+];
+heat.forEach(([lat,lng,i])=>L.circle([lat,lng],{radius:350+i*400,color:'#f39c12',fillColor:'#f39c12',fillOpacity:0.12+i*0.08,weight:0}).addTo(map));
+const scored=[
+{n:'North Corridor',c:[40.74,-73.99],s:86},
+{n:'Campus Edge',c:[40.73,-74.01],s:74},
+{n:'Industrial Fringe',c:[40.71,-74.02],s:51},
+{n:'Downtown Core',c:[40.715,-73.995],s:42}
+];
+scored.forEach(o=>L.circleMarker(o.c,{radius:10,color:'#fff',fillColor:o.s>70?'#2ecc71':o.s>55?'#f1c40f':'#e67e22',fillOpacity:.95})
+ .addTo(map).bindPopup('<b>'+o.n+'</b><br>Opportunity score: '+o.s));
+</script>
+
+<p style="margin-top:28px;color:var(--muted);font-size:13px">Demo sample for Upwork proposals · Nurtac Suleymanzade · GIS Specialist · PhD student · <a href="mailto:nurtac.suleymanzade@gmail.com">nurtac.suleymanzade@gmail.com</a></p>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</body></html>
