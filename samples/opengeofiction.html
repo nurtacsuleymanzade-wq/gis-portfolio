@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>OpenGeoFiction sample — fictional district on OSM</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+  html,body,#map{height:100%;margin:0}
+  .panel{position:absolute;z-index:1000;top:12px;left:12px;background:#0f172acc;color:#e2e8f0;
+    padding:12px 14px;border-radius:10px;font:14px/1.4 system-ui;max-width:280px;backdrop-filter:blur(6px)}
+  .panel h1{font-size:15px;margin:0 0 6px}
+  .panel p{margin:0;opacity:.85;font-size:12px}
+  .fiction{fill:#f59e0b;fill-opacity:.25;stroke:#f59e0b;stroke-width:2}
+  .label{background:transparent;border:0;color:#fff;font-weight:700;text-shadow:0 1px 3px #000;font-size:13px}
+</style>
+</head>
+<body>
+<div class="panel">
+  <h1>OpenGeoFiction demo</h1>
+  <p>OSM basemap + invented district polygons, place names, and lore markers. Same pattern for any fictional overlay on open data.</p>
+</div>
+<div id="map"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const map = L.map('map').setView([40.7128,-74.006], 13);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+  maxZoom:19, attribution:'© OpenStreetMap'
+}).addTo(map);
+
+// Fictional "Harborward" district over real NYC waterfront coords (demo only)
+const harborward = L.polygon([
+  [40.704,-74.018],[40.710,-74.000],[40.718,-74.005],[40.715,-74.022]
+], {className:'fiction', color:'#f59e0b', weight:2, fillOpacity:0.28}).addTo(map);
+harborward.bindPopup('<b>Harborward</b><br/>Fictional borough for OpenGeoFiction-style storytelling.');
+
+const sites = [
+  {lat:40.708, lon:-74.012, name:'Ash Pier', note:'Invented waterfront market'},
+  {lat:40.714, lon:-74.008, name:'Clockspire', note:'Fictional landmark'},
+  {lat:40.711, lon:-74.016, name:'Old Customs Vault', note:'Lore location'}
+];
+sites.forEach(s=>{
+  L.circleMarker([s.lat,s.lon],{radius:7,color:'#fff',weight:2,fillColor:'#f59e0b',fillOpacity:1})
+    .addTo(map).bindPopup(`<b>${s.name}</b><br/>${s.note}`);
+  L.marker([s.lat,s.lon],{icon:L.divIcon({className:'label', html:s.name, iconSize:[120,20], iconAnchor:[-8,10]})}).addTo(map);
+});
+</script>
+</body>
+</html>
