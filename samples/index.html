@@ -1,22 +1,42 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>GIS Samples · Nurtac Suleymanzade</title>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>GIS Portfolio Samples — Nurtac Suleymanzade</title>
 <style>
-body{margin:0;font-family:Inter,system-ui,sans-serif;background:#04060c;color:#e8eef7;padding:32px 18px}
-a{color:#5bb8c4;text-decoration:none} .wrap{max-width:900px;margin:0 auto}
-.card{display:block;border:1px solid #1e2a3d;border-radius:16px;padding:18px;margin:14px 0;background:#0c1220}
-.card:hover{border-color:#5bb8c4} .muted{color:#9bb0c9}
-</style></head><body><div class="wrap">
-<p><a href="../index.html">← Portfolio home</a></p>
-<h1>Upwork proposal samples</h1>
-<p class="muted">Real QGIS 300 DPI exports + interactive demos.</p>
-<div style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin:18px 0">
-<a class="card" href="./maps/SAMPLE_ZONING.png"><img src="./maps/SAMPLE_ZONING.png" alt="Zoning" style="width:100%;border-radius:10px"/><strong>Zoning PNG</strong></a>
-<a class="card" href="./maps/SAMPLE_HEALTHCARE.png"><img src="./maps/SAMPLE_HEALTHCARE.png" alt="Healthcare" style="width:100%;border-radius:10px"/><strong>Healthcare PNG</strong></a>
-<a class="card" href="./maps/SAMPLE_SUITABILITY.png"><img src="./maps/SAMPLE_SUITABILITY.png" alt="Suitability" style="width:100%;border-radius:10px"/><strong>Suitability PNG</strong></a>
+body{margin:0;font-family:system-ui,sans-serif;background:#0b1220;color:#e2e8f0}
+header{padding:28px 24px 8px;max-width:1100px;margin:0 auto}
+h1{font-size:1.4rem;margin:0 0 6px}p{opacity:.8;margin:0 0 8px;line-height:1.45}
+.grid{display:grid;gap:20px;padding:16px 24px 40px;max-width:1100px;margin:0 auto}
+@media(min-width:800px){.grid{grid-template-columns:1fr 1fr}}
+.card{background:#111827;border:1px solid #1f2937;border-radius:14px;overflow:hidden}
+.card img{width:100%;display:block;background:#0f172a}
+.card .body{padding:14px 16px}
+.card h2{font-size:1rem;margin:0 0 6px}
+.card p{font-size:.9rem;margin:0 0 10px}
+a{color:#38bdf8;text-decoration:none}a:hover{text-decoration:underline}
+.badge{display:inline-block;font-size:.7rem;letter-spacing:.04em;text-transform:uppercase;
+  background:#14532d;color:#bbf7d0;padding:3px 8px;border-radius:999px;margin-bottom:8px}
+</style></head><body>
+<header>
+  <h1>Professional GIS map samples</h1>
+  <p>QA-passed rebuild · street-snapped zoning · land-clipped healthcare · smoothed suitability methodology.</p>
+  <p><a href="../">← Portfolio home</a> · <a href="opengeofiction.html">OpenGeoFiction demo</a> · <a href="victoria.html">Victoria SVG</a></p>
+</header>
+<div class="grid">
+  <article class="card"><img src="maps/SAMPLE_ZONING.png" alt="Zoning digitization sample"/>
+    <div class="body"><div class="badge">Digitizing</div>
+    <h2>Zoning parcels (US-style)</h2>
+    <p>Street-snapped R1/R2/C1/C2/M1/OS on a clean urban block grid.</p>
+    <a href="maps/SAMPLE_ZONING.png">PNG</a> · <a href="maps/SAMPLE_ZONING.pdf">PDF</a></div></article>
+  <article class="card"><img src="maps/SAMPLE_HEALTHCARE.png" alt="Healthcare facilities sample"/>
+    <div class="body"><div class="badge">Cartography</div>
+    <h2>Regional healthcare facilities</h2>
+    <p>22 land-clipped trauma / hospital / clinic sites on Absheron with major roads.</p>
+    <a href="maps/SAMPLE_HEALTHCARE.png">PNG</a> · <a href="maps/SAMPLE_HEALTHCARE.pdf">PDF</a></div></article>
+  <article class="card"><img src="maps/SAMPLE_SUITABILITY.png" alt="Suitability analysis sample"/>
+    <div class="body"><div class="badge">Analysis</div>
+    <h2>Location opportunity score</h2>
+    <p>Smoothed 0–100 multi-criteria suitability with ranked high-score candidate sites.</p>
+    <a href="maps/SAMPLE_SUITABILITY.png">PNG</a> · <a href="maps/SAMPLE_SUITABILITY.pdf">PDF</a></div></article>
 </div>
-<p class="muted">Domain-specific demos you can open in one click — not the same tourism map for every job.</p>
-<a class="card" href="./zoning-digitize.html"><strong>Zoning digitize</strong><br><span class="muted">PDF → polygons · ZONE_CODE · topology QA</span></a>
-<a class="card" href="./healthcare-mapping.html"><strong>Healthcare facility mapping</strong><br><span class="muted">Trauma / ED cartography for decision-makers</span></a>
-<a class="card" href="./location-suitability.html"><strong>Location suitability & opportunity score</strong><br><span class="muted">Interactive site screening · Leaflet</span></a>
-</div></body></html>
+</body></html>
