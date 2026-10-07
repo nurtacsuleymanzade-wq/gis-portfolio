@@ -1,0 +1,24 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LiDAR processing — PDAL denoise, classification, DTM/DSM — Nurtac Suleymanzade</title><style>body{margin:0;background:#0f172a;color:#e2e8f0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.6}
+.wrap{max-width:1040px;margin:0 auto;padding:32px 20px 60px}a{color:#38bdf8}h1{font-size:1.6rem;margin:.2em 0}h2{font-size:1.1rem;margin-top:1.8em;color:#f8fafc}
+.eyebrow{text-transform:uppercase;letter-spacing:.12em;font-size:.75rem;color:#94a3b8}img{max-width:100%;border-radius:12px;display:block;margin:14px 0}
+.card{background:#1e293b;border-radius:12px;padding:16px 18px;margin:14px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.grid .card{margin:0}.btn{display:inline-block;background:#38bdf8;color:#0f172a;padding:7px 14px;border-radius:8px;text-decoration:none;font-weight:600;margin:4px 6px 4px 0}
+code{background:#0b1220;padding:1px 5px;border-radius:4px}small{color:#94a3b8}ul{padding-left:20px}</style></head><body><div class="wrap">
+<p class="eyebrow"><a href="../index.html">Nurtac Suleymanzade · GIS</a> / <a href="index.html">3D &amp; Advanced</a></p>
+<h1>LiDAR processing — denoise, classify, DTM / DSM</h1>
+<p>A real USGS 3DEP airborne LiDAR tile (Boulder, Colorado; about 380 × 380 m, 3.6 million points) processed end-to-end with PDAL.</p>
+<a class="btn" href="lidar-viewer.html">Open 3D point-cloud viewer</a>
+<img src="img/lidar_before_after.jpg" alt="Before and after point cloud classification">
+<img src="img/lidar_dtm_dsm.jpg" alt="DTM and DSM hillshades">
+<h2>Pipeline (PDAL 2.x in Docker)</h2><div class="card"><ol>
+<li><code>readers.ept</code>: stream only the area of interest from the public USGS Entwine dataset (no full-tile download), reproject to UTM 13N + NAVD88.</li>
+<li>Original vendor classes are wiped (<code>Classification = 0</code>) so the result shows only my own processing.</li>
+<li><b>Noise removal:</b> <code>filters.outlier</code> (statistical, k = 12, 2.5σ) + <code>filters.elm</code> (extended local minimum) flag isolated and low-outlier returns as class 7. That is 96,555 points (2.7 %), removed from the products.</li>
+<li><b>Ground:</b> <code>filters.smrf</code> (Simple Morphological Filter: slope 0.2, window 16 m, threshold 0.45 m).</li>
+<li><b>Buildings / vegetation:</b> <code>filters.hag_nn</code> computes height above ground. <code>filters.approximatecoplanar</code> tests local planarity. Points &gt; 2.5 m that are planar → <i>building (6)</i>, other points &gt; 2 m → <i>high vegetation (5)</i>, the rest → <i>other / low (1)</i>.</li>
+<li><b>Rasters:</b> <code>writers.gdal</code>: DSM = max of all returns, DTM = IDW of ground, both 0.5 m. DTM gaps under buildings filled with <code>gdal_fillnodata</code>.</li></ol>
+<small>Honest limits: the building/vegetation split is a rule-based heuristic. Pitched roofs and dense canopy edges are partly mixed (on this tile it under-detects some roofs). Production work adds tuned thresholds, footprints or a trained classifier, plus QA against the vendor classes.</small></div>
+<h2>Who benefits / value</h2><div class="card"><b>Who benefits.</b> <i>Architects &amp; engineers</i> (bare-earth DTM and building heights for site design), <i>mining &amp; quarrying</i> (stockpile/terrain surfaces), <i>municipalities &amp; utilities</i> (tree canopy and building inventories, vegetation encroachment), <i>forestry &amp; academia</i> (canopy height models). <b>Value:</b> turns raw, noisy point clouds into clean classified LAZ plus DTM/DSM rasters that drop straight into QGIS, ArcGIS or CAD.</div>
+<h2>Data credits</h2><p><small>U.S. Geological Survey 3D Elevation Program, project CO_DRCOG_1_2020 (public domain), via the AWS Open Data <code>usgs-lidar-public</code> Entwine bucket.</small></p>
+<p style="margin-top:40px"><small>All outputs on this page were produced from open data with free software (Blender, PDAL, GDAL, OpenDroneMap, MapLibre GL, Three.js). Compute: a cloud Linux workstation with NVIDIA L4 GPUs.</small></p></div></body></html>

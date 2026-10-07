@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Baku 3D city model — Icherisheher &amp; Sabail — Nurtac Suleymanzade</title>
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<style>html,body,#map{margin:0;height:100%;font-family:system-ui,sans-serif}
+#panel{position:absolute;top:12px;left:12px;z-index:2;background:rgba(15,23,42,.9);color:#e2e8f0;padding:14px 16px;border-radius:12px;max-width:340px;font-size:13px;line-height:1.45}
+#panel h1{font-size:15px;margin:0 0 6px}#panel a{color:#38bdf8}.k{display:inline-block;width:10px;height:10px;margin-right:5px}</style></head>
+<body><div id="map"></div><div id="panel"><h1>Baku 3D city model — Icherisheher &amp; Sabail</h1>
+<div id="info">Loading…</div>
+<p><span class=k style="background:#f59e0b"></span>height tag &nbsp;<span class=k style="background:#e2e8f0"></span>levels × 3.2 m &nbsp;<span class=k style="background:#64748b"></span>no data (9 m default)</p>
+<p style="opacity:.75;margin:6px 0 0">OSM building footprints extruded on the GPU (MapLibre fill-extrusion) over SRTM-based terrain and Sentinel-2 cloudless imagery. Heights come from OSM <code>height</code> / <code>building:levels</code> where mapped; untagged buildings use a 9 m placeholder, so this is an indicative massing model, not a surveyed LOD2 model.<br>
+Data: © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> (ODbL) · <a href="https://s2maps.eu">Sentinel-2 cloudless 2016 by EOX IT Services GmbH</a> (contains modified Copernicus Sentinel data 2016, CC BY 4.0) · AWS Terrain Tiles. <a href="index.html">← 3D &amp; Advanced</a></p></div>
+<script>
+const map=new maplibregl.Map({container:'map',center:[49.8375,40.3655],zoom:15.3,pitch:62,bearing:-25,maxPitch:80,hash:true,
+style:{version:8,sources:{s2:{type:'raster',tiles:['https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg'],tileSize:256,maxzoom:15,attribution:'Sentinel-2 cloudless by EOX (CC BY 4.0)'},
+dem:{type:'raster-dem',tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],encoding:'terrarium',tileSize:256,maxzoom:14}},
+layers:[{id:'s2',type:'raster',source:'s2'}],sky:{}}});
+map.addControl(new maplibregl.NavigationControl({visualizePitch:true}));
+map.on('load',async()=>{
+ map.setTerrain({source:'dem',exaggeration:1});
+ const d=await (await fetch('data/baku_buildings.geojson')).json();
+ const c={};d.features.forEach(f=>c[f.properties.s]=(c[f.properties.s]||0)+1);
+ document.getElementById('info').textContent=`${d.features.length.toLocaleString('en')} OSM buildings · ${c.height||0} with height, ${c.levels||0} with levels`;
+ map.addSource('b',{type:'geojson',data:d});
+ map.addLayer({id:'b',type:'fill-extrusion',source:'b',paint:{'fill-extrusion-height':['get','h'],
+  'fill-extrusion-color':['match',['get','s'],'height','#f59e0b','levels','#e2e8f0','#64748b'],'fill-extrusion-opacity':.9}});
+ map.on('click','b',e=>{const p=e.features[0].properties;new maplibregl.Popup().setLngLat(e.lngLat).setHTML(`<b>${p.n||'Building'}</b><br>${p.h} m (${p.s})`).addTo(map)});
+});
+</script></body></html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Photorealistic 3D terrain — Shahdag / Quba — Nurtac Suleymanzade</title><style>body{margin:0;background:#0f172a;color:#e2e8f0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.6}
+.wrap{max-width:1040px;margin:0 auto;padding:32px 20px 60px}a{color:#38bdf8}h1{font-size:1.6rem;margin:.2em 0}h2{font-size:1.1rem;margin-top:1.8em;color:#f8fafc}
+.eyebrow{text-transform:uppercase;letter-spacing:.12em;font-size:.75rem;color:#94a3b8}img{max-width:100%;border-radius:12px;display:block;margin:14px 0}
+.card{background:#1e293b;border-radius:12px;padding:16px 18px;margin:14px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.grid .card{margin:0}.btn{display:inline-block;background:#38bdf8;color:#0f172a;padding:7px 14px;border-radius:8px;text-decoration:none;font-weight:600;margin:4px 6px 4px 0}
+code{background:#0b1220;padding:1px 5px;border-radius:4px}small{color:#94a3b8}ul{padding-left:20px}</style></head><body><div class="wrap">
+<p class="eyebrow"><a href="../index.html">Nurtac Suleymanzade · GIS</a> / <a href="index.html">3D &amp; Advanced</a></p>
+<h1>Photorealistic 3D terrain — Shahdag / Quba, Azerbaijan</h1>
+<p>Blender Cycles render (GPU, 256 samples, denoised) of a real SRTM elevation model draped with Sentinel-2 cloudless imagery. 3840 × 2160 px.</p>
+<a href="img/shahdag_cycles_4k.jpg"><img src="img/shahdag_cycles_1920.jpg" alt="3D render of the Shahdag massif from SRTM and Sentinel-2"></a>
+<a class="btn" href="img/shahdag_cycles_4k.jpg">Full 4K JPG (3840×2160)</a> <a class="btn" href="../samples/index.html">Other samples</a>
+<h2>Technique</h2><div class="card"><ul>
+<li><b>Elevation:</b> SRTM 1-arc-second tiles mosaicked and reprojected to UTM 39N (EPSG:32639) at 30 m with GDAL; ~60 × 54 km window covering Shahdag, Bazarduzu, Tufandag, Quba and Qusar. DEM range 257–4,457 m.</li>
+<li><b>Texture:</b> EOX Sentinel-2 cloudless mosaic requested through WMS and warped by GDAL onto exactly the same UTM grid (≈15 m texel), so imagery and relief line up pixel-for-pixel.</li>
+<li><b>3D:</b> a 1,007 × 894 vertex mesh built directly from the height array with Blender's Python API (NumPy), 1.6× vertical exaggeration, physically based Nishita sky for sun and atmosphere.</li>
+<li><b>Render:</b> Cycles on an NVIDIA L4 (CUDA), 256 samples + OpenImageDenoise, Filmic colour management. 4K frame in about 90 seconds.</li></ul>
+<small>Note: the vertical scale is exaggerated 1.6× for legibility. This is a visualisation, not a measurement product. Imagery is the 2016 cloud-free composite, so seasonal snow cover is not shown.</small></div>
+<h2>Who benefits / value</h2><div class="card"><b>Who benefits.</b> <i>Tourism &amp; resorts</i> (Shahdag ski area brochures, trail posters), <i>mining &amp; exploration</i> (concession context visuals for investor decks), <i>academia</i> (study-area figures for theses and journal papers), and <i>municipalities / regional planners</i> communicating terrain to non-specialists. <b>Value:</b> a print-ready 4K image built from real elevation and imagery, reproducible for any area on Earth within a day.</div>
+<h2>Data credits</h2><p><small>SRTM: NASA / USGS (public domain). <a href="https://s2maps.eu">Sentinel-2 cloudless 2016 by EOX IT Services GmbH</a> (contains modified Copernicus Sentinel data 2016), CC BY 4.0.</small></p>
+<p style="margin-top:40px"><small>All outputs on this page were produced from open data with free software (Blender, PDAL, GDAL, OpenDroneMap, MapLibre GL, Three.js). Compute: a cloud Linux workstation with NVIDIA L4 GPUs.</small></p></div></body></html>

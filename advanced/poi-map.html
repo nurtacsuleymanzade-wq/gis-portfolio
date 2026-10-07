@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>165k OSM POIs · Caucasus WebGL map — Nurtac Suleymanzade</title>
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<style>html,body,#map{margin:0;height:100%;font-family:system-ui,sans-serif}
+#panel{position:absolute;top:12px;left:12px;z-index:2;background:rgba(15,23,42,.9);color:#e2e8f0;padding:14px 16px;border-radius:12px;max-width:330px;font-size:13px;line-height:1.45}
+#panel h1{font-size:15px;margin:0 0 6px}#panel a{color:#38bdf8}label{display:block;margin:2px 0;cursor:pointer}
+.sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}button{margin-top:8px;background:#38bdf8;border:0;border-radius:6px;padding:5px 10px;cursor:pointer}</style></head>
+<body><div id="map"></div><div id="panel"><h1>Caucasus POIs — WebGL, 3D terrain</h1>
+<div id="count">Loading OpenStreetMap points…</div><div id="legend"></div>
+<button id="t3d">Toggle 3D terrain</button>
+<p style="opacity:.75;margin:8px 0 0">All points are rendered on the GPU (MapLibre GL circle layer, client-side). Data: © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> (ODbL) via Geofabrik extracts of Azerbaijan, Georgia, Armenia. Terrain: AWS Terrain Tiles (Mapzen/SRTM). Basemap: <a href="https://openfreemap.org">OpenFreeMap</a>. <a href="index.html">← 3D &amp; Advanced</a></p></div>
+<script>
+const C={amenity:'#f97316',shop:'#a855f7',tourism:'#22c55e',place:'#facc15',historic:'#ef4444',office:'#38bdf8',leisure:'#14b8a6',building:'#94a3b8'};
+const map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/positron',center:[46.5,41.0],zoom:6,pitch:0,hash:true,maxPitch:75});
+map.addControl(new maplibregl.NavigationControl({visualizePitch:true}));
+map.on('load',async()=>{
+ map.addSource('dem',{type:'raster-dem',tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],encoding:'terrarium',tileSize:256,maxzoom:14});
+ map.addLayer({id:'hs',type:'hillshade',source:'dem',paint:{'hillshade-exaggeration':0.35}});
+ const a=await (await fetch('data/caucasus_osm_pois.json')).json();
+ const fc={type:'FeatureCollection',features:a.map(p=>({type:'Feature',geometry:{type:'Point',coordinates:[p[0],p[1]]},properties:{c:p[2],n:p[3]}}))};
+ document.getElementById('count').textContent=a.length.toLocaleString('en')+' real OSM features rendered';
+ const cnt={};a.forEach(p=>cnt[p[2]]=(cnt[p[2]]||0)+1);
+ const m=['match',['get','c']];for(const k in C)m.push(k,C[k]);m.push('#fff');
+ map.addSource('p',{type:'geojson',data:fc});
+ map.addLayer({id:'p',type:'circle',source:'p',paint:{'circle-color':m,'circle-radius':['interpolate',['linear'],['zoom'],5,1.2,10,3,15,6],'circle-opacity':.8}});
+ const lg=document.getElementById('legend');
+ for(const k in C){if(!cnt[k])continue;const l=document.createElement('label');l.innerHTML=`<input type=checkbox checked data-k="${k}"> <span class=sw style="background:${C[k]}"></span>${k} (${cnt[k].toLocaleString('en')})`;lg.appendChild(l)}
+ lg.onchange=()=>{const on=[...lg.querySelectorAll('input:checked')].map(i=>i.dataset.k);map.setFilter('p',['in',['get','c'],['literal',on]])};
+ map.on('click','p',e=>{const f=e.features[0];new maplibregl.Popup().setLngLat(e.lngLat).setHTML(`<b>${f.properties.n||'(unnamed)'}</b><br>${f.properties.c}`).addTo(map)});
+ map.on('mouseenter','p',()=>map.getCanvas().style.cursor='pointer');map.on('mouseleave','p',()=>map.getCanvas().style.cursor='');
+});
+let on=false;document.getElementById('t3d').onclick=()=>{on=!on;if(on){map.setTerrain({source:'dem',exaggeration:1.5});map.easeTo({pitch:65,center:[48.15,41.25],zoom:10,bearing:-20})}else{map.setTerrain(null);map.easeTo({pitch:0})}};
+</script></body></html>

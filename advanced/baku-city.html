@@ -1,0 +1,21 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Baku 3D city model — Nurtac Suleymanzade</title><style>body{margin:0;background:#0f172a;color:#e2e8f0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.6}
+.wrap{max-width:1040px;margin:0 auto;padding:32px 20px 60px}a{color:#38bdf8}h1{font-size:1.6rem;margin:.2em 0}h2{font-size:1.1rem;margin-top:1.8em;color:#f8fafc}
+.eyebrow{text-transform:uppercase;letter-spacing:.12em;font-size:.75rem;color:#94a3b8}img{max-width:100%;border-radius:12px;display:block;margin:14px 0}
+.card{background:#1e293b;border-radius:12px;padding:16px 18px;margin:14px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.grid .card{margin:0}.btn{display:inline-block;background:#38bdf8;color:#0f172a;padding:7px 14px;border-radius:8px;text-decoration:none;font-weight:600;margin:4px 6px 4px 0}
+code{background:#0b1220;padding:1px 5px;border-radius:4px}small{color:#94a3b8}ul{padding-left:20px}</style></head><body><div class="wrap">
+<p class="eyebrow"><a href="../index.html">Nurtac Suleymanzade · GIS</a> / <a href="index.html">3D &amp; Advanced</a></p>
+<h1>Baku 3D city model — Icherisheher &amp; Sabail</h1>
+<p>1,736 OpenStreetMap building footprints extruded to height over Sentinel-2 imagery. It comes as an interactive MapLibre 3D scene and a Blender Cycles render.</p>
+<a class="btn" href="baku-3d-city.html">Open interactive 3D map</a> <a class="btn" href="img/baku_city_cycles_2560.jpg">Render 2560×1440</a>
+<img src="img/baku_city_cycles_1600.jpg" alt="Blender render of Baku old city and Sabail buildings">
+<h2>Technique</h2><div class="card"><ul>
+<li>Footprints from the Geofabrik Azerbaijan OSM extract (GDAL OSM driver), clipped to 49.815–49.865 E, 40.352–40.378 N.</li>
+<li>Height rules: OSM <code>height</code> if present (19 buildings), else <code>building:levels × 3.2 m</code> (848), else a 9 m placeholder (869). Colour-coded in the web map so the source of every height is transparent.</li>
+<li>Web: MapLibre GL <code>fill-extrusion</code> on AWS terrain tiles + EOX Sentinel-2 cloudless WMTS (no API token).</li>
+<li>Render: footprints reprojected to UTM 39N and extruded with Blender bmesh, on a Sentinel-2 ground plane (flat, since the relief here is minimal), then rendered with Cycles on GPU.</li></ul>
+<small>An indicative LOD1 massing model, not a surveyed model. Roof shapes are flat and about half the heights are placeholders.</small></div>
+<h2>Who benefits / value</h2><div class="card"><b>Who benefits.</b> <i>Architects &amp; urban designers</i> (massing context around a plot), <i>real-estate developers</i> (marketing and view studies), <i>municipalities &amp; heritage bodies</i> (Icherisheher UNESCO buffer-zone communication), <i>tourism</i> (interactive old-city maps), <i>academia</i> (urban morphology studies). <b>Value:</b> a quick 3D context model from open data, upgradeable to surveyed heights when a client supplies them.</div>
+<h2>Data credits</h2><p><small>© OpenStreetMap contributors (ODbL). Sentinel-2 cloudless 2016 by EOX IT Services GmbH (CC BY 4.0). AWS Terrain Tiles.</small></p>
+<p style="margin-top:40px"><small>All outputs on this page were produced from open data with free software (Blender, PDAL, GDAL, OpenDroneMap, MapLibre GL, Three.js). Compute: a cloud Linux workstation with NVIDIA L4 GPUs.</small></p></div></body></html>
