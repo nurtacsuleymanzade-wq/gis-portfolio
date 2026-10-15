@@ -97,4 +97,5 @@ $('geoRows').innerHTML=ranked.map((s,i)=>'<tr><td>#'+(i+1)+'</td><td>'+esc(s.nam
 $('geoPoints').innerHTML='<circle cx="250" cy="148" r="8" fill="#fff" stroke="#6aaeff" stroke-width="3"/><text x="261" y="145" fill="#fff" font-size="12">Hub</text>'+ranked.map((s,i)=>'<circle cx="'+s.x+'" cy="'+s.y+'" r="'+(12-i*1.2)+'" fill="'+(i===0?'#50dfc0':'#6aaeff')+'" stroke="#082235" stroke-width="2"/><text x="'+(s.x+14)+'" y="'+(s.y+5)+'" fill="#fff" font-size="13">'+s.id+' #'+(i+1)+'</text>').join('')}
 $('geoRun').onclick=runGeo;['geoPop','geoDist','geoRisk'].forEach(id=>$(id).addEventListener('input',runGeo));$('geoExport').onclick=()=>{runGeo();save('nova_site_ranking.csv',['rank,site,latitude,longitude,distance_km,demand,risk,score',...ranked.map((s,i)=>[i+1,csvCell(s.name),s.lat,s.lon,s.distance.toFixed(3),s.demand,s.risk,s.score.toFixed(3)].join(','))].join('\n')+'\n','text/csv')};
 runGpu();runEtl();runGeo();
+const selected=new URLSearchParams(location.search).get('demo');if(['gpu','etl','geo'].includes(selected)){const button=document.querySelector('.tab[data-tab="'+selected+'"]');if(button)button.click();}
 </script></body></html>
