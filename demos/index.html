@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="NOVA Engineering Lab — interactive demonstrations of GPU batch planning, Python-style ETL automation and geospatial site selection.">
+<title>NOVA Engineering Lab | AI Automation · GPU · GIS</title>
+<style>
+:root{color-scheme:dark;--bg:#08111e;--panel:#111f30;--panel2:#17293e;--ink:#edf5ff;--muted:#9db2c8;--accent:#50dfc0;--blue:#6aaeff;--line:#30445a}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 10% 0%,#18304b 0%,var(--bg) 47%);color:var(--ink);font:15px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:1150px;margin:auto;padding:36px 22px 70px}header{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.logo{font-size:15px;font-weight:800;letter-spacing:.19em;color:var(--accent)}a{color:#9fd2ff;text-decoration:none}a:hover{text-decoration:underline}
+h1{font-size:clamp(32px,5vw,58px);line-height:1.08;margin:50px 0 14px;max-width:830px}h2{font-size:23px;margin:0 0 8px}h3{margin:0 0 8px;font-size:16px}
+p{color:var(--muted)}.lede{max-width:770px;font-size:17px}.eyebrow{font-size:12px;letter-spacing:.16em;color:var(--accent);font-weight:750}
+.tabs{display:flex;flex-wrap:wrap;gap:9px;margin:32px 0 22px}.tab{border:1px solid var(--line);border-radius:12px;padding:12px 16px;background:#132236;color:var(--ink);cursor:pointer;font-weight:700}
+.tab.active{background:var(--accent);color:#062025;border-color:var(--accent)}.demo{display:none}.demo.active{display:block}
+.panel{background:linear-gradient(135deg,#15273b,#0e1b2c);border:1px solid var(--line);border-radius:18px;padding:22px;min-width:0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:17px 0}
+.stat{background:#091a2a;border:1px solid var(--line);border-radius:13px;padding:15px}.stat b{display:block;font-size:24px;color:var(--accent)}.stat span{font-size:12px;color:var(--muted)}
+label{display:block;color:#c9daec;font-weight:650;font-size:13px;margin:12px 0 5px}input,textarea,select{width:100%;border:1px solid #3a546e;background:#071624;color:#f2f8ff;border-radius:9px;padding:11px;font:inherit}
+textarea{resize:vertical;min-height:120px;font:13px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace}
+button.action{background:var(--accent);border:0;border-radius:10px;padding:11px 17px;color:#072b29;font-weight:800;cursor:pointer;margin:12px 8px 0 0}
+button.secondary{background:#243a52;color:#dcecff;border:1px solid #48617a}button:hover{filter:brightness(1.07)}
+.note{font-size:12px;color:#abc0d5;border-left:3px solid var(--blue);padding:8px 12px;margin:15px 0}
+pre{background:#071624;border:1px solid var(--line);padding:14px;border-radius:10px;overflow:auto;max-height:320px;font:12px/1.5 ui-monospace,Consolas,monospace;color:#d2e6f7;white-space:pre-wrap;overflow-wrap:anywhere}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;border-bottom:1px solid var(--line);padding:9px 7px}th{color:#9cb6cd;font-weight:650}
+.scroller{overflow:auto;max-height:370px}.pill{display:inline-block;padding:3px 9px;border-radius:99px;background:#254338;color:#8bf0d4;font-size:12px}
+.map{width:100%;height:auto;border:1px solid var(--line);border-radius:12px;background:#0b2033}
+footer{border-top:1px solid var(--line);margin-top:40px;padding-top:20px;color:var(--muted);font-size:13px}
+@media(max-width:800px){.grid,.stats{grid-template-columns:1fr}main{padding:23px 14px}h1{margin-top:35px}.panel{padding:15px}}
+</style></head><body><main>
+<header><div class="logo">NOVA / ENGINEERING LAB</div><div><a href="../">GIS portfolio ↗</a> &nbsp; · &nbsp; <a href="https://www.upwork.com/freelancers/~0184687ebeea3486f2">Hire on Upwork ↗</a></div></header>
+<div class="eyebrow" style="margin-top:42px">INTERACTIVE TECHNICAL PORTFOLIO · 2026</div>
+<h1>Complex workflows.<br><span style="color:var(--accent)">Working prototypes.</span></h1>
+<p class="lede">Three interactive proof-of-concept tools showing how we approach GPU production planning, data automation and spatial decision support. Change inputs, run the logic and export results.</p>
+<div class="note"><b>Transparency:</b> These are functional, browser-based demonstration prototypes using sample or user-entered data. The GPU queue is a simulator, not a live ComfyUI connection. Geospatial locations are fictional. No client data is transmitted.</div>
+<nav class="tabs" aria-label="Demo selector"><button class="tab active" data-tab="gpu">01 · GPU Batch Planner</button><button class="tab" data-tab="etl">02 · ETL Automation</button><button class="tab" data-tab="geo">03 · Spatial Site Selector</button></nav>
+<section id="gpu" class="demo active">
+<div class="grid"><div class="panel"><div class="eyebrow">GPU PRODUCTION ENGINEERING</div><h2>Batch Render Orchestrator</h2><p>Estimate throughput, VRAM feasibility, queue order and rendering cost for an AI video batch. Export an executable-style job manifest.</p>
+<label for="gpuModel">Model preset</label><select id="gpuModel"><option value="ltx">LTX-2.5 FAST · 24 GB class</option><option value="h3">MiniMax H3 · 24 GB class</option><option value="wan">Wan 2.2 · 24 GB class</option></select>
+<div class="grid"><div><label for="gpuClips">Clips</label><input id="gpuClips" type="number" min="1" max="500" value="24"></div><div><label for="gpuSeconds">Seconds / clip</label><input id="gpuSeconds" type="number" min="1" max="30" value="5"></div></div>
+<div class="grid"><div><label for="gpuWorkers">Parallel GPU workers</label><select id="gpuWorkers"><option value="1">1 GPU</option><option value="2" selected>2 GPUs</option><option value="4">4 GPUs</option></select></div><div><label for="gpuRate">GPU cost / hour (USD)</label><input id="gpuRate" type="number" min="0" step=".05" value=".85"></div></div>
+<label for="gpuOverhead">Job overhead (seconds)</label><input id="gpuOverhead" type="number" min="0" max="120" value="15">
+<button class="action" id="gpuRun">Calculate plan</button><button class="action secondary" id="gpuExport">Export job manifest JSON</button>
+<div class="note">Preset speeds are editable planning assumptions, not benchmarks or guaranteed production performance. Check actual hardware, model, resolution and prompt complexity before quoting clients.</div></div>
+<div class="panel"><h3>Projected batch performance</h3><div class="stats"><div class="stat"><b id="gpuEta">—</b><span>Estimated makespan</span></div><div class="stat"><b id="gpuCost">—</b><span>Estimated GPU cost</span></div><div class="stat"><b id="gpuThroughput">—</b><span>Clips / hour</span></div></div><h3>Simulated worker queue</h3><div class="scroller"><table><thead><tr><th>Job</th><th>GPU</th><th>Start</th><th>Finish</th></tr></thead><tbody id="gpuRows"></tbody></table></div></div></div></section>
+<section id="etl" class="demo">
+<div class="grid"><div class="panel"><div class="eyebrow">PYTHON / API / ETL THINKING</div><h2>Data Cleaning Pipeline</h2><p>Paste a CSV, map its fields, filter incomplete records, deduplicate by ID and export a clean dataset with a processing audit.</p>
+<label for="etlInput">Input CSV</label><textarea id="etlInput" rows="9">id,name,region,value
+A1,North Site,East,42
+A2,West Site,West,85
+A1,North Site,East,42
+A3,South Site,South,18
+A4,Central Site,Central,67
+A5,,East,31
+A6,Harbor Site,West,94</textarea>
+<div class="grid"><div><label for="etlKey">Unique ID column</label><input id="etlKey" value="id"></div><div><label for="etlMin">Minimum numeric value</label><input id="etlMin" type="number" value="30"></div></div>
+<label for="etlField">Numeric column</label><input id="etlField" value="value">
+<button class="action" id="etlRun">Run pipeline</button><button class="action secondary" id="etlExport">Download cleaned CSV</button>
+<div class="note">Runs entirely in your browser. Quoted CSV cells are supported; this demo is not a replacement for a production data quality framework.</div></div>
+<div class="panel"><h3>Transformation audit</h3><div class="stats"><div class="stat"><b id="etlRaw">—</b><span>Input records</span></div><div class="stat"><b id="etlClean">—</b><span>Output records</span></div><div class="stat"><b id="etlDrop">—</b><span>Removed</span></div></div><h3>Cleaned CSV preview</h3><pre id="etlPreview">Run the pipeline to see results.</pre><h3>Processing log</h3><pre id="etlLog">Awaiting input.</pre></div></div></section>
+<section id="geo" class="demo">
+<div class="grid"><div class="panel"><div class="eyebrow">GIS / LOCATION INTELLIGENCE</div><h2>Spatial Site Selector</h2><p>Rank fictional candidate sites using transparent weighted multi-criteria scoring and Haversine distance to a configurable service hub.</p>
+<div class="grid"><div><label for="geoPop">Demand weight</label><input id="geoPop" type="range" min="0" max="100" value="50"></div><div><label for="geoDist">Proximity weight</label><input id="geoDist" type="range" min="0" max="100" value="35"></div></div>
+<label for="geoRisk">Low-risk weight</label><input id="geoRisk" type="range" min="0" max="100" value="15">
+<div id="geoWeights" class="pill">Weights normalize automatically</div>
+<button class="action" id="geoRun">Recalculate suitability</button><button class="action secondary" id="geoExport">Export ranked CSV</button>
+<div class="note">All site coordinates and attributes are synthetic examples. Coordinates use a fictional local cluster; distances are calculated geodesically using the Haversine formula. This is a demonstration, not a planning recommendation.</div>
+<h3 style="margin-top:20px">Scoring formula</h3><pre>Score = w₁ × Demand + w₂ × Proximity + w₃ × (100 − Risk)
+Proximity = max(0, 100 − 12 × distance_km)
+Weights are normalized to sum to 1.</pre></div>
+<div class="panel"><h3>Interactive scoring results</h3><svg class="map" id="geoMap" viewBox="0 0 480 285" role="img" aria-label="Diagram of fictional candidate site locations"><path d="M0 180 Q100 135 175 175 T480 105" fill="none" stroke="#2e688a" stroke-width="25" opacity=".5"/><path d="M40 30 L120 100 L210 48 L320 110 L450 48" fill="none" stroke="#44607a" stroke-width="3" stroke-dasharray="7 9"/><g id="geoPoints"></g></svg><div class="scroller"><table><thead><tr><th>Rank</th><th>Site</th><th>Distance</th><th>Score</th></tr></thead><tbody id="geoRows"></tbody></table></div></div></div></section>
+<footer>Built as a transparent technical proof of concept for <b>Nurtac Suleymanzade</b>. Demonstration results are reproducible from the visible input and code. No live GPU claims or fabricated client outcomes. <a href="https://github.com/nurtacsuleymanzade-wq/gis-portfolio/tree/main/demos">View source ↗</a></footer>
+</main><script>
+"use strict";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const save=(name,data,type)=>{const a=document.createElement('a');const u=URL.createObjectURL(new Blob([data],{type:type||'text/plain'}));a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),500)};
+document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tab,.demo').forEach(x=>x.classList.remove('active'));btn.classList.add('active');$(btn.dataset.tab).classList.add('active')}));
+let gpuManifest=[];
+function runGpu(){const model=$('gpuModel').value,n=Math.min(500,Math.max(1,Number($('gpuClips').value)||1)),sec=Math.min(30,Math.max(1,Number($('gpuSeconds').value)||1)),workers=Number($('gpuWorkers').value),rate=Math.max(0,Number($('gpuRate').value)||0),overhead=Math.max(0,Number($('gpuOverhead').value)||0);
+const presets={ltx:{name:'LTX-2.5 FAST',factor:2.1},h3:{name:'MiniMax H3',factor:3.2},wan:{name:'Wan 2.2',factor:4.4}};
+const per=sec*presets[model].factor*10+overhead,lanes=Array(workers).fill(0);
+gpuManifest=Array.from({length:n},(_,i)=>{let gpu=lanes.indexOf(Math.min(...lanes));let start=lanes[gpu];lanes[gpu]+=per;return {id:'clip_'+String(i+1).padStart(3,'0'),model:presets[model].name,duration_seconds:sec,gpu_worker:gpu,start_seconds:Math.round(start),finish_seconds:Math.round(lanes[gpu]),status:'PLANNED_NOT_RENDERED'}});
+const total=Math.max(...lanes);$('gpuEta').textContent=(total/60).toFixed(1)+' min';$('gpuCost').textContent='$'+(lanes.reduce((a,b)=>a+b,0)/3600*rate).toFixed(2);$('gpuThroughput').textContent=(n/(total/3600)).toFixed(1);
+$('gpuRows').innerHTML=gpuManifest.slice(0,80).map(j=>'<tr><td>'+j.id+'</td><td>GPU '+j.gpu_worker+'</td><td>'+j.start_seconds+'s</td><td>'+j.finish_seconds+'s</td></tr>').join('')+(n>80?'<tr><td colspan="4">Showing first 80 of '+n+' planned jobs</td></tr>':'');
+}
+$('gpuRun').onclick=runGpu;$('gpuExport').onclick=()=>{runGpu();save('nova_gpu_batch_plan.json',JSON.stringify({kind:'simulation_only',generated_at:new Date().toISOString(),jobs:gpuManifest},null,2),'application/json')};
+function parseCSV(text){const rows=[],row=[];let cell='',quoted=false;for(let i=0;i<text.length;i++){const c=text[i];if(c==='"'){if(quoted&&text[i+1]==='"'){cell+='"';i++}else quoted=!quoted}else if(c===','&&!quoted){row.push(cell);cell=''}else if((c==='\n'||c==='\r')&&!quoted){if(c==='\r'&&text[i+1]==='\n')i++;row.push(cell);if(row.some(v=>v.trim()))rows.push(row.slice());row.length=0;cell=''}else cell+=c}row.push(cell);if(row.some(v=>v.trim()))rows.push(row);if(quoted)throw Error('Unclosed quoted CSV field');return rows}
+function csvCell(v){const s=String(v??'');return /[",\r\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s}
+let etlCsv='';
+function runEtl(){try{const rows=parseCSV($('etlInput').value);if(rows.length<2)throw Error('Provide a header and at least one data row.');const heads=rows[0].map(x=>x.trim()),key=$('etlKey').value.trim(),num=$('etlField').value.trim(),k=heads.indexOf(key),v=heads.indexOf(num);if(k<0||v<0)throw Error('ID or numeric column was not found in the CSV header.');const min=Number($('etlMin').value),seen=new Set(),clean=[],reasons={missing:0,duplicate:0,below:0,invalid:0};for(const row of rows.slice(1)){const id=(row[k]||'').trim(),val=Number(row[v]);if(row.length!==heads.length||!id||row.some(x=>!String(x).trim())){reasons.missing++;continue}if(!Number.isFinite(val)){reasons.invalid++;continue}if(seen.has(id)){reasons.duplicate++;continue}seen.add(id);if(val<min){reasons.below++;continue}clean.push(row)}
+etlCsv=[heads,...clean].map(r=>r.map(csvCell).join(',')).join('\n')+'\n';$('etlRaw').textContent=rows.length-1;$('etlClean').textContent=clean.length;$('etlDrop').textContent=rows.length-1-clean.length;$('etlPreview').textContent=etlCsv;$('etlLog').textContent=JSON.stringify({pipeline:'validate → deduplicate → filter → export',input_rows:rows.length-1,output_rows:clean.length,rejected:reasons,execution:'browser_local'},null,2)}catch(e){etlCsv='';$('etlLog').textContent='ERROR: '+e.message;$('etlPreview').textContent='Fix input and retry.'}}
+$('etlRun').onclick=runEtl;$('etlExport').onclick=()=>{runEtl();if(etlCsv)save('nova_cleaned_data.csv',etlCsv,'text/csv;charset=utf-8')};
+const hub={lat:40.400,lon:49.850},sites=[{id:'A',name:'Harbor East',lat:40.421,lon:49.877,demand:86,risk:38,x:345,y:62},{id:'B',name:'Central West',lat:40.391,lon:49.827,demand:75,risk:22,x:182,y:160},{id:'C',name:'North Ridge',lat:40.436,lon:49.843,demand:60,risk:10,x:232,y:40},{id:'D',name:'South Junction',lat:40.371,lon:49.865,demand:91,risk:70,x:285,y:238},{id:'E',name:'Industrial Edge',lat:40.405,lon:49.901,demand:65,risk:48,x:430,y:120}];let ranked=[];
+function km(a,b){const rad=x=>x*Math.PI/180,R=6371,dLat=rad(b.lat-a.lat),dLon=rad(b.lon-a.lon),z=Math.sin(dLat/2)**2+Math.cos(rad(a.lat))*Math.cos(rad(b.lat))*Math.sin(dLon/2)**2;return 2*R*Math.atan2(Math.sqrt(z),Math.sqrt(1-z))}
+function runGeo(){const w=[$('geoPop'),$('geoDist'),$('geoRisk')].map(x=>Number(x.value)),sum=w.reduce((a,b)=>a+b,0)||1;$('geoWeights').textContent='Normalized weights: demand '+(w[0]/sum*100).toFixed(0)+'% · proximity '+(w[1]/sum*100).toFixed(0)+'% · low risk '+(w[2]/sum*100).toFixed(0)+'%';
+ranked=sites.map(s=>{const distance=km(hub,s),proximity=Math.max(0,100-12*distance),score=(w[0]*s.demand+w[1]*proximity+w[2]*(100-s.risk))/sum;return {...s,distance,score}}).sort((a,b)=>b.score-a.score);
+$('geoRows').innerHTML=ranked.map((s,i)=>'<tr><td>#'+(i+1)+'</td><td>'+esc(s.name)+'</td><td>'+s.distance.toFixed(2)+' km</td><td><b>'+s.score.toFixed(1)+'</b></td></tr>').join('');
+$('geoPoints').innerHTML='<circle cx="250" cy="148" r="8" fill="#fff" stroke="#6aaeff" stroke-width="3"/><text x="261" y="145" fill="#fff" font-size="12">Hub</text>'+ranked.map((s,i)=>'<circle cx="'+s.x+'" cy="'+s.y+'" r="'+(12-i*1.2)+'" fill="'+(i===0?'#50dfc0':'#6aaeff')+'" stroke="#082235" stroke-width="2"/><text x="'+(s.x+14)+'" y="'+(s.y+5)+'" fill="#fff" font-size="13">'+s.id+' #'+(i+1)+'</text>').join('')}
+$('geoRun').onclick=runGeo;['geoPop','geoDist','geoRisk'].forEach(id=>$(id).addEventListener('input',runGeo));$('geoExport').onclick=()=>{runGeo();save('nova_site_ranking.csv',['rank,site,latitude,longitude,distance_km,demand,risk,score',...ranked.map((s,i)=>[i+1,csvCell(s.name),s.lat,s.lon,s.distance.toFixed(3),s.demand,s.risk,s.score.toFixed(3)].join(','))].join('\n')+'\n','text/csv')};
+runGpu();runEtl();runGeo();
+</script></body></html>
