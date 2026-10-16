@@ -1,0 +1,353 @@
+{
+  "schema_version": "1.0",
+  "last_updated": "2026-10-16",
+  "owner": "Nurtac Suleymanzade",
+  "purpose": "Portfolio link selection for Upwork proposals",
+  "general_portfolio": "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/",
+  "video_portfolio": "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/samples/video-portfolio-samples.html",
+  "rules": {
+    "selection": "Classify by the job's deliverables and required technology, not a superficial keyword alone.",
+    "priority": "Pick the single most directly relevant, credible demo. Add at most one secondary link if it proves a different essential capability.",
+    "max_demo_links": 2,
+    "include_general_portfolio": "Optional third link only if client requests broader background or portfolio.",
+    "if_no_match": "Do not force an irrelevant demo. Send general portfolio only, or explicitly offer a targeted proof-of-concept.",
+    "never_claim": [
+      "A self-directed demo was a paid client commission",
+      "Synthetic demo data is real customer data",
+      "A browser simulation is a production-connected GPU/API system",
+      "An unverified media URL is definitely playable",
+      "Unverified client outcomes, accuracy figures or certifications"
+    ],
+    "video_note": "External media host links must be checked before sending to a client.",
+    "match_policy": "The bot should first read this manifest, choose a route, then confirm URL accessibility and proposal relevance before sharing."
+  },
+  "routes": [
+    {
+      "id": "ai_gpu",
+      "label": "AI video automation / GPU / ComfyUI",
+      "keywords": [
+        "comfyui",
+        "gpu",
+        "render farm",
+        "batch",
+        "workflow",
+        "ai video",
+        "inference",
+        "queue",
+        "ltx",
+        "wan"
+      ],
+      "note": "GPU planner is a browser simulation, not an actual GPU-backed job executor.",
+      "primary_url": "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/demos/?demo=gpu",
+      "secondary_urls": [
+        "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/demos/",
+        "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/samples/video-portfolio-samples.html"
+      ]
+    },
+    {
+      "id": "python_etl",
+      "label": "Python automation / ETL / CSV data pipelines",
+      "keywords": [
+        "python",
+        "etl",
+        "data cleaning",
+        "csv",
+        "data pipeline",
+        "data validation",
+        "automation",
+        "pandas"
+      ],
+      "note": "Browser ETL demo and documented Python CLI/tests; do not imply all automation is production-deployed.",
+      "primary_url": "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/demos/?demo=etl",
+      "secondary_urls": [
+        "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/demos/"
+      ]
+    },
+    {
+      "id": "fraud_dashboard",
+      "label": "Fraud detection / analytics dashboard / API frontend",
+      "keywords": [
+        "fraud",
+        "risk scoring",
+        "forensics",
+        "verification dashboard",
+        "dashboard",
+        "react",
+        "typescript",
+        "api frontend"
+      ],
+      "note": "Dashboard records are synthetic; demo is not connected to a client's fraud API.",
+      "primary_url": "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/fraud-dashboard/",
+      "secondary_urls": [
+        "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/demos/?demo=etl"
+      ]
+    },
+    {
+      "id": "gis_web",
+      "label": "Interactive GIS / Leaflet / WebGL maps",
+      "keywords": [
+        "interactive map",
+        "web gis",
+        "leaflet",
+        "mapbox",
+        "webgl",
+        "osm",
+        "poi",
+        "geospatial dashboard"
+      ],
+      "note": "Match specific project requirements; do not imply a custom client map was delivered.",
+      "primary_url": "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/advanced/poi-map.html",
+      "secondary_urls": [
+        "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/samples/",
+        "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/advanced/"
+      ]
+    },
+    {
+      "id": "gis_site",
+      "label": "Site selection / land screening / spatial suitability",
+      "keywords": [
+        "site selection",
+        "land",
+        "parcel",
+        "suitability",
+        "constraint",
+        "real estate",
+        "property",
+        "zoning"
+      ],
+      "note": "Ontario demo is a screening example, not a legal planning or survey determination.",
+      "primary_url": "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/samples/ontario-residential-site-screening/",
+      "secondary_urls": [
+        "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/samples/location-suitability.html",
+        "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/samples/zoning-digitize.html"
+      ]
+    },
+    {
+      "id": "gis_zoning",
+      "label": "Zoning digitization / cadastral mapping",
+      "keywords": [
+        "zoning",
+        "digitizing",
+        "digitization",
+        "parcel boundary",
+        "cadastre",
+        "land use map"
+      ],
+      "note": "Do not claim official cadastral certification.",
+      "primary_url": "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/samples/zoning-digitize.html",
+      "secondary_urls": [
+        "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/samples/ontario-residential-site-screening/"
+      ]
+    },
+    {
+      "id": "gis_health",
+      "label": "Healthcare / public services accessibility mapping",
+      "keywords": [
+        "healthcare",
+        "hospital",
+        "clinic",
+        "health facility",
+        "public service",
+        "accessibility mapping"
+      ],
+      "note": "Example portfolio map, not a current medical-provider directory.",
+      "primary_url": "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/samples/healthcare-mapping.html",
+      "secondary_urls": [
+        "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/samples/location-suitability.html"
+      ]
+    },
+    {
+      "id": "gis_agriculture",
+      "label": "Agricultural geostatistics / precision agriculture",
+      "keywords": [
+        "agriculture",
+        "yield",
+        "fertilizer",
+        "nitrogen",
+        "geostatistics",
+        "mixed model",
+        "precision agriculture"
+      ],
+      "note": "Study/demo context; check methods and underlying datasets before claiming generalizability.",
+      "primary_url": "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/samples/ag-yield-geostatistics/",
+      "secondary_urls": [
+        "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/advanced/"
+      ]
+    },
+    {
+      "id": "remote_sensing",
+      "label": "Satellite remote sensing / mining / spectral analysis",
+      "keywords": [
+        "sentinel-2",
+        "remote sensing",
+        "satellite",
+        "mineral",
+        "alteration",
+        "mining",
+        "spectral",
+        "geology"
+      ],
+      "note": "Mineral alteration mapping is an analytical indicator, not a verified mineral discovery.",
+      "primary_url": "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/advanced/mineral-alteration-gedabek/",
+      "secondary_urls": [
+        "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/samples/etah-urban-growth/"
+      ]
+    },
+    {
+      "id": "urban_change",
+      "label": "Urban growth / change detection / satellite imagery",
+      "keywords": [
+        "urban growth",
+        "urban expansion",
+        "change detection",
+        "built-up",
+        "land cover change",
+        "time series"
+      ],
+      "note": "Use the time period shown on the demo; don't invent validation metrics.",
+      "primary_url": "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/samples/etah-urban-growth/",
+      "secondary_urls": [
+        "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/advanced/mineral-alteration-gedabek/"
+      ]
+    },
+    {
+      "id": "gis_3d",
+      "label": "3D GIS / Cesium / digital twin",
+      "keywords": [
+        "3d gis",
+        "cesium",
+        "digital twin",
+        "3d tiles",
+        "city model",
+        "web 3d"
+      ],
+      "note": "Distinguish interactive 3D prototype from an enterprise production digital twin.",
+      "primary_url": "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/advanced/cesium-3d-tiles-twin/",
+      "secondary_urls": [
+        "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/advanced/baku-3d-city.html",
+        "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/advanced/"
+      ]
+    },
+    {
+      "id": "blender_3d",
+      "label": "Blender / 3D modeling / cinematic rendering",
+      "keywords": [
+        "blender",
+        "3d render",
+        "3d modeling",
+        "animation",
+        "cinematic",
+        "architecture visualization"
+      ],
+      "note": "Video clips on the video portfolio may depend on an external media host.",
+      "primary_url": "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/samples/video-portfolio-samples.html",
+      "secondary_urls": [
+        "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/advanced/baku-3d-city.html",
+        "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/advanced/terrain-render.html"
+      ]
+    },
+    {
+      "id": "video_motion",
+      "label": "AI commercial video / motion graphics / short ads",
+      "keywords": [
+        "video editing",
+        "motion graphics",
+        "ai video",
+        "commercial",
+        "reels",
+        "advertising",
+        "promo video"
+      ],
+      "note": "Speculative sample, not a commissioned/approved advertisement.",
+      "primary_url": "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/samples/insurance-motion-demo.html",
+      "secondary_urls": [
+        "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/samples/video-portfolio-samples.html"
+      ]
+    },
+    {
+      "id": "video_sports",
+      "label": "3D sports broadcast / racing intro",
+      "keywords": [
+        "sim racing",
+        "sports intro",
+        "broadcast intro",
+        "logo animation",
+        "motorsport",
+        "racing"
+      ],
+      "note": "Speculative preview; third-party marks/assets may have rights restrictions.",
+      "primary_url": "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/samples/vwsc-sim-racing-3d-preview.html",
+      "secondary_urls": [
+        "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/samples/video-portfolio-samples.html"
+      ]
+    },
+    {
+      "id": "gis_lidar",
+      "label": "LiDAR / point cloud / roof reconstruction",
+      "keywords": [
+        "lidar",
+        "point cloud",
+        "roof",
+        "photogrammetry",
+        "point cloud viewer",
+        "3d reconstruction"
+      ],
+      "note": "A viewer/demo does not imply a completed commissioned survey.",
+      "primary_url": "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/advanced/lidar-roof-reconstruction/",
+      "secondary_urls": [
+        "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/advanced/lidar-viewer.html"
+      ]
+    },
+    {
+      "id": "gis_solar",
+      "label": "Solar irradiance / shadow / DSM analysis",
+      "keywords": [
+        "solar",
+        "irradiance",
+        "shadows",
+        "shadow analysis",
+        "dsm",
+        "roof solar"
+      ],
+      "note": "Analytical demo; do not assert site-specific engineering certification.",
+      "primary_url": "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/advanced/solar-shadow-analysis/",
+      "secondary_urls": [
+        "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/advanced/terrain-render.html"
+      ]
+    },
+    {
+      "id": "gis_flood",
+      "label": "Flood risk / hydrology / GIS simulation",
+      "keywords": [
+        "flood",
+        "hydrology",
+        "flood risk",
+        "water depth",
+        "hazard mapping",
+        "simulation"
+      ],
+      "note": "Demonstration animation; not a certified flood-risk study.",
+      "primary_url": "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/advanced/gpu-flood-simulation/",
+      "secondary_urls": [
+        "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/samples/video-portfolio-samples.html"
+      ]
+    },
+    {
+      "id": "tourism_gis",
+      "label": "Tourism geography / tourism spatial analysis",
+      "keywords": [
+        "tourism",
+        "hotels",
+        "travel",
+        "tourism map",
+        "azerbaijan tourism",
+        "destination analysis"
+      ],
+      "note": "Research portfolio; data coverage and currency must be verified for client use.",
+      "primary_url": "https://nurtacsuleymanzade-wq.github.io/TurizminMekansalDagilisi/harita.html",
+      "secondary_urls": [
+        "https://nurtacsuleymanzade-wq.github.io/TurizminMekansalDagilisi/hotel-statistics/"
+      ]
+    }
+  ]
+}
