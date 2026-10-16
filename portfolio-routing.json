@@ -398,6 +398,23 @@
         "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/advanced/cesium-3d-tiles-twin/"
       ],
       "note": "AI cinematic fictional city, not a georeferenced city model; show Cesium as evidence of GIS capability."
+    },
+    {
+      "id": "blender_product_turntable",
+      "label": "Blender 3D product modeling / studio turntable",
+      "keywords": [
+        "blender product animation",
+        "3d product turntable",
+        "3d modeling",
+        "speaker rendering",
+        "ecommerce 3d",
+        "product visualization"
+      ],
+      "primary_url": "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/portfolio-lab/blender-speaker-turntable/",
+      "secondary_urls": [
+        "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/portfolio-lab/product-headphones/"
+      ],
+      "note": "Real 4-second Blender animation, procedurally modeled original unbranded speaker. Source .blend exists on NOVA server; not downloadable from GitHub."
     }
   ],
   "portfolio_lab": "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/portfolio-lab/"
