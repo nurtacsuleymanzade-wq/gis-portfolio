@@ -23,7 +23,7 @@ Contemporary two-story villa; ivory limestone/travertine and natural oak; full-h
 | G0 | Tool/GPU and licensing audit | Assets licensed for commercial use; provenance recorded | COMPLETE |
 | G1 | Asset procurement | 2K PBR material sets, HDRI, realistic furniture and plants; checksums | COMPLETE |
 | G2 | Original villa geometry + layout | Doors connect spaces; scale consistent; camera can traverse | BLOCKOUT CREATED; continuity QA pending |
-| G3 | 5 proof stills | No primitive-box look, visible photoreal material response, coherent rooms | NOT STARTED |
+| G3 | 5 proof stills | No primitive-box look, visible photoreal material response, coherent rooms | FIVE DRAFTS RENDERED; VISUAL QA FAILED |
 | G4 | Visual QA and fixes | All five frames accepted, no clipping or missing textures | BLOCKED BY G3 |
 | G5 | 60s camera route + draft | Single 3D space, stable geometry, collision-free path | BLOCKED BY G4 |
 | G6 | Final render + encode + publish | 60.0s MP4, QA playback, public case study with evidence | BLOCKED BY G5 |
@@ -63,3 +63,13 @@ The public page is a **production tracker** until final renders pass review. Nev
 - 67 scene objects, five camera proof positions, imported Sofa_01, CoffeeTable_01 and potted_plant_01.
 - G2 is a **geometry blockout**, not yet a photoreal deliverable. Material/lighting quality and room continuity require proof render review.
 - Compatibility note: Poly Haven `wood_floor` 2K blend asset uses a newer Blender file format and failed to load in Blender 4.0.2; the current scene uses a temporary oak material. Other materials/models were imported. Replace with supported image maps before G3 approval.
+
+## G3 visual QA: FAIL — do not publish as a portfolio demo
+Five 640×360 draft frames were rendered on NOVA and two (exterior, living room) visually inspected. The current result is **not photorealistic**: exterior massing looks boxy, HDRI background conflicts with the designed site, indoor furniture and finishes are stylistically incoherent, and the 12-sample renders are noisy. These drafts are diagnostic only. **Stop final video render.**
+
+### Corrective actions before another quality gate
+1. Replace simplified facade/structural massing with an architecturally credible detailed original design, using licensed high-detail building components rather than box primitives.
+2. Use a consistent modern furniture set; the downloaded sofa is ornate and unsuitable for the chosen contemporary style.
+3. Rebuild landscape/background integration, true PBR material nodes and glass behavior; replace the temporary oak fallback.
+4. Increase proof render quality (Cycles denoising-compatible build or denoise in post), validate correct HDRI exposure and physical camera.
+5. Re-render five frames, compare to real archviz references, and **only then** authorize a 60s video.
