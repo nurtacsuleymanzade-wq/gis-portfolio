@@ -1,0 +1,37 @@
+<!doctype html><html lang="az"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>AZ Villa 3D | Editable Architectural Prototype</title>
+<style>*{box-sizing:border-box}body{margin:0;background:#101719;color:#f1ece2;font-family:system-ui,-apple-system,Segoe UI,sans-serif;overflow:hidden}#stage{height:100vh;width:100vw}header{position:fixed;z-index:2;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:15px;padding:17px 24px;background:linear-gradient(#101719dd,transparent);pointer-events:none}header>*{pointer-events:auto}h1{font-size:20px;margin:0;font-weight:640;letter-spacing:.02em}small{display:block;opacity:.68;font-size:11px;letter-spacing:.13em;margin-top:5px;text-transform:uppercase}.button{display:inline-flex;gap:9px;align-items:center;border:1px solid #a6b4b457;background:#172526;color:#fff;padding:12px 16px;border-radius:8px;cursor:pointer;font-size:13px}.button:hover{background:#304044}.panel{position:fixed;bottom:20px;left:20px;z-index:3;background:#10191ad9;padding:18px;max-width:400px;border:1px solid #9eab9b32;border-radius:12px;box-shadow:0 10px 40px #0008;backdrop-filter:blur(15px)}.muted{opacity:.7;font-size:13px;line-height:1.5}.status{font-size:12px;color:#d8c49e;margin:10px 0 0}.chip{display:inline-block;color:#b6decf;border:1px solid #b6decf50;padding:4px 7px;border-radius:5px;font-size:11px;margin:0 0 12px}#drop{display:block;border:1px dashed #e1bb7d6b;border-radius:7px;padding:14px;margin:13px 0;cursor:pointer;text-align:center;color:#f3d6a1;font-size:13px}input[type=file]{display:none}a{color:#eecb8f}.tag{font-size:11px;letter-spacing:.07em;color:#c8baa2;white-space:nowrap}@media(max-width:600px){header{padding:14px}h1{font-size:15px}.panel{left:10px;right:10px;bottom:10px;max-width:none}.button{padding:9px}.tag{display:none}}</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script></head><body>
+<div id="stage"></div>
+<header><div><h1>AZERBAIJAN VILLA <span style="color:#d3aa73">/ 3D</span></h1><small>Original editable architecture • Abşeron</small></div><span class="tag">WEB PREVIEW • NOT FINAL FILM</span></header>
+<div class="panel"><div class="chip">EDITABLE GLB PREVIEW</div><div style="font-weight:600;font-size:17px">Azərbaycan villası — model baxışı</div><p class="muted">Google Drive-dan GLB-ni endirib aşağıya əlavə et. Siçanla və ya barmaqla fırlat və böyüt. <b>60s tour</b> avtomatik kamera orbitidir, render edilmiş video deyil.</p><label id="drop" for="file">GLB faylını seç və ya buraya sürüklə</label><input type="file" id="file" accept=".glb,.gltf" /><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="button" id="tour">▶ 60s tour</button><button class="button" id="stop">Ⅱ Dayandır</button><a class="button" href="https://drive.google.com/drive/folders/1yzkdj7E6OrkmqxqnUiWPzScAJ73xNQHG" target="_blank" rel="noopener">GLB • Google Drive ↗</a></div><div class="status" id="status">Modeli seçdikdən sonra 3D səhnə açılacaq.</div></div>
+<script type="module">
+import * as THREE from 'three';import {OrbitControls} from 'three/addons/controls/OrbitControls.js';import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+const stage=document.getElementById('stage'),status=document.getElementById('status');
+const scene=new THREE.Scene();scene.background=new THREE.Color('#afb8b1');scene.fog=new THREE.Fog('#afb8b1',130,330);
+const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
+renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.8));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.36;stage.appendChild(renderer.domElement);
+const camera=new THREE.PerspectiveCamera(48,innerWidth/innerHeight,.1,1500);camera.position.set(40,24,50);
+const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.065;controls.target.set(0,3,0);controls.update();
+scene.add(new THREE.HemisphereLight(0xcce1fd,0x83705e,2.0));
+const sun=new THREE.DirectionalLight(0xffe4be,3.3);sun.position.set(-40,58,-30);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-100;sun.shadow.camera.right=100;sun.shadow.camera.top=100;sun.shadow.camera.bottom=-100;scene.add(sun);
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(500,500),new THREE.MeshStandardMaterial({color:0x829382,roughness:1}));ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
+const grid=new THREE.GridHelper(150,30,0x9ca49d,0x9ca49d);grid.material.transparent=true;grid.material.opacity=.10;scene.add(grid);
+let loaded=null,auto=false,started=0,orbitRadius=54,orbitHeight=22;
+const loader=new GLTFLoader();
+function loadFile(file){if(!file)return;const url=URL.createObjectURL(file);status.textContent='Model oxunur: '+file.name;
+loader.load(url,gltf=>{if(loaded){scene.remove(loaded);loaded.traverse(o=>{if(o.isMesh){o.geometry?.dispose();}})}
+loaded=gltf.scene;scene.add(loaded);loaded.updateMatrixWorld(true);
+let bb=new THREE.Box3().setFromObject(loaded),size=bb.getSize(new THREE.Vector3()),center=bb.getCenter(new THREE.Vector3());
+loaded.position.sub(center);loaded.position.y+=size.y/2;loaded.updateMatrixWorld(true);
+const max=Math.max(size.x,size.y*1.7,size.z);orbitRadius=max*1.23;orbitHeight=size.y*.9+max*.17;camera.position.set(orbitRadius*.63,orbitHeight,orbitRadius*.73);
+controls.target.set(0,size.y*.30,0);controls.minDistance=max*.25;controls.maxDistance=max*5;controls.update();ground.position.y=-.06;
+loaded.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;o.material?.side&&(o.material.side=THREE.DoubleSide)}});status.textContent='✓ '+file.name+' — '+size.x.toFixed(1)+' × '+size.y.toFixed(1)+' × '+size.z.toFixed(1)+' (GLB vahidləri)';URL.revokeObjectURL(url);
+},undefined,e=>{status.textContent='GLB yüklənmə xətası: '+e.message;URL.revokeObjectURL(url)})}
+document.getElementById('file').addEventListener('change',e=>loadFile(e.target.files[0]));
+document.body.addEventListener('dragover',e=>e.preventDefault());document.body.addEventListener('drop',e=>{e.preventDefault();loadFile(e.dataTransfer.files[0])});
+document.getElementById('tour').addEventListener('click',()=>{auto=true;started=performance.now();status.textContent='60 saniyəlik kamera orbitinə başlanıldı — bu video faylı deyil';});
+document.getElementById('stop').addEventListener('click',()=>{auto=false;status.textContent='Kamera sərbəstdir.'});
+function animate(t){requestAnimationFrame(animate);if(auto&&loaded){const p=Math.min((t-started)/60000,1),angle=p*2*Math.PI-.65;camera.position.set(Math.sin(angle)*orbitRadius,orbitHeight*(.75+.20*Math.sin(p*Math.PI)),Math.cos(angle)*orbitRadius);camera.lookAt(controls.target);if(p>=1){auto=false;status.textContent='✓ 60 saniyəlik interaktiv baxış tamamlandı';}}
+else controls.update();renderer.render(scene,camera)}
+requestAnimationFrame(animate);addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+</script></body></html>
