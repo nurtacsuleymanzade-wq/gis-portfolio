@@ -348,6 +348,57 @@
       "secondary_urls": [
         "https://nurtacsuleymanzade-wq.github.io/TurizminMekansalDagilisi/hotel-statistics/"
       ]
+    },
+    {
+      "id": "archviz_villa",
+      "label": "Architectural visualization / residential flythrough",
+      "keywords": [
+        "archviz",
+        "architectural animation",
+        "villa",
+        "residential walkthrough",
+        "property marketing",
+        "exterior rendering"
+      ],
+      "primary_url": "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/portfolio-lab/architectural-villa/",
+      "secondary_urls": [
+        "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/advanced/baku-3d-city.html"
+      ],
+      "note": "AI-assisted speculative concept, not CAD-verified architecture. Video render may be pending."
+    },
+    {
+      "id": "product_animation",
+      "label": "Product animation / e-commerce 3D advertising",
+      "keywords": [
+        "product animation",
+        "3d product",
+        "ecommerce video",
+        "product promo",
+        "headphones",
+        "turntable animation"
+      ],
+      "primary_url": "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/portfolio-lab/product-headphones/",
+      "secondary_urls": [
+        "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/samples/video-portfolio-samples.html"
+      ],
+      "note": "Speculative unbranded product design; not a paid campaign. Video render may be pending."
+    },
+    {
+      "id": "cinematic_digital_twin",
+      "label": "Cinematic 3D GIS city flyover",
+      "keywords": [
+        "3d city flyover",
+        "urban digital twin video",
+        "city animation",
+        "cinematic gis",
+        "3d map animation"
+      ],
+      "primary_url": "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/portfolio-lab/coastal-digital-twin/",
+      "secondary_urls": [
+        "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/advanced/cesium-3d-tiles-twin/"
+      ],
+      "note": "AI cinematic fictional city, not a georeferenced city model; show Cesium as evidence of GIS capability."
     }
-  ]
+  ],
+  "portfolio_lab": "https://nurtacsuleymanzade-wq.github.io/gis-portfolio/portfolio-lab/"
 }
