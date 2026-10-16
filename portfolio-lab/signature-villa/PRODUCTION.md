@@ -1,7 +1,7 @@
 # NOVA Signature Villa — Production Plan
 
 **Project:** NOVA Signature Villa — original photorealistic architectural walkthrough  
-**Status (2026-10-16):** Asset acquisition and scene design. **Not a finished video.**  
+**Status (2026-10-16):** G1 asset acquisition COMPLETE (8 CC0 assets, 39 files, 156,062,175 bytes; MD5 verified). G2 original scene design NEXT. **Not a finished video.**  
 **Production machine:** NOVA /data/NOVA_FILM_STUDIO/portfolio_demos/NOVA_SIGNATURE_VILLA  
 **Client positioning:** Original concept architectural visualization, not a replica of a third-party property.
 
@@ -20,8 +20,8 @@ Contemporary two-story villa; ivory limestone/travertine and natural oak; full-h
 ## Milestones and gates
 | Gate | Work | Pass criteria | Status |
 |---|---|---|---|
-| G0 | Tool/GPU and licensing audit | Assets licensed for commercial use; provenance recorded | IN PROGRESS |
-| G1 | Asset procurement | 2K+ PBR material sets, HDRI, realistic furniture and plants; checksums | IN PROGRESS |
+| G0 | Tool/GPU and licensing audit | Assets licensed for commercial use; provenance recorded | COMPLETE |
+| G1 | Asset procurement | 2K PBR material sets, HDRI, realistic furniture and plants; checksums | COMPLETE |
 | G2 | Original villa geometry + layout | Doors connect spaces; scale consistent; camera can traverse | NOT STARTED |
 | G3 | 5 proof stills | No primitive-box look, visible photoreal material response, coherent rooms | NOT STARTED |
 | G4 | Visual QA and fixes | All five frames accepted, no clipping or missing textures | BLOCKED BY G3 |
@@ -45,3 +45,15 @@ The prior 60-second villa video was technically playable but visually unacceptab
 
 ## Public delivery
 The public page is a **production tracker** until final renders pass review. Never label placeholders as photoreal deliverables.
+
+## Verified G1 asset inventory (2026-10-16)
+- residential_garden: 2K HDRI
+- wood_floor: 2K PBR
+- marble_01: 2K PBR
+- clay_plaster: 2K PBR
+- floor_tiles_02: 2K PBR
+- Sofa_01: 2K 3D model
+- CoffeeTable_01: 2K 3D model
+- potted_plant_01: 2K 3D model
+- Total: 8 assets, 39 files, 156,062,175 bytes. Source checksums verified against Poly Haven API metadata.
+- Server-side manifest: /data/NOVA_FILM_STUDIO/portfolio_demos/NOVA_SIGNATURE_VILLA/asset_manifest.json
