@@ -1,7 +1,7 @@
 # NOVA Signature Villa — Production Plan
 
 **Project:** NOVA Signature Villa — original photorealistic architectural walkthrough  
-**Status (2026-10-16):** G1 asset acquisition COMPLETE (8 CC0 assets, 39 files, 156,062,175 bytes; MD5 verified). G2 original scene design NEXT. **Not a finished video.**  
+**Status (2026-10-16):** G1 asset acquisition COMPLETE (8 CC0 assets, 39 files, 156,062,175 bytes; MD5 verified). G2 original 3D scene BLOCKOUT CREATED (67 objects; three imported CC0 furniture models; five proof camera positions). G3 photoreal material/lighting proof renders NEXT. **Not a finished video.**  
 **Production machine:** NOVA /data/NOVA_FILM_STUDIO/portfolio_demos/NOVA_SIGNATURE_VILLA  
 **Client positioning:** Original concept architectural visualization, not a replica of a third-party property.
 
@@ -22,7 +22,7 @@ Contemporary two-story villa; ivory limestone/travertine and natural oak; full-h
 |---|---|---|---|
 | G0 | Tool/GPU and licensing audit | Assets licensed for commercial use; provenance recorded | COMPLETE |
 | G1 | Asset procurement | 2K PBR material sets, HDRI, realistic furniture and plants; checksums | COMPLETE |
-| G2 | Original villa geometry + layout | Doors connect spaces; scale consistent; camera can traverse | NOT STARTED |
+| G2 | Original villa geometry + layout | Doors connect spaces; scale consistent; camera can traverse | BLOCKOUT CREATED; continuity QA pending |
 | G3 | 5 proof stills | No primitive-box look, visible photoreal material response, coherent rooms | NOT STARTED |
 | G4 | Visual QA and fixes | All five frames accepted, no clipping or missing textures | BLOCKED BY G3 |
 | G5 | 60s camera route + draft | Single 3D space, stable geometry, collision-free path | BLOCKED BY G4 |
@@ -57,3 +57,9 @@ The public page is a **production tracker** until final renders pass review. Nev
 - potted_plant_01: 2K 3D model
 - Total: 8 assets, 39 files, 156,062,175 bytes. Source checksums verified against Poly Haven API metadata.
 - Server-side manifest: /data/NOVA_FILM_STUDIO/portfolio_demos/NOVA_SIGNATURE_VILLA/asset_manifest.json
+
+## Verified G2 scene checkpoint (2026-10-16)
+- Blender 4.0.2 scene saved: `/data/NOVA_FILM_STUDIO/portfolio_demos/NOVA_SIGNATURE_VILLA/NOVA_SIGNATURE_VILLA_G2.blend` (9.9 MB).
+- 67 scene objects, five camera proof positions, imported Sofa_01, CoffeeTable_01 and potted_plant_01.
+- G2 is a **geometry blockout**, not yet a photoreal deliverable. Material/lighting quality and room continuity require proof render review.
+- Compatibility note: Poly Haven `wood_floor` 2K blend asset uses a newer Blender file format and failed to load in Blender 4.0.2; the current scene uses a temporary oak material. Other materials/models were imported. Replace with supported image maps before G3 approval.
