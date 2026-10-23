@@ -1,0 +1,40 @@
+name: Publish temporary Microbioma 4K review
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/publish-microbioma-4k-review.yml
+permissions:
+  contents: write
+jobs:
+  publish-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Download and verify Blender render
+        shell: bash
+        run: |
+          set -euo pipefail
+          test ! -e previews/microbioma-4k-review.mp4
+          mkdir -p previews
+          curl --fail --location --silent --show-error --retry 3 --retry-delay 2 'https://151.115.77.234.sslip.io/review-10b973a5cf729896e367d0a31deaf8bb/microbioma-4k-transfer-72b758374442cef70b5d.mp4' -o /tmp/microbioma-4k-review.mp4
+          test "$(stat -c '%s' /tmp/microbioma-4k-review.mp4)" = '47095863'
+          echo '43b4fbd45b0a8e0dbd0c2124d6d1f6dd382f979f3f35b31fd58ee258d3f664d7  /tmp/microbioma-4k-review.mp4' | sha256sum --check -
+      - name: Commit review to Pages source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git rebase origin/main
+          cp /tmp/microbioma-4k-review.mp4 previews/microbioma-4k-review.mp4
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add previews/microbioma-4k-review.mp4
+          git rm .github/workflows/publish-microbioma-4k-review.yml
+          git commit -m 'Add Blender-rendered Microbioma 4K review draft'
+          git push origin HEAD:main
