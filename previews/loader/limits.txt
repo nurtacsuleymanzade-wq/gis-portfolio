@@ -1,0 +1,7 @@
+Compact articulated loader - movement limits (1 unit = 1 m, +Y forward, Z up)
+articulation (front_frame rot Z about origin): -43 .. +43 deg (+ = left)
+boom_outer lift (rot X about boom pivot (0.0, 0.28, 1.38)): 0 .. 65 deg above rest (rest = -32 deg)
+boom_inner telescope (local +Y slide): 0 .. 0.70 m
+quick_attach_plate tilt (rot X relative to boom, 0 = level at rest): -45 (dump) .. +40 (rollback) deg
+rams lift_left/lift_right/telescope/tilt: cylinder+rod track anchors ram_<x>_anchor_base / ram_<x>_anchor_rod (baked in glTF clips)
+triangles: loader 7576, bucket 568

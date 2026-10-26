@@ -1,0 +1,13 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Compact Articulated Loader – real-time sample</title>
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+<style>body{margin:0;font-family:system-ui;background:#1b1d22;color:#eee}header{padding:14px 20px}
+model-viewer{width:100%;height:72vh;background:#e9ebef}.bar{padding:10px 20px;display:flex;gap:8px;flex-wrap:wrap}
+button{padding:8px 14px;border:0;border-radius:6px;background:#e07a10;color:#fff;cursor:pointer}small{color:#aaa}</style></head><body>
+<header><b>Compact articulated loader</b> — low-poly real-time glTF, rigged hydraulics (lift / telescope / tilt rams), articulation ±43°.<br>
+<small>Blender 4.5 · metric, origin at articulation joint · Khronos glTF validator: 0 errors / 0 warnings · baked clips below</small></header>
+<model-viewer id="mv" src="compact_loader.glb" camera-controls shadow-intensity="1" exposure="1" environment-image="neutral" autoplay animation-name="boom_raise" camera-orbit="45deg 70deg 9m"></model-viewer>
+<div class="bar" id="b"></div>
+<div class="bar"><a style="color:#e07a10" href="loader_range.mp4">MP4: full range</a>&nbsp;·&nbsp;<a style="color:#e07a10" href="limits.txt">limits.txt</a>&nbsp;·&nbsp;<a style="color:#e07a10" href="bucket.glb">bucket.glb</a>&nbsp;·&nbsp;<a style="color:#e07a10" href="render_wireframe_tris.png">wireframe</a></div>
+<script>const mv=document.getElementById('mv');["boom_raise","boom_extend","attachment_tilt","articulate_left","articulate_right"].forEach(n=>{const x=document.createElement('button');x.textContent=n;x.onclick=()=>{mv.animationName=n;mv.currentTime=0;mv.play()};document.getElementById('b').appendChild(x)});</script>
+</body></html>
