@@ -1,7 +1,13 @@
-Compact articulated loader - movement limits (1 unit = 1 m, +Y forward, Z up)
+Compact articulated loader v2 - movement limits (1 unit = 1 m, +Y forward, Z up, origin = articulation joint on ground)
 articulation (front_frame rot Z about origin): -43 .. +43 deg (+ = left)
-boom_outer lift (rot X about boom pivot (0.0, 0.28, 1.38)): 0 .. 65 deg above rest (rest = -32 deg)
+boom_outer lift (rot X about pivot (0.0, 0.28, 1.38)): 0 .. 65 deg above rest (rest = -32 deg)
 boom_inner telescope (local +Y slide): 0 .. 0.70 m
-quick_attach_plate tilt (rot X relative to boom, 0 = level at rest): -45 (dump) .. +40 (rollback) deg
-rams lift_left/lift_right/telescope/tilt: cylinder+rod track anchors ram_<x>_anchor_base / ram_<x>_anchor_rod (baked in glTF clips)
-triangles: loader 7576, bucket 568
+quick_attach_plate tilt: -45 (dump) .. +40 (rollback) deg RELATIVE TO GROUND - plate is self-levelling through the lift range
+rams lift_left/lift_right/telescope/tilt/steer: cylinder+rod track ram_<x>_anchor_base / ram_<x>_anchor_rod (baked into clips)
+RAM lift_left: stroke 0.725-1.268 m, barrel 0.689, rod 0.679, connected_full_range=True
+RAM lift_right: stroke 0.725-1.268 m, barrel 0.689, rod 0.679, connected_full_range=True
+RAM telescope: stroke 0.900-1.600 m, barrel 0.855, rod 0.845, connected_full_range=True
+RAM tilt: stroke 0.729-1.324 m, barrel 0.693, rod 0.715, connected_full_range=True
+RAM steer: stroke 0.490-0.819 m, barrel 0.465, rod 0.454, connected_full_range=True
+mounts: mount_quick_attach (bucket.attach_quick_attach), mount_rear_hitch, mount_cab (cab_enclosed swaps rops_*)
+triangles: loader 108308 (incl. ROPS), bucket 13700, cab_enclosed 5340

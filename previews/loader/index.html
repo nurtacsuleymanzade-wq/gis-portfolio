@@ -1,13 +1,29 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Compact Articulated Loader – real-time sample</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Compact Articulated Loader v2 – real-time glTF sample</title>
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
-<style>body{margin:0;font-family:system-ui;background:#1b1d22;color:#eee}header{padding:14px 20px}
-model-viewer{width:100%;height:72vh;background:#e9ebef}.bar{padding:10px 20px;display:flex;gap:8px;flex-wrap:wrap}
-button{padding:8px 14px;border:0;border-radius:6px;background:#e07a10;color:#fff;cursor:pointer}small{color:#aaa}</style></head><body>
-<header><b>Compact articulated loader</b> — low-poly real-time glTF, rigged hydraulics (lift / telescope / tilt rams), articulation ±43°.<br>
-<small>Blender 4.5 · metric, origin at articulation joint · Khronos glTF validator: 0 errors / 0 warnings · baked clips below</small></header>
-<model-viewer id="mv" src="compact_loader.glb" camera-controls shadow-intensity="1" exposure="1" environment-image="neutral" autoplay animation-name="boom_raise" camera-orbit="45deg 70deg 9m"></model-viewer>
-<div class="bar" id="b"></div>
-<div class="bar"><a style="color:#e07a10" href="loader_range.mp4">MP4: full range</a>&nbsp;·&nbsp;<a style="color:#e07a10" href="limits.txt">limits.txt</a>&nbsp;·&nbsp;<a style="color:#e07a10" href="bucket.glb">bucket.glb</a>&nbsp;·&nbsp;<a style="color:#e07a10" href="render_wireframe_tris.png">wireframe</a></div>
-<script>const mv=document.getElementById('mv');["boom_raise","boom_extend","attachment_tilt","articulate_left","articulate_right"].forEach(n=>{const x=document.createElement('button');x.textContent=n;x.onclick=()=>{mv.animationName=n;mv.currentTime=0;mv.play()};document.getElementById('b').appendChild(x)});</script>
+<style>body{margin:0;font-family:system-ui,sans-serif;background:#1b1d22;color:#eee}header{padding:16px 22px}
+model-viewer{width:100%;height:70vh;background:linear-gradient(#6b6e74,#d9dbe0)}.bar{padding:10px 22px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+button{padding:8px 14px;border:0;border-radius:6px;background:#c9560a;color:#fff;cursor:pointer}button.alt{background:#3a3d45}
+small,.note{color:#aab}a{color:#f08a3a}.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;padding:10px 22px 30px}
+.gal img,.gal video{width:100%;border-radius:6px;display:block}table{border-collapse:collapse;margin:6px 22px}td{padding:3px 14px 3px 0;color:#ccd}</style></head><body>
+<header><b>Compact articulated loader — v2 (portfolio build)</b><br>
+<small>Blender 4.5 → glTF 2.0 · metric, origin at articulation joint on the ground, +Y forward, Z up · Khronos validator 0 errors / 0 warnings</small></header>
+<model-viewer id="mv" src="compact_loader.glb" camera-controls touch-action="pan-y" shadow-intensity="1" exposure="1.05" environment-image="neutral" autoplay animation-name="boom_raise" camera-orbit="40deg 72deg 9.5m" camera-target="0m 1.2m 0.6m"></model-viewer>
+<div class="bar" id="clips"><span class="note">Baked clips:</span></div>
+<div class="bar"><span class="note">Variant:</span><button class="alt" id="rops">ROPS canopy</button><button class="alt" id="cab">Enclosed cab</button></div>
+<table>
+<tr><td>Loader</td><td>108,308 tris (with ROPS) · 5 baked clips · 5 hydraulic rams (lift L/R, telescope, tilt, steering) on anchor Empties</td></tr>
+<tr><td>Bucket</td><td>13,700 tris · separate asset, hooks on the rear face over the quick-attach top bar</td></tr>
+<tr><td>Cab option</td><td>cab_enclosed 5,340 tris · swaps the ROPS canopy (mount_cab)</td></tr>
+<tr><td>Materials</td><td>PBR metal/roughness, one shared paint material, 2048² baked AO atlas (JPEG in glTF)</td></tr>
+<tr><td>Rig</td><td>Articulation ±43°, boom lift 0–65°, telescope 0–0.70 m, self-levelling quick-attach plate, tilt −45° / +40° relative to ground</td></tr>
+</table>
+<div class="bar"><a href="loader_showcase.mp4">MP4 turntable + motion (15 s)</a>·<a href="compact_loader.glb">compact_loader.glb</a>·<a href="compact_loader_cab.glb">compact_loader_cab.glb</a>·<a href="bucket.glb">bucket.glb</a>·<a href="cab_enclosed.glb">cab_enclosed.glb</a>·<a href="limits.txt">limits.txt</a>·<a href="v1/">v1 blockout</a></div>
+<div class="gal">
+<video src="loader_showcase.mp4" controls muted loop playsinline poster="render_three_quarter.jpg"></video>
+<img src="render_three_quarter.jpg" alt="three-quarter"><img src="render_three_quarter_cab.jpg" alt="enclosed cab"><img src="render_wireframe.jpg" alt="wireframe">
+<img src="render_front.jpg" alt="front"><img src="render_side.jpg" alt="side"><img src="render_rear.jpg" alt="rear"><img src="render_top.jpg" alt="top">
+</div>
+<script>const mv=document.getElementById('mv');["boom_raise","boom_extend","attachment_tilt","articulate_left","articulate_right"].forEach(n=>{const x=document.createElement('button');x.textContent=n;x.onclick=()=>{mv.animationName=n;mv.currentTime=0;mv.play()};document.getElementById('clips').appendChild(x)});
+document.getElementById('rops').onclick=()=>{mv.src='compact_loader.glb'};document.getElementById('cab').onclick=()=>{mv.src='compact_loader_cab.glb'};</script>
 </body></html>

@@ -1,0 +1,8 @@
+/data/clients/samples/loader/out_v2/compact_loader.glb errors 0 warnings 0 infos 14
+ anims 5 tris 63184
+/data/clients/samples/loader/out_v2/compact_loader_cab.glb errors 0 warnings 0 infos 15
+ anims 5 tris 62532
+/data/clients/samples/loader/out_v2/cab_enclosed.glb errors 0 warnings 0 infos 1
+ anims 0 tris 2616
+/data/clients/samples/loader/out_v2/bucket.glb errors 0 warnings 0 infos 3
+ anims 0 tris 10620
