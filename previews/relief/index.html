@@ -1,0 +1,18 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fictional shaded-relief terrain samples</title>
+<style>body{margin:0;font:15px system-ui,sans-serif;background:#1d1f21;color:#ddd}header{padding:18px 24px}h1{font-size:20px;margin:0 0 6px}p{margin:4px 0;color:#aaa}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;padding:0 24px 24px}figure{margin:0;background:#2a2c2f;padding:8px}figure img{width:100%;cursor:zoom-in;display:block}figcaption{padding:6px 2px;color:#bbb;font-size:13px}
+#v{position:fixed;inset:0;background:#000;display:none;overflow:hidden;cursor:grab}#v img{position:absolute;transform-origin:0 0;max-width:none;user-select:none}#x{position:fixed;top:10px;right:16px;color:#fff;font-size:28px;cursor:pointer;z-index:2;display:none}</style></head><body>
+<header><h1>Fictional shaded-relief terrain &ndash; samples</h1><p>True 90&deg; overhead, natural colours, direction-free (omnidirectional + sky-view) shading, low relief, lakes only, no rivers, no labels. 4096 &times; 4096 px. Click to open, scroll to zoom, drag to pan.</p></header>
+<div class="g">
+<figure><img src="alpine_web.jpg" data-full="alpine_4096.jpg"><figcaption>World A &ndash; alpine range with glacial lakes (4096 px)</figcaption></figure>
+<figure><img src="highlands_tileable_web.jpg" data-full="highlands_tileable_4096.jpg"><figcaption>World B &ndash; rolling forested highlands, seamless / tileable (4096 px)</figcaption></figure>
+<figure><img src="highlands_tiled_2x2.jpg" data-full="highlands_tiled_2x2.jpg"><figcaption>World B repeated 2&times;2 &ndash; tiling check</figcaption></figure>
+<figure><img src="alpine_crop_100pct.jpg" data-full="alpine_crop_100pct.jpg"><figcaption>World A &ndash; 100% crop</figcaption></figure>
+<figure><img src="highlands_crop_100pct.jpg" data-full="highlands_crop_100pct.jpg"><figcaption>World B &ndash; 100% crop</figcaption></figure>
+</div><div id="x">&times;</div><div id="v"><img id="vi"></div>
+<script>const v=document.getElementById("v"),vi=document.getElementById("vi"),x=document.getElementById("x");let s=1,tx=0,ty=0,d=null;
+function ap(){vi.style.transform="translate("+tx+"px,"+ty+"px) scale("+s+")"}
+document.querySelectorAll("figure img").forEach(i=>i.onclick=()=>{vi.onload=()=>{s=Math.min(innerWidth/vi.naturalWidth,innerHeight/vi.naturalHeight);tx=(innerWidth-vi.naturalWidth*s)/2;ty=(innerHeight-vi.naturalHeight*s)/2;ap()};vi.src=i.dataset.full;v.style.display=x.style.display="block"});
+x.onclick=()=>{v.style.display=x.style.display="none"};
+v.onwheel=e=>{e.preventDefault();const k=e.deltaY<0?1.2:1/1.2;tx=e.clientX-(e.clientX-tx)*k;ty=e.clientY-(e.clientY-ty)*k;s*=k;ap()};
+v.onmousedown=e=>{d=[e.clientX-tx,e.clientY-ty]};onmouseup=()=>d=null;v.onmousemove=e=>{if(d){tx=e.clientX-d[0];ty=e.clientY-d[1];ap()}};</script></body></html>
