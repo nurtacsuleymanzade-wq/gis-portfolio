@@ -1,0 +1,66 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:,"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Interactive 3D Terrain — Nurtac Suleymanzade</title>
+<style>
+html,body{margin:0;height:100%;background:#0d1117;color:#e6edf3;font:14px/1.4 system-ui,-apple-system,Segoe UI,sans-serif;overflow:hidden}
+#c{position:fixed;inset:0}
+.panel{position:fixed;top:16px;left:16px;width:290px;background:rgba(13,17,23,.86);border:1px solid #30363d;border-radius:12px;padding:16px 18px;backdrop-filter:blur(6px)}
+h1{font-size:17px;margin:0 0 4px}p{margin:4px 0 12px;color:#9da7b3;font-size:12.5px}
+.row{display:flex;gap:6px;margin:8px 0;flex-wrap:wrap}
+button{flex:1;background:#21262d;color:#e6edf3;border:1px solid #30363d;border-radius:8px;padding:7px 8px;cursor:pointer;font-size:12.5px}
+button.on{background:#1f6feb;border-color:#1f6feb}
+label{display:block;margin-top:10px;font-size:12.5px}input[type=range]{width:100%}
+.stats{font-size:11.5px;color:#7d8590;margin-top:10px}
+#inset{position:fixed;right:16px;top:16px;width:170px;border:1px solid #30363d;border-radius:8px;background:#0d1117;padding:6px;font-size:11px;color:#9da7b3;text-align:center}
+#inset img{width:100%;display:block;border-radius:4px;margin-bottom:4px}
+#load{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;font-size:15px;color:#9da7b3}
+.hint{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);font-size:12px;color:#7d8590}
+a{color:#58a6ff}
+</style></head><body>
+<div id="load">Loading terrain…</div><canvas id="c"></canvas>
+<div class="panel">
+<h1>Real-time 3D terrain mesh</h1>
+<p>Built from a 16-bit heightmap (Copernicus GLO-30 DEM, ~40&nbsp;km area), stylized colour map draped on the geometry. Rendered live in your browser with WebGL — rotate it, switch to wireframe, change the relief.</p>
+<div class="row"><button id="bTex" class="on">Colour map</button><button id="bH">Heightmap</button><button id="bClay">Clay</button></div>
+<div class="row"><button id="bWire">Wireframe</button><button id="bRot">Auto-rotate</button></div>
+<label>Vertical exaggeration: <b id="exv">2.0×</b><input id="ex" type="range" min="0.5" max="5" step="0.1" value="2"></label>
+<label>Sun direction<input id="sun" type="range" min="0" max="360" step="1" value="315"></label>
+<div class="stats" id="stats"></div>
+<p style="margin-top:12px"><a href="../">← Portfolio</a></p>
+</div>
+<div id="inset"><img src="heightmap_preview.jpg" alt="Source heightmap">Source 16-bit heightmap</div>
+<div class="hint">Drag to orbit · scroll to zoom · right-drag to pan</div>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+const N=769,SZ=40.585,RG=2.697;
+const r=new THREE.WebGLRenderer({canvas:document.getElementById('c'),antialias:true});r.setPixelRatio(Math.min(devicePixelRatio,2));r.setSize(innerWidth,innerHeight);
+r.outputColorSpace=THREE.SRGBColorSpace;
+const sc=new THREE.Scene();sc.background=new THREE.Color(0x0d1117);sc.fog=new THREE.Fog(0x0d1117,70,140);
+const cam=new THREE.PerspectiveCamera(40,innerWidth/innerHeight,0.1,500);cam.position.set(0,32,42);
+const ctl=new OrbitControls(cam,r.domElement);ctl.enableDamping=true;ctl.maxPolarAngle=Math.PI*0.48;ctl.minDistance=6;ctl.maxDistance=110;
+sc.add(new THREE.HemisphereLight(0xdfe8ff,0x3a3020,0.7));const sun=new THREE.DirectionalLight(0xffffff,2.2);sc.add(sun);
+function setSun(a){a=a*Math.PI/180;sun.position.set(Math.cos(a)*30,22,-Math.sin(a)*30);}setSun(315);
+const buf=await (await fetch('height_769.u16')).arrayBuffer();const H=new Uint16Array(buf);
+const g=new THREE.PlaneGeometry(SZ,SZ,N-1,N-1);g.rotateX(-Math.PI/2);const P=g.attributes.position;
+const base=new Float32Array(N*N);for(let i=0;i<N*N;i++)base[i]=H[i]/65535*RG;
+const M=129,S=(N-1)/(M-1);const g2=new THREE.PlaneGeometry(SZ,SZ,M-1,M-1);g2.rotateX(-Math.PI/2);const P2=g2.attributes.position;
+function applyEx(e){for(let i=0;i<N*N;i++)P.setY(i,base[i]*e);P.needsUpdate=true;g.computeVertexNormals();for(let y=0;y<M;y++)for(let x=0;x<M;x++)P2.setY(y*M+x,base[(y*S)*N+x*S]*e+0.03);P2.needsUpdate=true;}
+applyEx(2);
+const L=new THREE.TextureLoader();const tex=await L.loadAsync('colormap_2048.jpg');tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=8;
+const htex=await L.loadAsync('heightmap_preview.jpg');htex.colorSpace=THREE.SRGBColorSpace;
+const mat=new THREE.MeshStandardMaterial({map:tex,roughness:0.95,metalness:0});
+const mesh=new THREE.Mesh(g,mat);sc.add(mesh);
+const wire=new THREE.Mesh(g2,new THREE.MeshBasicMaterial({color:0x3fb8ff,wireframe:true,transparent:true,opacity:0.6}));wire.visible=false;sc.add(wire);
+document.getElementById('load').remove();
+document.getElementById('stats').textContent=`${N}×${N} vertices · ${((N-1)*(N-1)*2/1e6).toFixed(2)} M triangles · elevation 111–2808 m`;
+const B=id=>document.getElementById(id);
+function mode(m){mat.map=m==='clay'?null:(m==='h'?htex:tex);mat.color.set(m==='clay'?0xb8b2a6:0xffffff);mat.needsUpdate=true;['bTex','bH','bClay'].forEach(b=>B(b).classList.remove('on'));B({tex:'bTex',h:'bH',clay:'bClay'}[m]).classList.add('on');}
+B('bTex').onclick=()=>mode('tex');B('bH').onclick=()=>mode('h');B('bClay').onclick=()=>mode('clay');
+B('bWire').onclick=()=>{wire.visible=!wire.visible;B('bWire').classList.toggle('on');};
+B('bRot').onclick=()=>{ctl.autoRotate=!ctl.autoRotate;B('bRot').classList.toggle('on');};
+B('ex').oninput=e=>{B('exv').textContent=(+e.target.value).toFixed(1)+'×';applyEx(+e.target.value);};
+B('sun').oninput=e=>setSun(+e.target.value);
+addEventListener('resize',()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();r.setSize(innerWidth,innerHeight);});
+window.__meshReady=true;
+(function loop(){ctl.update();r.render(sc,cam);requestAnimationFrame(loop);})();
+</script></body></html>
