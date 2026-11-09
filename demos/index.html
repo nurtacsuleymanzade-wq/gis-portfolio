@@ -16,6 +16,7 @@ p{color:var(--muted)}.lede{max-width:770px;font-size:17px}.eyebrow{font-size:12p
 .stat{background:#091a2a;border:1px solid var(--line);border-radius:13px;padding:15px}.stat b{display:block;font-size:24px;color:var(--accent)}.stat span{font-size:12px;color:var(--muted)}
 label{display:block;color:#c9daec;font-weight:650;font-size:13px;margin:12px 0 5px}input,textarea,select{width:100%;border:1px solid #3a546e;background:#071624;color:#f2f8ff;border-radius:9px;padding:11px;font:inherit}
 textarea{resize:vertical;min-height:120px;font:13px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace}
+.maplibre-link{display:inline-block;background:var(--accent);border-radius:10px;padding:11px 17px;color:#072b29;font-weight:800;text-decoration:none;margin:12px 8px 0 0}.maplibre-link:hover{filter:brightness(1.07)}
 button.action{background:var(--accent);border:0;border-radius:10px;padding:11px 17px;color:#072b29;font-weight:800;cursor:pointer;margin:12px 8px 0 0}
 button.secondary{background:#243a52;color:#dcecff;border:1px solid #48617a}button:hover{filter:brightness(1.07)}
 .note{font-size:12px;color:#abc0d5;border-left:3px solid var(--blue);padding:8px 12px;margin:15px 0}
@@ -29,9 +30,9 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding-top:20px;color:v
 <header><div class="logo">NOVA / ENGINEERING LAB</div><div><a href="../">GIS portfolio ↗</a> &nbsp; · &nbsp; <a href="https://www.upwork.com/freelancers/~0184687ebeea3486f2">Hire on Upwork ↗</a></div></header>
 <div class="eyebrow" style="margin-top:42px">INTERACTIVE TECHNICAL PORTFOLIO · 2026</div>
 <h1>Complex workflows.<br><span style="color:var(--accent)">Working prototypes.</span></h1>
-<p class="lede">Three interactive proof-of-concept tools showing how we approach GPU production planning, data automation and spatial decision support. Change inputs, run the logic and export results.</p>
+<p class="lede">Four interactive proof-of-concept tools showing how we approach GPU production planning, data automation and spatial decision support. Change inputs, run the logic and export results.</p>
 <div class="note"><b>Transparency:</b> These are functional, browser-based demonstration prototypes using sample or user-entered data. The GPU queue is a simulator, not a live ComfyUI connection. Geospatial locations are fictional. No client data is transmitted.</div>
-<nav class="tabs" aria-label="Demo selector"><button class="tab active" data-tab="gpu">01 · GPU Batch Planner</button><button class="tab" data-tab="etl">02 · ETL Automation</button><button class="tab" data-tab="geo">03 · Spatial Site Selector</button></nav>
+<nav class="tabs" aria-label="Demo selector"><button class="tab active" data-tab="gpu">01 · GPU Batch Planner</button><button class="tab" data-tab="etl">02 · ETL Automation</button><button class="tab" data-tab="geo">03 · Spatial Site Selector</button><button class="tab" data-tab="maplibre">04 · MapLibre Parcel Screening</button></nav>
 <section id="gpu" class="demo active">
 <div class="grid"><div class="panel"><div class="eyebrow">GPU PRODUCTION ENGINEERING</div><h2>Batch Render Orchestrator</h2><p>Estimate throughput, VRAM feasibility, queue order and rendering cost for an AI video batch. Export an executable-style job manifest.</p>
 <label for="gpuModel">Model preset</label><select id="gpuModel"><option value="ltx">LTX-2.5 FAST · 24 GB class</option><option value="h3">MiniMax H3 · 24 GB class</option><option value="wan">Wan 2.2 · 24 GB class</option></select>
@@ -67,6 +68,7 @@ A6,Harbor Site,West,94</textarea>
 Proximity = max(0, 100 − 12 × distance_km)
 Weights are normalized to sum to 1.</pre></div>
 <div class="panel"><h3>Interactive scoring results</h3><svg class="map" id="geoMap" viewBox="0 0 480 285" role="img" aria-label="Diagram of fictional candidate site locations"><path d="M0 180 Q100 135 175 175 T480 105" fill="none" stroke="#2e688a" stroke-width="25" opacity=".5"/><path d="M40 30 L120 100 L210 48 L320 110 L450 48" fill="none" stroke="#44607a" stroke-width="3" stroke-dasharray="7 9"/><g id="geoPoints"></g></svg><div class="scroller"><table><thead><tr><th>Rank</th><th>Site</th><th>Distance</th><th>Score</th></tr></thead><tbody id="geoRows"></tbody></table></div></div></div></section>
+<section id="maplibre" class="demo"><div class="panel"><div class="eyebrow">MAPLIBRE GL JS · GIS</div><h2>Parcel screening map</h2><p>Open the standalone interactive map with parcel search, zoning/status filters, flood and utility context layers, parcel details, shortlist controls, and CSV/GeoJSON export.</p><div class="note"><b>Data boundary:</b> Parcel polygons and context layers are synthetic sample data. The base map uses MapLibre demo tiles.</div><a class="maplibre-link" href="./maplibre-parcel-demo/">Open interactive map ↗</a><a href="https://github.com/nurtacsuleymanzade-wq/gis-portfolio/tree/main/demos/maplibre-parcel-demo" target="_blank" rel="noreferrer">View source ↗</a></div></section>
 <footer>Built as a transparent technical proof of concept for <b>Nurtac Suleymanzade</b>. Demonstration results are reproducible from the visible input and code. No live GPU claims or fabricated client outcomes. <a href="https://github.com/nurtacsuleymanzade-wq/gis-portfolio/tree/main/demos">View source ↗</a></footer>
 </main><script>
 "use strict";
@@ -97,5 +99,5 @@ $('geoRows').innerHTML=ranked.map((s,i)=>'<tr><td>#'+(i+1)+'</td><td>'+esc(s.nam
 $('geoPoints').innerHTML='<circle cx="250" cy="148" r="8" fill="#fff" stroke="#6aaeff" stroke-width="3"/><text x="261" y="145" fill="#fff" font-size="12">Hub</text>'+ranked.map((s,i)=>'<circle cx="'+s.x+'" cy="'+s.y+'" r="'+(12-i*1.2)+'" fill="'+(i===0?'#50dfc0':'#6aaeff')+'" stroke="#082235" stroke-width="2"/><text x="'+(s.x+14)+'" y="'+(s.y+5)+'" fill="#fff" font-size="13">'+s.id+' #'+(i+1)+'</text>').join('')}
 $('geoRun').onclick=runGeo;['geoPop','geoDist','geoRisk'].forEach(id=>$(id).addEventListener('input',runGeo));$('geoExport').onclick=()=>{runGeo();save('nova_site_ranking.csv',['rank,site,latitude,longitude,distance_km,demand,risk,score',...ranked.map((s,i)=>[i+1,csvCell(s.name),s.lat,s.lon,s.distance.toFixed(3),s.demand,s.risk,s.score.toFixed(3)].join(','))].join('\n')+'\n','text/csv')};
 runGpu();runEtl();runGeo();
-const selected=new URLSearchParams(location.search).get('demo');if(['gpu','etl','geo'].includes(selected)){const button=document.querySelector('.tab[data-tab="'+selected+'"]');if(button)button.click();}
+const selected=new URLSearchParams(location.search).get('demo');if(['gpu','etl','geo','maplibre'].includes(selected)){const button=document.querySelector('.tab[data-tab="'+selected+'"]');if(button)button.click();}
 </script></body></html>
