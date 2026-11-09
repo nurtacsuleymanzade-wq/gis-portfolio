@@ -3,43 +3,49 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#0d1722" />
-    <meta name="description" content="MapLibre parcel screening demo with synthetic data." />
-    <title>ParcelScope — MapLibre Demo</title>
+    <meta name="theme-color" content="#193a43" />
+    <meta name="description" content="A MapLibre land screening workspace with clearly labeled sample parcels." />
+    <title>Lotline — Parcel Atlas</title>
     <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@6.16.0/dist/maplibre-gl.css" />
-    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="./style.css?v=lotline-20261110" />
   </head>
   <body>
     <header class="topbar">
-      <a class="brand" href="#" aria-label="ParcelScope home">
-        <span class="brand-mark">P</span>
-        <span>Parcel<span class="brand-light">Scope</span></span>
+      <a class="brand" href="#" aria-label="Lotline home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none"><path d="M5 5h9v9H5zM18 5h9v9h-9zM5 18h9v9H5zM18 18h9v9h-9z" stroke="currentColor" stroke-width="1.7"/><path d="M9.5 9.5h4M22.5 9.5h2M9.5 22.5h2M22.5 22.5h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        </span>
+        <span class="brand-copy"><strong>Lotline</strong><span>Parcel atlas</span></span>
       </a>
-      <div class="top-meta"><span class="live-dot"></span> MAPLIBRE WEB APP <span class="top-divider">/</span> PORTFOLIO DEMO</div>
-      <a class="github-link" href="https://github.com/nurtacsuleymanzade-wq/gis-portfolio/tree/main/demos/maplibre-parcel-demo" target="_blank" rel="noreferrer">Source <span aria-hidden="true">↗</span></a>
+      <div class="project-context"><span class="context-mark"></span><span>Interactive sample</span></div>
+      <a class="github-link" href="https://github.com/nurtacsuleymanzade-wq/gis-portfolio/tree/main/demos/maplibre-parcel-demo" target="_blank" rel="noreferrer">View source
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 12 12 4M5 4h7v7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
     </header>
 
     <main class="app-shell">
       <aside class="sidebar">
         <div class="intro">
-          <p class="eyebrow">LAND INTELLIGENCE</p>
-          <h1>Parcel screening</h1>
-          <p class="subhead">Explore, compare, and shortlist parcels in one map.</p>
+          <p class="project-kicker"><span class="kicker-rule"></span>Greene County · Missouri</p>
+          <h1>Find a site<br />with context.</h1>
+          <p class="subhead">Compare parcel size, land use and nearby infrastructure in one place.</p>
         </div>
 
         <section class="search-box" aria-label="Parcel search">
-          <label for="search">FIND A PARCEL</label>
+          <label for="search">Search by parcel ID</label>
           <div class="search-row">
-            <input id="search" type="search" placeholder="Try SPR-10042" autocomplete="off" />
-            <button id="searchBtn" class="icon-btn" type="button" aria-label="Search">⌕</button>
+            <input id="search" type="search" placeholder="For example, SPR-10042" autocomplete="off" />
+            <button id="searchBtn" class="icon-btn" type="button" aria-label="Search parcels">
+              <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.7" cy="8.7" r="5.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="m13 13 4 4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            </button>
           </div>
         </section>
 
-        <section class="filter-section" aria-label="Filters">
-          <div class="section-heading"><span>FILTERS</span><button id="resetBtn" class="text-btn" type="button">Reset</button></div>
-          <label class="field-label" for="zoneFilter">Zoning</label>
+        <section class="filter-section" aria-label="Parcel filters">
+          <div class="section-heading"><h2>Refine results</h2><button id="resetBtn" class="text-btn" type="button">Clear</button></div>
+          <label class="field-label" for="zoneFilter">Land use</label>
           <select id="zoneFilter">
-            <option value="all">All zoning</option>
+            <option value="all">All land uses</option>
             <option value="Residential">Residential</option>
             <option value="Commercial">Commercial</option>
             <option value="Industrial">Industrial</option>
@@ -52,42 +58,51 @@
             <option value="Under Review">Under review</option>
             <option value="On Hold">On hold</option>
           </select>
-          <label class="field-label" for="acreFilter">Minimum size <span id="acreValue">0.0 ac</span></label>
+          <label class="field-label area-label" for="acreFilter">Minimum parcel area <span id="acreValue">0.0 ac</span></label>
           <input id="acreFilter" class="range" type="range" min="0" max="8" value="0" step="0.5" />
         </section>
 
-        <section class="context-section" aria-label="Map layers">
-          <div class="section-heading"><span>MAP LAYERS</span></div>
-          <label class="toggle-row"><span><i class="legend-dot flood"></i> Flood context</span><input id="floodToggle" type="checkbox" checked /><b></b></label>
-          <label class="toggle-row"><span><i class="legend-dot station"></i> Utility sites</span><input id="stationToggle" type="checkbox" checked /><b></b></label>
+        <section class="context-section" aria-label="Context layers">
+          <div class="section-heading"><h2>Nearby context</h2></div>
+          <label class="toggle-row"><span><i class="legend-dot flood"></i> Flood context</span><input id="floodToggle" type="checkbox" checked /><b class="switch"></b></label>
+          <label class="toggle-row"><span><i class="legend-dot station"></i> Utility sites</span><input id="stationToggle" type="checkbox" checked /><b class="switch"></b></label>
         </section>
 
-        <section class="results-section">
-          <div class="section-heading"><span>PARCELS</span><span id="resultCount" class="count-pill">—</span></div>
+        <section class="results-section" aria-label="Matching parcels">
+          <div class="results-heading"><div><h2>Matching parcels</h2><p>Choose a parcel to inspect its details.</p></div><span id="resultCount" class="count-pill">—</span></div>
           <div id="parcelList" class="parcel-list" aria-live="polite"></div>
         </section>
 
         <footer class="sidebar-footer">
-          <span class="synthetic-badge">SYNTHETIC SAMPLE DATA</span>
-          <span>Springfield, Missouri · for demonstration only</span>
+          <span class="sample-mark" aria-hidden="true">i</span>
+          <div><strong>Illustrative dataset</strong><span>All parcel and context features are synthetic examples.</span></div>
         </footer>
       </aside>
 
       <section class="map-panel" aria-label="Interactive parcel map">
         <div id="map" role="application" aria-label="Map of synthetic sample parcels"></div>
         <div class="map-toolbar">
-          <div class="map-title"><span class="map-pin">⌖</span><span>SPRINGFIELD, MO</span></div>
+          <div class="map-title"><span class="map-pin" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M16 8.2c0 4.6-6 9-6 9s-6-4.4-6-9a6 6 0 1 1 12 0Z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="8" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></span><span><strong>Springfield</strong><small>Greene County, Missouri</small></span></div>
           <div class="map-actions">
-            <button id="exportGeojson" class="tool-btn" type="button">↓ <span>GeoJSON</span></button>
-            <button id="exportCsv" class="tool-btn" type="button">↓ <span>CSV</span></button>
+            <button id="exportGeojson" class="tool-btn" type="button" aria-label="Download filtered GeoJSON"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v8m0 0 3-3m-3 3L5 7M3 12v2h10v-2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>GeoJSON</span></button>
+            <button id="exportCsv" class="tool-btn" type="button" aria-label="Download filtered CSV"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v8m0 0 3-3m-3 3L5 7M3 12v2h10v-2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>CSV</span></button>
           </div>
         </div>
-        <div id="mapError" class="map-error" hidden>Map tiles could not load. Check your internet connection and reload.</div>
+        <div id="mapError" class="map-error" role="status" hidden>Map layers could not load. Check your connection and refresh.</div>
         <div id="detailCard" class="detail-card" hidden></div>
-        <div class="map-caption"><span class="legend-dot parcel-legend"></span> Parcels <span class="caption-sep">·</span> <span class="legend-dot flood"></span> Flood context <span class="caption-sep">·</span> <span class="legend-dot station"></span> Utility sites</div>
+        <div class="map-caption" aria-label="Map legend">
+          <div class="legend-heading"><strong>Parcel zoning</strong><span>Sample features</span></div>
+          <div class="legend-grid">
+            <span><i class="legend-dot residential"></i>Residential</span>
+            <span><i class="legend-dot commercial"></i>Commercial</span>
+            <span><i class="legend-dot industrial"></i>Industrial</span>
+            <span><i class="legend-dot mixed-use"></i>Mixed use</span>
+          </div>
+          <div class="legend-context"><span><i class="legend-dot flood"></i>Flood context</span><span><i class="legend-dot station"></i>Utility site</span></div>
+        </div>
       </section>
     </main>
 
-    <script type="module" src="./app.js?v=9e9eb02731e797dfd73d19eace85c9dfa977d359"></script>
+    <script type="module" src="./app.js?v=lotline-20261110"></script>
   </body>
 </html>
