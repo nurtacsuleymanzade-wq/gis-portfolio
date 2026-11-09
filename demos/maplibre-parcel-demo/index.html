@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0d1722" />
+    <meta name="description" content="MapLibre parcel screening demo with synthetic data." />
+    <title>ParcelScope — MapLibre Demo</title>
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@6.16.0/dist/maplibre-gl.css" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="ParcelScope home">
+        <span class="brand-mark">P</span>
+        <span>Parcel<span class="brand-light">Scope</span></span>
+      </a>
+      <div class="top-meta"><span class="live-dot"></span> MAPLIBRE WEB APP <span class="top-divider">/</span> PORTFOLIO DEMO</div>
+      <a class="github-link" href="https://github.com/nurtacsuleymanzade-wq/gis-portfolio/tree/main/demos/maplibre-parcel-demo" target="_blank" rel="noreferrer">Source <span aria-hidden="true">↗</span></a>
+    </header>
+
+    <main class="app-shell">
+      <aside class="sidebar">
+        <div class="intro">
+          <p class="eyebrow">LAND INTELLIGENCE</p>
+          <h1>Parcel screening</h1>
+          <p class="subhead">Explore, compare, and shortlist parcels in one map.</p>
+        </div>
+
+        <section class="search-box" aria-label="Parcel search">
+          <label for="search">FIND A PARCEL</label>
+          <div class="search-row">
+            <input id="search" type="search" placeholder="Try SPR-10042" autocomplete="off" />
+            <button id="searchBtn" class="icon-btn" type="button" aria-label="Search">⌕</button>
+          </div>
+        </section>
+
+        <section class="filter-section" aria-label="Filters">
+          <div class="section-heading"><span>FILTERS</span><button id="resetBtn" class="text-btn" type="button">Reset</button></div>
+          <label class="field-label" for="zoneFilter">Zoning</label>
+          <select id="zoneFilter">
+            <option value="all">All zoning</option>
+            <option value="Residential">Residential</option>
+            <option value="Commercial">Commercial</option>
+            <option value="Industrial">Industrial</option>
+            <option value="Mixed Use">Mixed use</option>
+          </select>
+          <label class="field-label" for="statusFilter">Availability</label>
+          <select id="statusFilter">
+            <option value="all">All statuses</option>
+            <option value="Available">Available</option>
+            <option value="Under Review">Under review</option>
+            <option value="On Hold">On hold</option>
+          </select>
+          <label class="field-label" for="acreFilter">Minimum size <span id="acreValue">0.0 ac</span></label>
+          <input id="acreFilter" class="range" type="range" min="0" max="8" value="0" step="0.5" />
+        </section>
+
+        <section class="context-section" aria-label="Map layers">
+          <div class="section-heading"><span>MAP LAYERS</span></div>
+          <label class="toggle-row"><span><i class="legend-dot flood"></i> Flood context</span><input id="floodToggle" type="checkbox" checked /><b></b></label>
+          <label class="toggle-row"><span><i class="legend-dot station"></i> Utility sites</span><input id="stationToggle" type="checkbox" checked /><b></b></label>
+        </section>
+
+        <section class="results-section">
+          <div class="section-heading"><span>PARCELS</span><span id="resultCount" class="count-pill">—</span></div>
+          <div id="parcelList" class="parcel-list" aria-live="polite"></div>
+        </section>
+
+        <footer class="sidebar-footer">
+          <span class="synthetic-badge">SYNTHETIC SAMPLE DATA</span>
+          <span>Springfield, Missouri · for demonstration only</span>
+        </footer>
+      </aside>
+
+      <section class="map-panel" aria-label="Interactive parcel map">
+        <div id="map" role="application" aria-label="Map of synthetic sample parcels"></div>
+        <div class="map-toolbar">
+          <div class="map-title"><span class="map-pin">⌖</span><span>SPRINGFIELD, MO</span></div>
+          <div class="map-actions">
+            <button id="exportGeojson" class="tool-btn" type="button">↓ <span>GeoJSON</span></button>
+            <button id="exportCsv" class="tool-btn" type="button">↓ <span>CSV</span></button>
+          </div>
+        </div>
+        <div id="mapError" class="map-error" hidden>Map tiles could not load. Check your internet connection and reload.</div>
+        <div id="detailCard" class="detail-card" hidden></div>
+        <div class="map-caption"><span class="legend-dot parcel-legend"></span> Parcels <span class="caption-sep">·</span> <span class="legend-dot flood"></span> Flood context <span class="caption-sep">·</span> <span class="legend-dot station"></span> Utility sites</div>
+      </section>
+    </main>
+
+    <script src="https://unpkg.com/maplibre-gl@6.16.0/dist/maplibre-gl.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
