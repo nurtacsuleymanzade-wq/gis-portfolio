@@ -1,6 +1,8 @@
 # NOVA Engineering Lab — four functional proof-of-concept demos
 
-**Live demos:** https://nurtacsuleymanzade-wq.github.io/gis-portfolio/demos/\n\n**MapLibre ParcelScope:** https://nurtacsuleymanzade-wq.github.io/gis-portfolio/demos/maplibre-parcel-demo/
+**Live demos:** https://nurtacsuleymanzade-wq.github.io/gis-portfolio/demos/
+
+**MapLibre ParcelScope:** https://nurtacsuleymanzade-wq.github.io/gis-portfolio/demos/maplibre-parcel-demo/
 
 **Author:** Nurtac Suleymanzade — AI Automation & Geospatial Engineer.
 
