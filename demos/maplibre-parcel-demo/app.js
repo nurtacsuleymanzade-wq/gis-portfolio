@@ -1,5 +1,3 @@
-import * as maplibregl from 'https://unpkg.com/maplibre-gl@6.16.0/dist/maplibre-gl.mjs';
-
 (() => {
   const center = [-93.2923, 37.2153];
   const zones = ['Residential', 'Commercial', 'Industrial', 'Mixed Use'];
@@ -81,9 +79,9 @@ import * as maplibregl from 'https://unpkg.com/maplibre-gl@6.16.0/dist/maplibre-
   }
   function selectParcel(feature, zoom = true) {
     if (!feature) return;
-    if (selectedId) map.setFeatureState({ source: 'parcels', id: selectedId }, { selected: false });
+    if (selectedId && map?.getSource('parcels')) map.setFeatureState({ source: 'parcels', id: selectedId }, { selected: false });
     selectedId = feature.id;
-    map.setFeatureState({ source: 'parcels', id: selectedId }, { selected: true });
+    if (map?.getSource('parcels')) map.setFeatureState({ source: 'parcels', id: selectedId }, { selected: true });
     const p = feature.properties;
     renderList();
     ui.detail.hidden = false;
@@ -97,7 +95,7 @@ import * as maplibregl from 'https://unpkg.com/maplibre-gl@6.16.0/dist/maplibre-
       try { await navigator.clipboard.writeText(p.parcel_id); ui.detail.querySelector('#copyIdBtn').textContent = 'Copied'; }
       catch { ui.detail.querySelector('#copyIdBtn').textContent = p.parcel_id; }
     });
-    if (zoom) map.flyTo({ center: [feature.geometry.coordinates[0][0][0], feature.geometry.coordinates[0][0][1]], zoom: 15.5, duration: 650 });
+    if (zoom && map?.loaded()) map.flyTo({ center: [feature.geometry.coordinates[0][0][0], feature.geometry.coordinates[0][0][1]], zoom: 15.5, duration: 650 });
   }
   function clearSelection() {
     if (selectedId && map?.getSource('parcels')) map.setFeatureState({ source: 'parcels', id: selectedId }, { selected: false });
@@ -117,9 +115,11 @@ import * as maplibregl from 'https://unpkg.com/maplibre-gl@6.16.0/dist/maplibre-
     const a = document.createElement('a'); a.href = url; a.download = name; a.click(); URL.revokeObjectURL(url);
   }
 
-  if (!maplibregl.Map) {
+  const maplibregl = window.maplibregl;
+  if (!maplibregl?.Map) {
     ui.error.hidden = false;
     ui.error.textContent = 'Map renderer did not load. Check your connection and refresh.';
+    updateFilters();
     return;
   }
 
@@ -158,4 +158,5 @@ import * as maplibregl from 'https://unpkg.com/maplibre-gl@6.16.0/dist/maplibre-
     const csv = [cols.join(','), ...current.map(f => cols.map(k => `"${String(f.properties[k]).replaceAll('"','""')}"`).join(','))].join('\n');
     download('parcels-synthetic.csv', csv, 'text/csv');
   });
+  updateFilters();
 })();
