@@ -1,10 +1,21 @@
-# ParcelScope — MapLibre demo
+# Lotline — Parcel Atlas
 
-Static, browser-based parcel-screening prototype for a GIS portfolio. It uses MapLibre GL JS with a public demo vector style and locally generated **synthetic** parcel/context features around Springfield, Missouri.
+A browser-based parcel screening prototype built with MapLibre GL JS. It pairs a large interactive map with focused search, filters, parcel details and export controls.
 
 ## Live demo
 
-[Open the interactive MapLibre demo](https://nurtacsuleymanzade-wq.github.io/gis-portfolio/demos/maplibre-parcel-demo/?rev=86befe1a3032b9c102efbc4fd7f20bca0ad33295).
+[Open Lotline — Parcel Atlas](https://nurtacsuleymanzade-wq.github.io/gis-portfolio/demos/maplibre-parcel-demo/?rev=lotline-20261110)
+
+## Interface
+
+The map remains the main workspace. A compact parcel panel holds search, land-use and availability filters, context layers, and a short result list. The cool mineral palette and boundary-grid mark are specific to land records; zoning colors are repeated in the map legend.
+
+## Features
+
+- MapLibre vector map with 1,147 generated parcel polygons, flood-context areas and utility-site points.
+- Search by parcel ID, filters for land use/status/minimum area, and map/list selection.
+- Parcel detail panel, browser-local shortlist, CSV export and filtered GeoJSON export.
+- Responsive layout, visible keyboard focus and reduced-motion support.
 
 ## Run locally
 
@@ -16,13 +27,6 @@ python3 -m http.server 8080
 
 Open `http://localhost:8080`.
 
-## Features
-
-- Interactive MapLibre vector map with parcel polygons, flood-context polygons and utility-site points.
-- Search by parcel ID, filters for zoning/status/minimum site area, and map/list selection.
-- Detail card, browser-local shortlist, CSV export and filtered GeoJSON export.
-- Responsive layout; no API key, account, or backend required.
-
 ## Data and service limits
 
-Every parcel, flood-context shape, and utility point is fabricated for this demo. It is not a property dataset and must not be used for investment or permitting decisions. The base style is MapLibre's public demo style; replace it with a supported production tile/style service before production use.
+Parcel, flood-context and utility features are synthetic examples centered on Springfield, Missouri. They are not property records and must not be used for investment or permitting decisions. The base style uses MapLibre's public demo tiles; select a supported production style and data source before production use.
