@@ -1,6 +1,6 @@
-# NOVA Engineering Lab — three functional proof-of-concept demos
+# NOVA Engineering Lab — four functional proof-of-concept demos
 
-**Live demo:** https://nurtacsuleymanzade-wq.github.io/gis-portfolio/demos/
+**Live demos:** https://nurtacsuleymanzade-wq.github.io/gis-portfolio/demos/\n\n**MapLibre ParcelScope:** https://nurtacsuleymanzade-wq.github.io/gis-portfolio/demos/maplibre-parcel-demo/
 
 **Author:** Nurtac Suleymanzade — AI Automation & Geospatial Engineer.
 
@@ -11,6 +11,7 @@
 | GPU Batch Planner | Multi-worker greedy scheduling, makespan, GPU-hour cost estimates, JSON job manifest export | Browser-side **simulation**, not a connected ComfyUI renderer. Preset timings are assumptions, not measured benchmarks. |
 | ETL Automation | CSV parsing, completeness checks, deduplication, numeric threshold filtering, processing audit, CSV download | Browser-side ETL; a standalone Python implementation is included. |
 | Spatial Site Selector | Haversine distance, normalized weighted multi-criteria scoring, live ranking, CSV export | **Synthetic** candidate coordinates and attributes, not real land-use recommendations. |
+| MapLibre Parcel Screening | MapLibre GL JS parcel search, filters, context layers, shortlist, CSV/GeoJSON export | Synthetic parcel and context data; public MapLibre demo style. |
 
 ## Reproducible Python ETL
 
