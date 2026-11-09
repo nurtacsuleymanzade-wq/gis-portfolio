@@ -67,7 +67,7 @@ import * as maplibregl from 'https://unpkg.com/maplibre-gl@6.16.0/dist/maplibre-
     if (Number(ui.acres.value) > 0) expression.push(['>=', ['get', 'acres'], Number(ui.acres.value)]);
     if (map?.getLayer('parcel-fill')) map.setFilter('parcel-fill', expression);
     if (map?.getLayer('parcel-line')) map.setFilter('parcel-line', expression);
-    ui.count.textContent = current.length.toLocaleString();
+    ui.count.textContent = current.length.toLocaleString('en-US');
     renderList();
     if (selectedId && !current.some(f => f.id === selectedId)) clearSelection();
   }
@@ -76,7 +76,7 @@ import * as maplibregl from 'https://unpkg.com/maplibre-gl@6.16.0/dist/maplibre-
     ui.list.innerHTML = items.length ? items.map(f => {
       const p = f.properties;
       const statusClass = p.status === 'On Hold' ? 'hold' : p.status === 'Under Review' ? 'review' : '';
-      return `<button class="parcel-row ${selectedId === f.id ? 'active' : ''}" data-id="${f.id}" type="button"><span><span class="parcel-id">${p.parcel_id}</span><span class="parcel-meta">${p.zone} · ${p.acres} ac</span></span><span class="status ${statusClass}">${p.status === 'Under Review' ? 'REVIEW' : p.status === 'On Hold' ? 'HOLD' : 'OPEN'}</span></button>`;
+      return `<button class="parcel-row ${selectedId === f.id ? 'active' : ''}" data-id="${f.id}" type="button"><span><span class="parcel-id">${p.parcel_id}</span><span class="parcel-meta">${p.zone} · ${Number(p.acres).toFixed(2)} ac</span></span><span class="status ${statusClass}">${p.status === 'Under Review' ? 'In review' : p.status === 'On Hold' ? 'On hold' : 'Available'}</span></button>`;
     }).join('') : '<div class="empty-state">No parcels match these filters.</div>';
   }
   function selectParcel(feature, zoom = true) {
@@ -87,7 +87,7 @@ import * as maplibregl from 'https://unpkg.com/maplibre-gl@6.16.0/dist/maplibre-
     const p = feature.properties;
     renderList();
     ui.detail.hidden = false;
-    ui.detail.innerHTML = `<div class="detail-top"><div><div class="detail-id">${p.parcel_id}</div><div class="detail-zone">${p.zone} · ${p.status}</div></div><button class="close-detail" aria-label="Close details" type="button">×</button></div><div class="detail-grid"><div><div class="detail-label">SITE AREA</div><div class="detail-value">${p.acres} ac</div></div><div><div class="detail-label">ASKING</div><div class="detail-value">$${Number(p.asking_price).toLocaleString()}</div></div><div><div class="detail-label">COUNTY</div><div class="detail-value">${p.county}</div></div><div><div class="detail-label">DATA TYPE</div><div class="detail-value">Synthetic</div></div></div><div class="detail-actions"><button class="primary-btn" id="shortlistBtn" type="button">${shortlisted.has(p.parcel_id) ? '✓ Shortlisted' : '+ Add to shortlist'}</button><button class="secondary-btn" id="copyIdBtn" type="button">Copy ID</button></div>`;
+    ui.detail.innerHTML = `<div class="detail-top"><div><div class="detail-id">${p.parcel_id}</div><div class="detail-zone">${p.zone} · ${p.status}</div></div><button class="close-detail" aria-label="Close details" type="button">×</button></div><div class="detail-grid"><div><div class="detail-label">Site area</div><div class="detail-value">${Number(p.acres).toFixed(2)} ac</div></div><div><div class="detail-label">Asking price</div><div class="detail-value">$${Number(p.asking_price).toLocaleString('en-US')}</div></div><div><div class="detail-label">County</div><div class="detail-value">${p.county}</div></div><div><div class="detail-label">Data type</div><div class="detail-value">Synthetic</div></div></div><div class="detail-actions"><button class="primary-btn" id="shortlistBtn" type="button">${shortlisted.has(p.parcel_id) ? '✓ Shortlisted' : '+ Add to shortlist'}</button><button class="secondary-btn" id="copyIdBtn" type="button">Copy ID</button></div>`;
     ui.detail.querySelector('.close-detail').addEventListener('click', clearSelection);
     ui.detail.querySelector('#shortlistBtn').addEventListener('click', () => {
       if (shortlisted.has(p.parcel_id)) shortlisted.delete(p.parcel_id); else shortlisted.add(p.parcel_id);
@@ -119,7 +119,7 @@ import * as maplibregl from 'https://unpkg.com/maplibre-gl@6.16.0/dist/maplibre-
 
   if (!maplibregl.Map) {
     ui.error.hidden = false;
-    ui.error.textContent = 'MapLibre could not load. Check your connection and reload.';
+    ui.error.textContent = 'Map renderer did not load. Check your connection and refresh.';
     return;
   }
 
@@ -130,13 +130,13 @@ import * as maplibregl from 'https://unpkg.com/maplibre-gl@6.16.0/dist/maplibre-
   });
   map.on('load', () => {
     map.addSource('parcels', { type: 'geojson', data: parcelData, promoteId: 'parcel_id' });
-    map.addLayer({ id: 'parcel-fill', type: 'fill', source: 'parcels', paint: { 'fill-color': ['match', ['get', 'zone'], 'Residential', '#55c4ae', 'Commercial', '#63a7ee', 'Industrial', '#efb45f', 'Mixed Use', '#bb91ec', '#55c4ae'], 'fill-opacity': 0.28 } });
-    map.addLayer({ id: 'parcel-line', type: 'line', source: 'parcels', paint: { 'line-color': ['case', ['boolean', ['feature-state', 'selected'], false], '#ffffff', '#d5f3ec'], 'line-width': ['case', ['boolean', ['feature-state', 'selected'], false], 2.4, 0.65], 'line-opacity': 0.8 } });
+    map.addLayer({ id: 'parcel-fill', type: 'fill', source: 'parcels', paint: { 'fill-color': ['match', ['get', 'zone'], 'Residential', '#3c8b7d', 'Commercial', '#527eb2', 'Industrial', '#bd8a2d', 'Mixed Use', '#8a6aa2', '#3c8b7d'], 'fill-opacity': 0.32 } });
+    map.addLayer({ id: 'parcel-line', type: 'line', source: 'parcels', paint: { 'line-color': ['case', ['boolean', ['feature-state', 'selected'], false], '#193a43', '#56746e'], 'line-width': ['case', ['boolean', ['feature-state', 'selected'], false], 2.4, 0.75], 'line-opacity': 0.82 } });
     map.addSource('flood', { type: 'geojson', data: floodData });
-    map.addLayer({ id: 'flood-fill', type: 'fill', source: 'flood', paint: { 'fill-color': '#459ee8', 'fill-opacity': 0.16 } });
-    map.addLayer({ id: 'flood-line', type: 'line', source: 'flood', paint: { 'line-color': '#60b9ff', 'line-width': 1.5, 'line-dasharray': [2, 2] } });
+    map.addLayer({ id: 'flood-fill', type: 'fill', source: 'flood', paint: { 'fill-color': '#77b6c9', 'fill-opacity': 0.18 } });
+    map.addLayer({ id: 'flood-line', type: 'line', source: 'flood', paint: { 'line-color': '#438aa0', 'line-width': 1.5, 'line-dasharray': [2, 2] } });
     map.addSource('utilities', { type: 'geojson', data: utilityData });
-    map.addLayer({ id: 'utility-points', type: 'circle', source: 'utilities', paint: { 'circle-radius': 5, 'circle-color': '#efbc68', 'circle-stroke-color': '#17232c', 'circle-stroke-width': 1.5 } });
+    map.addLayer({ id: 'utility-points', type: 'circle', source: 'utilities', paint: { 'circle-radius': 5, 'circle-color': '#f1cd76', 'circle-stroke-color': '#725a28', 'circle-stroke-width': 1.5 } });
     map.on('click', 'parcel-fill', e => selectParcel(e.features?.[0]));
     map.on('mouseenter', 'parcel-fill', () => { map.getCanvas().style.cursor = 'pointer'; });
     map.on('mouseleave', 'parcel-fill', () => { map.getCanvas().style.cursor = ''; });
