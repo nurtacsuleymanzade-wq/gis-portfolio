@@ -51,6 +51,7 @@
   let remoteStyleLoading = false;
   let localFallbackRestoring = false;
   let interactionsBound = false;
+  let mapHandlersBound = false;
   const localStyle = {
     version: 8,
     sources: {},
