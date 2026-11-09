@@ -1,3 +1,5 @@
+import * as maplibregl from 'https://unpkg.com/maplibre-gl@6.16.0/dist/maplibre-gl.mjs';
+
 (() => {
   const center = [-93.2923, 37.2153];
   const zones = ['Residential', 'Commercial', 'Industrial', 'Mixed Use'];
@@ -115,7 +117,7 @@
     const a = document.createElement('a'); a.href = url; a.download = name; a.click(); URL.revokeObjectURL(url);
   }
 
-  if (!window.maplibregl) {
+  if (!maplibregl.Map) {
     ui.error.hidden = false;
     ui.error.textContent = 'MapLibre could not load. Check your connection and reload.';
     return;
