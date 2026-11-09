@@ -2,6 +2,10 @@
 
 Static, browser-based parcel-screening prototype for a GIS portfolio. It uses MapLibre GL JS with a public demo vector style and locally generated **synthetic** parcel/context features around Springfield, Missouri.
 
+## Live demo
+
+[Open the interactive MapLibre demo](https://nurtacsuleymanzade-wq.github.io/gis-portfolio/demos/maplibre-parcel-demo/?rev=86befe1a3032b9c102efbc4fd7f20bca0ad33295).
+
 ## Run locally
 
 Serve this directory over HTTP (opening the file directly may block map requests):
