@@ -1,0 +1,57 @@
+{
+  "place": "Shahdag Mountain Resort, Qusar District, Azerbaijan",
+  "bbox": {
+    "minlon": 48.124,
+    "minlat": 41.278,
+    "maxlon": 48.172,
+    "maxlat": 41.338
+  },
+  "extracted": "2026-11-10",
+  "osm_api": "https://api.openstreetmap.org/api/0.6/map",
+  "license": "ODbL 1.0, © OpenStreetMap contributors",
+  "counts": {
+    "buildings.geojson": 132,
+    "pistes.geojson": 30,
+    "lifts.geojson": 12,
+    "roads.geojson": 175,
+    "areas.geojson": 15,
+    "pois.geojson": 17,
+    "trails.geojson": 5
+  },
+  "building_height_source": {
+    "height": 1,
+    "levels": 128,
+    "default": 3
+  },
+  "piste_difficulty": {
+    "intermediate": 9,
+    "unknown": 8,
+    "easy": 8,
+    "novice": 5
+  },
+  "lift_types": {
+    "chair_lift": 7,
+    "gondola": 3,
+    "rope_tow": 1,
+    "platter": 1
+  },
+  "poi_kinds": {
+    "hotel": 5,
+    "restaurant": 3,
+    "cafe": 5,
+    "shop": 3,
+    "theme_park": 1
+  },
+  "named_hotel_pois": [
+    "Shahdag & Spa Hotel",
+    "PIK Palace Shahdag Autograph Collection",
+    "Park Chalet, Shahdag, Autograph Collection",
+    "Zirve Hotel",
+    "المدينة الثلجية في باكو"
+  ],
+  "notes": [
+    "Features are clipped to the Shahdag ski-area bbox; nearby resorts (Suvar, Deluxe Park Qusar) are omitted on purpose.",
+    "Gaya Residences is listed on the official resort site but is not named in this OSM extract, so it is not added.",
+    "Building heights use OSM height or building:levels × 3.2 m; untagged buildings use a 9 m default."
+  ]
+}

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Shahdag 3D resort map (GeoJSON) · Nurtac Suleymanzade</title>
+  <link rel="icon" href="data:,"/>
+  <meta name="description" content="Interactive 3D map of Shahdag Mountain Resort, Qusar, Azerbaijan: OSM buildings, ski lifts, pistes and amenities as GeoJSON on real terrain. MapLibre GL JS, the open-source Mapbox GL JS fork."/>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css"/>
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <style>
+    :root{
+      --bg:#04060c; --card:rgba(12,18,32,.92); --text:#e8eef7; --muted:#9bb0c9;
+      --accent:#5bb8c4; --line:#1e2a3d; --panel-w:360px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;height:100%;background:var(--bg);color:var(--text);
+      font-family:Inter,system-ui,sans-serif;line-height:1.5}
+    #map{position:absolute;inset:0}
+    a{color:var(--accent)}
+    .panel{
+      position:absolute;top:14px;left:14px;z-index:2;width:min(var(--panel-w),calc(100% - 28px));
+      max-height:calc(100% - 28px);overflow:auto;background:var(--card);
+      border:1px solid var(--line);border-radius:16px;padding:16px 16px 14px;
+      box-shadow:0 16px 40px rgba(0,0,0,.35);backdrop-filter:blur(10px);
+    }
+    .eyebrow{letter-spacing:.12em;text-transform:uppercase;font-size:11px;color:var(--muted);margin:0}
+    h1{font-family:Georgia,serif;font-weight:500;font-size:1.35rem;line-height:1.25;margin:.25em 0 .4em}
+    .lead{color:var(--muted);font-size:13px;margin:0 0 12px}
+    .row{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+    button.chip, a.chip{
+      appearance:none;border:1px solid var(--line);background:#0b1220;color:var(--text);
+      border-radius:999px;padding:5px 10px;font-size:12px;cursor:pointer;text-decoration:none;
+    }
+    button.chip:hover, a.chip:hover{border-color:var(--accent);color:#fff}
+    button.chip.active{background:#12343a;border-color:var(--accent);color:#dff6f8}
+    h2{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:12px 0 6px}
+    .toggles label{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);padding:2px 0;cursor:pointer}
+    .toggles input{accent-color:var(--accent)}
+    .legend{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;font-size:12px;color:var(--muted)}
+    .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:middle}
+    .legend i.line{height:3px;border-radius:2px;width:16px;margin-bottom:3px}
+    .note,.credits{font-size:12px;color:var(--muted);margin:8px 0 0}
+    .credits{opacity:.9}
+    .nav{font-size:12px;margin-bottom:8px}
+    .nav a{color:var(--muted);text-decoration:none;margin-right:10px}
+    .nav a:hover{color:var(--accent)}
+    .maplibregl-popup-content{
+      background:#0c1220;color:var(--text);border:1px solid var(--line);
+      border-radius:10px;padding:10px 12px;box-shadow:0 8px 24px rgba(0,0,0,.4);
+      font-size:13px;min-width:140px;
+    }
+    .maplibregl-popup-anchor-bottom .maplibregl-popup-tip{border-top-color:#0c1220}
+    .maplibregl-popup-anchor-top .maplibregl-popup-tip{border-bottom-color:#0c1220}
+    .maplibregl-ctrl-attrib{font-size:10px}
+    .popup b{display:block;font-size:14px;margin-bottom:2px}
+    .popup .meta{color:var(--muted);font-size:12px}
+    html.cover-mode .panel,
+    html.cover-mode .maplibregl-ctrl-top-right,
+    html.cover-mode .maplibregl-ctrl-bottom-right{display:none !important}
+    @media (max-width:720px){
+      .panel{top:auto;bottom:0;left:0;width:100%;max-height:42%;border-radius:16px 16px 0 0}
+      h1{font-size:1.15rem}
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <aside class="panel">
+    <div class="nav"><a href="../../index.html">← Portfolio</a><a href="../index.html">Samples</a></div>
+    <p class="eyebrow">Sample · 3D GeoJSON map</p>
+    <h1>Shahdag Mountain Resort, Azerbaijan</h1>
+    <p class="lead">A real ski resort in Qusar District, drawn from OpenStreetMap as GeoJSON and draped on 3D terrain. Click a lift, piste, hotel or building for its OSM name and type. Nothing on this map was invented.</p>
+    <h2>Fly to</h2>
+    <div class="row" id="flytos"></div>
+    <h2>Layers</h2>
+    <div class="toggles">
+      <label><input type="checkbox" data-layers="pistes,piste-casing,piste-labels" checked/> Ski pistes</label>
+      <label><input type="checkbox" data-layers="lifts,lifts-tow,lift-casing,lift-labels" checked/> Lifts</label>
+      <label><input type="checkbox" data-layers="buildings" checked/> 3D buildings</label>
+      <label><input type="checkbox" data-layers="pois,poi-labels" checked/> Hotels &amp; amenities</label>
+      <label><input type="checkbox" data-layers="trails,trail-labels" checked/> Hiking trail (TCT)</label>
+      <label><input type="checkbox" data-layers="roads,paths,tracks,parking" checked/> Roads &amp; parking</label>
+      <label><input type="checkbox" data-layers="hillshade" checked/> Hillshade</label>
+    </div>
+    <h2>Basemap</h2>
+    <div class="row">
+      <button class="chip active" type="button" data-base="esri">Satellite (Esri)</button>
+      <button class="chip" type="button" data-base="s2">Sentinel-2 (EOX)</button>
+    </div>
+    <h2>Legend</h2>
+    <div class="legend">
+      <div><i class="line" style="background:#22c55e"></i>Novice piste</div>
+      <div><i class="line" style="background:#3b82f6"></i>Easy piste</div>
+      <div><i class="line" style="background:#ef4444"></i>Intermediate</div>
+      <div><i class="line" style="background:#94a3b8"></i>Difficulty untagged</div>
+      <div><i class="line" style="background:#f8fafc"></i>Gondola</div>
+      <div><i class="line" style="background:#fbbf24"></i>Chair / platter</div>
+      <div><i style="background:#e8d5b5"></i>Hotel building</div>
+      <div><i style="background:#dfe5ec"></i>Other building</div>
+    </div>
+    <h2>How it is built</h2>
+    <p class="note">MapLibre GL JS 4.7 (open-source fork of Mapbox GL JS) with the same style-spec, GeoJSON sources, fill-extrusion and terrain APIs a Mapbox GL job would use. A client Mapbox token would swap in Mapbox streets or satellite-streets without changing the GeoJSON or interaction code. Terrain is AWS Terrain Tiles (Terrarium / SRTM). Building heights use OSM <code>height</code> or <code>building:levels</code> × 3.2&nbsp;m; three untagged footprints use a 9&nbsp;m default.</p>
+    <h2>Honest limits</h2>
+    <p class="note">OSM at Shahdag is good but not complete: 12 lifts and 30 downhill segments are mapped, against about 20 lifts and 37 slopes on the official resort site, and no black/advanced grades are tagged yet. Gaya Residences is listed by the resort but is not named in this extract, so it is not added. Names follow OSM, including local spellings (Skalini, Aspen Qril). This is an indicative 3D resort map, not a surveyed as-built or an official trail map. No AI-generated geography.</p>
+    <p class="credits">Data: © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> (ODbL), extracted 10 Nov 2026 via the OSM API. Terrain: AWS Terrain Tiles. Imagery: Esri World Imagery (Esri, Maxar, Earthstar Geographics) or <a href="https://s2maps.eu">Sentinel-2 cloudless by EOX</a> (contains modified Copernicus Sentinel data, CC BY 4.0). Library: <a href="https://maplibre.org/">MapLibre GL JS</a>.</p>
+  </aside>
+<script>
+const DATA = 'data';
+const ESRI_TILES = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+const S2_TILES = 'https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg';
+const DEM_TILES = 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png';
+
+const VIEWS = {
+  overview: {center:[48.146, 41.308], zoom:13.55, pitch:62, bearing:18,
+    label:'Overview'},
+  village:  {center:[48.140, 41.320], zoom:15.4, pitch:58, bearing:-32,
+    label:'Hotel village'},
+  zirve:    {center:[48.1486, 41.3218], zoom:16.4, pitch:60, bearing:-20,
+    label:'Zirve Hotel'},
+  shahdag:  {center:[48.1366, 41.3196], zoom:16.4, pitch:60, bearing:-40,
+    label:'Shahdag Hotel & Spa'},
+  pik:      {center:[48.1351, 41.3192], zoom:16.5, pitch:60, bearing:-50,
+    label:'Pik Palace'},
+  park:     {center:[48.1346, 41.3197], zoom:16.5, pitch:60, bearing:-55,
+    label:'Park Chalet'},
+  aladas:   {center:[48.1628, 41.3324], zoom:15.6, pitch:64, bearing:20,
+    label:'Aladas Restaurant'},
+};
+
+const DIFF_COLOR = [
+  'match', ['get','difficulty'],
+  'novice','#22c55e',
+  'easy','#3b82f6',
+  'intermediate','#ef4444',
+  'advanced','#111111',
+  'expert','#111111',
+  '#94a3b8'
+];
+const LIFT_COLOR = [
+  'match', ['get','type'],
+  'gondola','#f8fafc',
+  'chair_lift','#fbbf24',
+  '#fb7185'
+];
+const POI_COLOR = [
+  'match', ['get','kind'],
+  'hotel','#f8e3b0',
+  'restaurant','#fb923c',
+  'cafe','#f59e0b',
+  'shop','#38bdf8',
+  'theme_park','#e879f9',
+  '#94a3b8'
+];
+
+function prettyType(p){
+  const t = (p.type || p.kind || '').replace(/_/g,' ');
+  const kind = p.kind || '';
+  if (kind === 'piste') return (p.difficulty && p.difficulty !== 'unknown' ? p.difficulty + ' ' : '') + (p.type || 'piste');
+  if (kind === 'lift') return t || 'lift';
+  return t || kind;
+}
+
+function popupHtml(p){
+  const title = p.label || p.name || prettyType(p);
+  const bits = [prettyType(p)];
+  if (p.height && (p.kind === 'hotel' || p.kind === 'building')) {
+    bits.push(p.height + ' m (' + (p.height_source === 'default' ? 'default' : p.height_source) + ')');
+  }
+  bits.push(p.id);
+  return `<div class="popup"><b>${title}</b><div class="meta">${bits.join(' · ')}</div></div>`;
+}
+
+const COVER = new URLSearchParams(location.search).get("cover") === "1";
+if (COVER) document.documentElement.classList.add("cover-mode");
+
+const map = new maplibregl.Map({
+  container: 'map',
+  hash: true,
+  center: VIEWS.overview.center,
+  zoom: VIEWS.overview.zoom,
+  pitch: VIEWS.overview.pitch,
+  bearing: VIEWS.overview.bearing,
+  minZoom: 11.5,
+  maxZoom: 17.8,
+  maxPitch: 80,
+  maxBounds: [[48.09, 41.25],[48.21, 41.37]],
+  attributionControl: false,
+  style: {
+    version: 8,
+    glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
+    sources: {
+      esri: {type:'raster', tiles:[ESRI_TILES], tileSize:256, maxzoom:19,
+        attribution:'Tiles © Esri — Esri, Maxar, Earthstar Geographics'},
+      s2: {type:'raster', tiles:[S2_TILES], tileSize:256, maxzoom:15,
+        attribution:'Sentinel-2 cloudless by EOX (CC BY 4.0)'},
+      dem: {type:'raster-dem', tiles:[DEM_TILES], encoding:'terrarium', tileSize:256, maxzoom:14,
+        attribution:'AWS Terrain Tiles / SRTM'},
+      demShade: {type:'raster-dem', tiles:[DEM_TILES], encoding:'terrarium', tileSize:256, maxzoom:14},
+    },
+    layers: [
+      {id:'esri', type:'raster', source:'esri'},
+      {id:'s2', type:'raster', source:'s2', layout:{visibility:'none'}},
+      {id:'hillshade', type:'hillshade', source:'demShade',
+        paint:{'hillshade-exaggeration':0.45,'hillshade-shadow-color':'#0b1220','hillshade-highlight-color':'#ffffff','hillshade-illumination-direction':220}},
+    ],
+    sky: {
+      'sky-color':'#7ec4e0',
+      'sky-horizon-blend':0.6,
+      'horizon-color':'#f0e4cf',
+      'horizon-fog-blend':0.7,
+      'fog-color':'#d7e2ea',
+      'fog-ground-blend':0.4
+    }
+  }
+});
+
+map.addControl(new maplibregl.NavigationControl({visualizePitch:true}), 'top-right');
+map.addControl(new maplibregl.AttributionControl({compact:true}), 'bottom-right');
+map.addControl(new maplibregl.ScaleControl({maxWidth:120}), 'bottom-right');
+
+const flyWrap = document.getElementById('flytos');
+Object.entries(VIEWS).forEach(([key, v]) => {
+  const b = document.createElement('button');
+  b.className = 'chip' + (key === 'overview' ? ' active' : '');
+  b.type = 'button';
+  b.textContent = v.label;
+  b.addEventListener('click', () => {
+    flyWrap.querySelectorAll('button').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    map.flyTo({center:v.center, zoom:v.zoom, pitch:v.pitch, bearing:v.bearing, duration:1800, essential:true});
+  });
+  flyWrap.appendChild(b);
+});
+
+document.querySelectorAll('[data-base]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-base]').forEach(x => x.classList.remove('active'));
+    btn.classList.add('active');
+    const isEsri = btn.dataset.base === 'esri';
+    map.setLayoutProperty('esri','visibility', isEsri ? 'visible' : 'none');
+    map.setLayoutProperty('s2','visibility', isEsri ? 'none' : 'visible');
+  });
+});
+
+document.querySelectorAll('.toggles input').forEach(inp => {
+  inp.addEventListener('change', () => {
+    inp.dataset.layers.split(',').forEach(id => {
+      if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', inp.checked ? 'visible' : 'none');
+    });
+  });
+});
+
+function addLineCasing(id, source, color, width){
+  map.addLayer({
+    id: id + '-casing', type:'line', source,
+    paint:{'line-color':'#041018','line-width':width,'line-opacity':0.7,'line-gap-width':0}
+  });
+}
+
+map.on('load', async () => {
+  map.setTerrain({source:'dem', exaggeration:1.12});
+
+  const files = {
+    roads: 'roads.geojson',
+    areas: 'areas.geojson',
+    pistes: 'pistes.geojson',
+    lifts: 'lifts.geojson',
+    trails: 'trails.geojson',
+    buildings: 'buildings.geojson',
+    pois: 'pois.geojson'
+  };
+  for (const [id, file] of Object.entries(files)) {
+    const data = await (await fetch(`${DATA}/${file}`)).json();
+    map.addSource(id, {type:'geojson', data, promoteId:'id'});
+  }
+
+  map.addLayer({
+    id:'parking', type:'fill', source:'areas',
+    filter:['==',['get','kind'],'parking'],
+    paint:{'fill-color':'#111827','fill-opacity':0.35,'fill-outline-color':'#94a3b8'}
+  });
+
+  map.addLayer({
+    id:'tracks', type:'line', source:'roads',
+    filter:['==',['get','kind'],'track'],
+    paint:{'line-color':'#d6c09a','line-width':1.2,'line-opacity':0.45,'line-dasharray':[3,2]}
+  });
+  map.addLayer({
+    id:'paths', type:'line', source:'roads',
+    filter:['==',['get','kind'],'path'],
+    paint:{'line-color':'#fde68a','line-width':1.6,'line-opacity':0.7,'line-dasharray':[2,1.4]}
+  });
+  map.addLayer({
+    id:'roads', type:'line', source:'roads',
+    filter:['==',['get','kind'],'road'],
+    paint:{
+      'line-color':'#f8fafc',
+      'line-opacity':0.8,
+      'line-width':['interpolate',['linear'],['zoom'],12,0.8,16,3.2]
+    }
+  });
+
+  map.addLayer({
+    id:'trail-casing', type:'line', source:'trails',
+    paint:{'line-color':'#0b3b2e','line-width':5,'line-opacity':0.85}
+  });
+  map.addLayer({
+    id:'trails', type:'line', source:'trails',
+    paint:{'line-color':'#34d399','line-width':2.2,'line-dasharray':[2,1.6],'line-opacity':0.95}
+  });
+  map.addLayer({
+    id:'trail-labels', type:'symbol', source:'trails',
+    layout:{
+      'symbol-placement':'line','text-field':['get','label'],'text-size':11,
+      'text-font':['Open Sans Regular','Arial Unicode MS Regular'],
+      'text-max-angle':30
+    },
+    paint:{'text-color':'#d1fae5','text-halo-color':'#041018','text-halo-width':1.2}
+  });
+
+  map.addLayer({
+    id:'piste-casing', type:'line', source:'pistes',
+    paint:{
+      'line-color':'#041018',
+      'line-width':['interpolate',['linear'],['zoom'],12,3.2,16,7],
+      'line-opacity':0.75
+    }
+  });
+  map.addLayer({
+    id:'pistes', type:'line', source:'pistes',
+    paint:{
+      'line-color': DIFF_COLOR,
+      'line-width':['interpolate',['linear'],['zoom'],12,1.8,16,4.2],
+      'line-opacity':0.95
+    }
+  });
+  map.addLayer({
+    id:'piste-labels', type:'symbol', source:'pistes',
+    filter:['!=',['get','label'],''],
+    layout:{
+      'symbol-placement':'line','text-field':['get','label'],'text-size':11,
+      'text-font':['Open Sans Regular','Arial Unicode MS Regular']
+    },
+    paint:{'text-color':'#f8fafc','text-halo-color':'#041018','text-halo-width':1.2}
+  });
+
+  map.addLayer({
+    id:'lift-casing', type:'line', source:'lifts',
+    paint:{'line-color':'#041018','line-width':5,'line-opacity':0.8}
+  });
+  map.addLayer({
+    id:'lifts', type:'line', source:'lifts',
+    filter:['in',['get','type'],['literal',['gondola','chair_lift']]],
+    paint:{
+      'line-color': LIFT_COLOR,
+      'line-width':['match',['get','type'],'gondola',3.2,2.4]
+    }
+  });
+  map.addLayer({
+    id:'lifts-tow', type:'line', source:'lifts',
+    filter:['!',['in',['get','type'],['literal',['gondola','chair_lift']]]],
+    paint:{
+      'line-color':'#fb7185',
+      'line-width':1.8,
+      'line-dasharray':[1.4,1.2]
+    }
+  });
+  map.addLayer({
+    id:'lift-labels', type:'symbol', source:'lifts',
+    filter:['!=',['get','label'],''],
+    layout:{
+      'symbol-placement':'line','text-field':['get','label'],'text-size':11,
+      'text-font':['Open Sans Regular','Arial Unicode MS Regular']
+    },
+    paint:{'text-color':'#fff7ed','text-halo-color':'#041018','text-halo-width':1.2}
+  });
+
+  map.addLayer({
+    id:'buildings', type:'fill-extrusion', source:'buildings',
+    paint:{
+      'fill-extrusion-height':['get','height'],
+      'fill-extrusion-base':0,
+      'fill-extrusion-color':['match',['get','kind'],'hotel','#e8d5b5','#dfe5ec'],
+      'fill-extrusion-opacity':0.92
+    }
+  });
+
+  map.addLayer({
+    id:'pois', type:'circle', source:'pois',
+    paint:{
+      'circle-color': POI_COLOR,
+      'circle-radius':['interpolate',['linear'],['zoom'],13,4,16,7],
+      'circle-stroke-color':'#041018',
+      'circle-stroke-width':1.2
+    }
+  });
+  map.addLayer({
+    id:'poi-labels', type:'symbol', source:'pois',
+    filter:['==',['get','named'],true],
+    layout:{
+      'text-field':['get','label'],
+      'text-size':12,
+      'text-font':['Open Sans Regular','Arial Unicode MS Regular'],
+      'text-offset':[0,1.1],
+      'text-anchor':'top',
+      'text-optional':true
+    },
+    paint:{'text-color':'#f8fafc','text-halo-color':'#041018','text-halo-width':1.3}
+  });
+
+  const clickable = ['buildings','pistes','lifts','lifts-tow','pois','trails','roads','paths','parking'];
+  clickable.forEach(id => {
+    map.on('mouseenter', id, () => { map.getCanvas().style.cursor = 'pointer'; });
+    map.on('mouseleave', id, () => { map.getCanvas().style.cursor = ''; });
+    map.on('click', id, (e) => {
+      const f = e.features[0];
+      new maplibregl.Popup({closeButton:false, maxWidth:'260px'})
+        .setLngLat(e.lngLat)
+        .setHTML(popupHtml(f.properties))
+        .addTo(map);
+    });
+  });
+});
+</script>
+</body>
+</html>
