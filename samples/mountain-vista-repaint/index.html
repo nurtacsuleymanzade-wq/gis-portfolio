@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Exterior repaint rendering – Phoenix flex/industrial · Nurtac Suleymanzade</title>
+<meta name="description" content="Before/after exterior repaint rendering of a Phoenix, AZ flex-industrial building in Blender Cycles, Sherwin-Williams palette."/>
+<style>
+:root{--bg:#04060c;--card:#0c1220;--text:#e8eef7;--muted:#9bb0c9;--accent:#5bb8c4;--line:#1e2a3d}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
+a{color:var(--accent)} .wrap{max-width:1200px;margin:0 auto;padding:24px 18px 64px}
+.eyebrow{letter-spacing:.12em;text-transform:uppercase;font-size:12px;color:var(--muted)}
+h1{font-family:Georgia,serif;font-weight:500;font-size:clamp(1.7rem,4vw,2.5rem);margin:.2em 0 .4em}
+.lead{color:var(--muted);max-width:70ch}.pill{border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:12px;color:var(--muted);display:inline-block;margin:0 6px 6px 0}
+img{width:100%;border-radius:14px;border:1px solid var(--line);display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:20px}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));margin-top:16px}
+.sw{display:flex;gap:12px;flex-wrap:wrap}.sw div{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.sw span{width:34px;height:34px;border-radius:8px;border:1px solid #333;display:inline-block}
+table{width:100%;border-collapse:collapse;font-size:13px} th,td{border-bottom:1px solid var(--line);padding:8px;text-align:left}
+figcaption{color:var(--muted);font-size:13px;margin-top:6px}
+.nav a{text-decoration:none;color:var(--muted);margin-right:14px;font-size:14px}
+</style></head><body><div class="wrap">
+<nav class="nav"><a href="../../index.html">← Portfolio</a></nav>
+<p class="eyebrow">Sample · Exterior repaint rendering</p>
+<h1>Before / after repaint – Phoenix flex-industrial building</h1>
+<p class="lead">Concept repaint study of a 1999-era Phoenix (Ahwatukee) flex/industrial building: the existing white scheme vs. a three-colour Sherwin-Williams scheme (charcoal parapet band, light-gray body, white pilasters). Same model, same camera, same sun &ndash; only the paint zones change, so the owner sees exactly what the repaint does.</p>
+<p><span class="pill">Blender 4.2 · Cycles</span><span class="pill">AgX colour management</span><span class="pill">Paint-zone materials</span><span class="pill">SW colour codes</span><span class="pill">Open-data demo, not client work</span></p>
+<figure><img src="./before_after.jpg" alt="Before and after repaint rendering"/><figcaption>Left: existing scheme (matched to public 2021 property photos). Right: proposed palette.</figcaption></figure>
+<div class="grid">
+<figure><img src="./before.jpg" alt="Before"/><figcaption>BEFORE &ndash; white body, warm-gray reveal band, blue reflective clerestory.</figcaption></figure>
+<figure><img src="./after.jpg" alt="After"/><figcaption>AFTER &ndash; Iron Ore parapet band + reveal, First Star body, Pure White pilasters.</figcaption></figure>
+</div>
+<div class="card"><h3 style="margin-top:0">Palette (proposed)</h3>
+<div class="sw"><div><span style="background:#434341"></span>SW 7069 Iron Ore &ndash; parapet band, reveal, clerestory frame</div>
+<div><span style="background:#DAD9D4"></span>SW 7646 First Star &ndash; main body</div>
+<div><span style="background:#EDECE6"></span>SW 7005 Pure White &ndash; pilasters / accents</div></div>
+<p class="lead" style="margin-top:12px">Screen hex values are Sherwin-Williams&rsquo; published approximations; final approval should be against physical chips on site.</p></div>
+<div class="card"><h3 style="margin-top:0">How it is built</h3>
+<table><tr><th>Step</th><th>What</th></tr>
+<tr><td>Reference</td><td>Massing, reveal band, storefront rhythm and blue clerestory matched to the public marketing photos of the property (source below). Not a survey; dimensions are estimated.</td></tr>
+<tr><td>Paint zones</td><td>Each repaintable surface is its own material (PAINT_Body, PAINT_UpperParapet, PAINT_RevealBand, PAINT_Pilaster_Accent, PAINT_ClerestoryFrame) with one colour node &ndash; a new scheme is a 5-value change, which keeps revision rounds fast.</td></tr>
+<tr><td>Look</td><td>Stucco texture as subtle luminance variation, light base grime, physical (Nishita) sky at ~38° sun, AgX view transform, 160 spp + OpenImageDenoise.</td></tr>
+<tr><td>Context</td><td>Desert landscaping, parking layout and a South Mountain backdrop (the site sits just south of South Mountain Park).</td></tr></table></div>
+<div class="card"><h3 style="margin-top:0">Honest limits of this demo</h3>
+<p class="lead">Built in one evening from public photos: no palm trees, cars or signage yet, and the backdrop ridge is procedural. A paid job would start from the owner&rsquo;s photos/elevations of every façade and add those entourage details.</p>
+<p class="lead">Photo reference (not reproduced here): Westmount Realty Capital property page, <a href="https://westmountrc.com/property/mountain-vista-commerce-center/">westmountrc.com/property/mountain-vista-commerce-center</a>. Vegetation and textures: Poly Haven (CC0). No AI image generation used.</p></div>
+</div></body></html>
