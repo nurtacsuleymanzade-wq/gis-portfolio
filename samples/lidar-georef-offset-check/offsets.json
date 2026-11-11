@@ -1,0 +1,42 @@
+[
+ {
+  "place": "Los Angeles",
+  "easting_ftUS": 6485937,
+  "northing_ftUS": 1840672,
+  "dE_ft": 12.97,
+  "dN_ft": 3.68,
+  "total_ft": 13.48
+ },
+ {
+  "place": "Santa Barbara",
+  "easting_ftUS": 6049004,
+  "northing_ftUS": 1979563,
+  "dE_ft": 12.1,
+  "dN_ft": 3.96,
+  "total_ft": 12.73
+ },
+ {
+  "place": "Bakersfield",
+  "easting_ftUS": 6263639,
+  "northing_ftUS": 2333381,
+  "dE_ft": 12.53,
+  "dN_ft": 4.67,
+  "total_ft": 13.37
+ },
+ {
+  "place": "Barstow",
+  "easting_ftUS": 6861505,
+  "northing_ftUS": 2151406,
+  "dE_ft": 13.72,
+  "dN_ft": 4.3,
+  "total_ft": 14.38
+ },
+ {
+  "place": "Ventura",
+  "easting_ftUS": 6171984,
+  "northing_ftUS": 1926780,
+  "dE_ft": 12.34,
+  "dN_ft": 3.85,
+  "total_ft": 12.93
+ }
+]

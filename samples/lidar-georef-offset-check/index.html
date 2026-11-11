@@ -1,0 +1,21 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LiDAR horizontal offset check: CA State Plane Zone 5 (US survey ft)</title>
+<style>body{font-family:system-ui,sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem;line-height:1.5;color:#222}table{border-collapse:collapse}td,th{border:1px solid #ccc;padding:4px 8px;text-align:right}th:first-child,td:first-child{text-align:left}img{max-width:100%}code{background:#f3f3f3;padding:1px 4px}</style></head><body>
+<h1>LiDAR horizontal offset check: NAD83(2011) / California Zone 5, US survey feet</h1>
+<p>Diagnostic sample for a DJI Terra / Zenmuse L3 point cloud that sits a few feet to ~14 ft off surveyed ground control while RTK stayed FIXED. A systematic offset of that size usually comes from the coordinate pipeline, not GNSS quality. The first and cheapest test is the foot definition.</p>
+<h2>1. Mixing US survey feet and international feet</h2>
+<p>One US survey foot = 1200/3937 m; one international foot = 0.3048 m. The ratio differs by 2&nbsp;ppm, so a coordinate read in the wrong foot moves by 2&nbsp;ppm of its own grid value. In Zone 5 eastings are ~6.0–6.9 million ft and northings ~1.8–2.4 million ft, which gives:</p>
+<table id="t"><tr><th>Place</th><th>Easting (ftUS)</th><th>Northing (ftUS)</th><th>ΔE (ft)</th><th>ΔN (ft)</th><th>Total (ft)</th></tr></table>
+<p><img src="ftus_vs_ft_shift_zone5.png" alt="Shift map across Zone 5"></p>
+<p>Signature: easting moves ~12–14 ft and northing ~3–5 ft, almost a pure translation over a small site (scale error only 2 ppm). If the 10 GCP residuals fit a near-constant shift of that size and direction, the fix is a unit redefinition at the step where it was mixed (Terra output CRS, Emlid base entry, or the surveyor's CSV import), not a re-flight.</p>
+<h2>2. Other causes, and how each one looks in the residuals</h2>
+<ul>
+<li><b>Base coordinate entered in the wrong datum/epoch</b> (e.g., NAD83(2011) values typed into a field that expects WGS84/ITRF, or the reverse): a constant translation of roughly a metre-scale in California, the same at every GCP.</li>
+<li><b>Grid vs ground / localization</b>: a scale about a project origin; offsets grow with distance from that origin.</li>
+<li><b>Rotation</b> (wrong zone, convergence or a site calibration): residuals rotate around a point; 2D Helmert fit shows a non-zero angle.</li>
+<li><b>Trajectory / IMU or boresight</b>: offsets change with flight-line direction and are not one rigid transform.</li>
+</ul>
+<h2>3. Method</h2>
+<p>Fit a 2D similarity (Helmert) transform from LiDAR to survey coordinates on the 10 GCPs, read translation, scale (ppm) and rotation, and compare with the signatures above. Then validate the corrected LAS on independent checkpoints (RMSE, max residual). Code: <a href="offset_check.py">offset_check.py</a> (pyproj, EPSG:2229).</p>
+<script>fetch('offsets.json').then(r=>r.json()).then(rows=>{const t=document.getElementById('t');rows.forEach(r=>{t.insertAdjacentHTML('beforeend',`<tr><td>${r.place}</td><td>${r.easting_ftUS.toLocaleString()}</td><td>${r.northing_ftUS.toLocaleString()}</td><td>${r.dE_ft}</td><td>${r.dN_ft}</td><td>${r.total_ft}</td></tr>`)})})</script>
+</body></html>
