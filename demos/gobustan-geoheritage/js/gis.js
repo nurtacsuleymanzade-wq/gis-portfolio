@@ -1,4 +1,4 @@
-const GEOJSON_URL = "./data/gobustan_unesco_reference_points.geojson";
+const GEOJSON_URL = "./data/gobustan_unesco_reference_points.geojson?v=20261113a";
 const LEAFLET_CSS = "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css";
 const LEAFLET_JS = "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js";
 const OSM_TILES = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";

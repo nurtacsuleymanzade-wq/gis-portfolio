@@ -1,4 +1,4 @@
-import("./gis.js").then(function(gis) {
+import("./gis.js?v=20261113a").then(function(gis) {
   gis.initGeoExplorer();
 }).catch(function(error) {
   console.error("Geographic explorer could not start", error);
@@ -6,7 +6,7 @@ import("./gis.js").then(function(gis) {
 
 async function openFallback(reason) {
   try {
-    const fallback = await import("./fallback.js");
+    const fallback = await import("./fallback.js?v=20261113a");
     fallback.initFallback(reason);
   } catch (error) {
     const box = document.getElementById("load-error");
@@ -18,7 +18,7 @@ async function openFallback(reason) {
 
 async function boot() {
   try {
-    await import("./main.js");
+    await import("./main.js?v=20261113a");
   } catch (error) {
     console.error("3D experience could not start", error);
     await openFallback("3d-error");

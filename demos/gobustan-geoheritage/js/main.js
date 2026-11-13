@@ -363,7 +363,7 @@ function buildWorld() {
 function showLoadError(err) {
   fallbackActive = true;
   console.error("Gobustan asset loading failed", err);
-  import("./fallback.js").then(function(fallback) {
+  import("./fallback.js?v=20261113a").then(function(fallback) {
     fallback.initFallback("asset-error");
   }).catch(function(error) {
     const box = document.getElementById("load-error");
