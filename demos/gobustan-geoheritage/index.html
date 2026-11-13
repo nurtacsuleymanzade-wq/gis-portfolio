@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1b2725">
+<title>Gobustan — Layers of the Landscape</title>
+<style>
+:root{color-scheme:dark;--ink:#f4ecd9;--muted:#b8b19f;--gold:#e9b95c;--panel:rgba(18,29,28,.82);--line:rgba(238,218,177,.18)}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#b99360;font:14px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);overscroll-behavior:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+#game{display:block;width:100vw;height:100vh;height:100dvh;touch-action:none;cursor:grab}
+#hud{position:fixed;inset:0;pointer-events:none;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
+.panel{background:var(--panel);border:1px solid var(--line);backdrop-filter:blur(12px);box-shadow:0 16px 48px rgba(0,0,0,.18)}
+.topbar{position:absolute;left:22px;right:22px;top:17px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.brand{display:flex;gap:12px;align-items:center;text-transform:uppercase;letter-spacing:.13em;font-size:10px;color:#e8ddc8}
+.brand-mark{width:34px;height:34px;border:1px solid rgba(233,185,92,.7);border-radius:50%;display:grid;place-items:center;color:var(--gold);font-size:15px}
+.brand strong{display:block;color:#fff7e6;font-size:12px;letter-spacing:.17em}
+.top-actions{display:flex;gap:8px;pointer-events:auto}
+.small-btn,.action-btn,.start-btn{border:1px solid rgba(233,185,92,.48);background:rgba(25,35,32,.9);color:var(--ink);font:inherit;cursor:pointer}
+.small-btn{padding:8px 11px;border-radius:999px;font-size:11px;letter-spacing:.1em}
+.small-btn:hover,.action-btn:hover,.start-btn:hover{background:#35443d}
+#stats{position:absolute;left:22px;top:72px;padding:10px 14px;border-radius:12px;min-width:188px}
+.eyebrow{font-size:9px;letter-spacing:.17em;text-transform:uppercase;color:var(--gold)}
+.stat-line{display:flex;align-items:baseline;gap:9px;margin-top:3px}
+.stat-line strong{font-size:18px;font-weight:600}
+.stat-line span{font-size:11px;color:var(--muted)}
+#coords{margin-top:4px;font-size:10px;color:#d7ceb8;letter-spacing:.05em}
+#map-card{position:absolute;right:22px;top:72px;width:208px;padding:12px;border-radius:12px}
+.map-head{display:flex;justify-content:space-between;align-items:center}
+.map-head strong{font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.map-head span{font-size:9px;color:var(--muted)}
+#minimap{display:block;width:100%;height:116px;margin-top:6px}
+.map-note{font-size:9px;color:#c7bda8;line-height:1.35}
+#near-prompt{position:absolute;left:50%;bottom:35px;transform:translateX(-50%);padding:10px 15px;border-radius:999px;color:#fff5dd;font-size:11px;letter-spacing:.04em;white-space:nowrap;text-align:center;display:none}
+#crosshair{position:absolute;left:50%;top:50%;width:8px;height:8px;border:1px solid rgba(255,244,216,.75);border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 0 4px rgba(28,37,32,.18)}
+#controls{position:absolute;left:22px;bottom:18px;color:#e7ddca;font-size:10px;letter-spacing:.04em;padding:8px 11px;border-radius:9px}
+#controls b{color:var(--gold);font-weight:600}
+#touch-controls{display:none;position:absolute;inset:0;pointer-events:none}
+#joy{position:absolute;left:24px;bottom:26px;width:104px;height:104px;border:1px solid rgba(255,246,226,.35);border-radius:50%;background:rgba(22,32,30,.28);pointer-events:auto;touch-action:none}
+#knob{position:absolute;left:31px;top:31px;width:40px;height:40px;border-radius:50%;background:rgba(233,185,92,.62);border:1px solid rgba(255,249,230,.72);transform:translate(0,0)}
+#inspect{position:absolute;right:26px;bottom:38px;width:72px;height:72px;border-radius:50%;pointer-events:auto;touch-action:none;background:rgba(20,32,29,.86);border:1px solid rgba(233,185,92,.65);color:var(--gold);font-size:10px;letter-spacing:.1em}
+#info{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(470px,calc(100vw - 34px));padding:22px 23px 18px;border-radius:18px;display:none;pointer-events:auto}
+#info h2{font-size:24px;line-height:1.12;margin:7px 0 10px;font-weight:550}
+#info p{font-size:13px;line-height:1.65;color:#ded6c5;margin:0 0 12px}
+#info .source{font-size:10px;color:#b9ae98}
+#info a{color:#f1c875;text-decoration:none;border-bottom:1px solid rgba(241,200,117,.45)}
+#close-info{margin-top:16px;border:0;background:var(--gold);color:#1b2725;border-radius:999px;padding:9px 15px;font:600 11px/1.2 system-ui,sans-serif;cursor:pointer}
+#start{position:absolute;inset:0;display:grid;place-items:center;padding:20px;pointer-events:auto;background:linear-gradient(90deg,rgba(13,22,22,.75),rgba(13,22,22,.28) 55%,rgba(13,22,22,.12))}
+.start-card{width:min(560px,100%);padding:clamp(24px,5vw,42px);border-radius:20px;margin-right:auto;margin-left:min(7vw,82px)}
+.start-card .eyebrow{font-size:10px}
+.start-card h1{font-size:clamp(35px,6vw,58px);line-height:.98;letter-spacing:-.04em;margin:13px 0 15px;font-weight:560}
+.start-card p{max-width:440px;color:#e1d8c7;line-height:1.65;font-size:14px}
+.start-meta{display:flex;gap:8px;flex-wrap:wrap;margin:17px 0 21px}
+.pill{font-size:10px;color:#d6c9ac;border:1px solid rgba(233,185,92,.3);padding:6px 9px;border-radius:999px;background:rgba(18,29,28,.45)}
+.start-btn{padding:12px 17px;border-radius:999px;background:var(--gold);color:#1b2725;font-weight:700;letter-spacing:.04em}
+.start-btn:disabled{opacity:.55;cursor:wait}
+#disclaimer{font-size:10px;color:#c6bca7;margin-top:15px;max-width:470px}
+#disclaimer a{color:#f1c875}
+#load-error{display:none;color:#ffc7a6;background:#3c201c;padding:10px;border-radius:8px;margin-top:12px;font-size:12px}
+@media(max-width:700px){
+ .topbar{left:12px;right:12px;top:12px}.brand{gap:8px;font-size:8px}.brand-mark{width:30px;height:30px}.brand strong{font-size:10px}
+ #stats{left:12px;top:57px;min-width:144px;padding:8px 10px}.stat-line strong{font-size:15px}
+ #map-card{right:12px;top:57px;width:165px;padding:8px}#minimap{height:91px}.map-note{font-size:8px}
+ #controls{display:none}#touch-controls{display:block}
+ .start-card{margin:0;width:min(510px,100%);background:rgba(18,29,28,.74);padding:25px;border-radius:18px}
+ #near-prompt{bottom:125px;max-width:85vw;white-space:normal}
+ #info{top:46%}
+}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+</head>
+<body>
+<canvas id="game"></canvas>
+<div id="hud">
+  <div class="topbar">
+    <div class="brand"><div class="brand-mark">◉</div><div><strong>Gobustan</strong>Geoheritage fieldnotes</div></div>
+    <div class="top-actions"><button class="small-btn" id="lang">EN / AZ</button><button class="small-btn" id="reset">RESTART</button></div>
+  </div>
+  <div id="stats" class="panel">
+    <div class="eyebrow" id="stats-label">FIELD LOG · ROUTE SKETCH</div>
+    <div class="stat-line"><strong id="progress">0 / 3</strong><span id="progress-label">stops explored</span></div>
+    <div id="coords">LOCAL GRID · E 050m · N 050m</div>
+  </div>
+  <div id="map-card" class="panel">
+    <div class="map-head"><strong id="map-title">EXPEDITION MAP</strong><span>N ↑</span></div>
+    <svg id="minimap" viewBox="0 0 180 112" aria-label="Schematic expedition route">
+      <path d="M90 12 L90 45 L135 68 L52 91" fill="none" stroke="rgba(233,185,92,.72)" stroke-width="2.3" stroke-dasharray="4 4"/>
+      <path d="M14 98 L20 98 M14 98 L14 92" stroke="rgba(238,218,177,.5)" stroke-width="1"/>
+      <text x="27" y="101" fill="rgba(238,218,177,.62)" font-size="7">LOCAL GRID · m</text>
+      <circle id="stop-0" cx="90" cy="45" r="4" fill="#e9b95c" stroke="#fff4d9" stroke-width="1"/>
+      <circle id="stop-1" cx="135" cy="68" r="4" fill="#e9b95c" stroke="#fff4d9" stroke-width="1"/>
+      <circle id="stop-2" cx="52" cy="91" r="4" fill="#e9b95c" stroke="#fff4d9" stroke-width="1"/>
+      <circle id="map-player" cx="90" cy="12" r="3" fill="#d9fff2" stroke="#17312b" stroke-width="1"/>
+    </svg>
+    <div class="map-note" id="map-note">Concept route · illustrative, not an official trail</div>
+  </div>
+  <div id="crosshair"></div>
+  <div id="near-prompt" class="panel">SPACE · INSPECT SITE</div>
+  <div id="controls" class="panel"><b>WASD</b> move · <b>drag</b> look · <b>SPACE</b> inspect</div>
+  <div id="touch-controls">
+    <div id="joy"><div id="knob"></div></div>
+    <button id="inspect" class="action-btn">EXPLORE</button>
+  </div>
+  <div id="info" class="panel">
+    <div class="eyebrow" id="info-kicker">FIELD NOTE 01 · ROCK ART</div>
+    <h2 id="info-title"></h2>
+    <p id="info-copy"></p>
+    <div class="source" id="info-source"></div>
+    <button id="close-info">CONTINUE ROUTE</button>
+  </div>
+  <div id="start">
+    <div class="start-card panel">
+      <div class="eyebrow" id="start-eyebrow">AZERBAIJAN · CULTURAL LANDSCAPE</div>
+      <h1 id="start-title">Layers of<br>the Landscape</h1>
+      <p id="start-copy">Follow a short geotourism route through a stylized semi-desert landscape. Discover rock art, the resonant stone, and the spatial story of Gobustan.</p>
+      <div class="start-meta"><span class="pill">UNESCO · 2007</span><span class="pill">3 field stops</span><span class="pill">EN / AZ</span></div>
+      <button class="start-btn" id="start-btn" disabled>LOADING LANDSCAPE…</button>
+      <div id="disclaimer">Portfolio concept: terrain and route are illustrative, not a surveyed GIS surface or official visitor trail. Facts are sourced to UNESCO and Azerbaijan Travel. 3D models generated with <a href="https://www.thrixel.com/" target="_blank" rel="noopener">Thrixel</a>.</div>
+      <div id="load-error"></div>
+    </div>
+  </div>
+</div>
+<script type="module" src="./js/main.js"></script>
+</body>
+</html>
