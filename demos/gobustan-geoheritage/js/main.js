@@ -38,6 +38,7 @@ const touchMove = { x: 0, y: 0 };
 let started = false;
 let infoOpen = false;
 let activeInfoIndex = -1;
+let fallbackActive = false;
 let language = "en";
 let nearbyIndex = -1;
 let lastFrame = 0;
@@ -141,6 +142,7 @@ function buildTerrain() {
   const count = row * row;
   const positions = new Float32Array(count * 3);
   const colors = new Float32Array(count * 3);
+  const uvs = new Float32Array(count * 2);
   const indices = new Uint32Array(segments * segments * 6);
   let k = 0;
   for (let j = 0; j <= segments; j++) {
@@ -150,6 +152,8 @@ function buildTerrain() {
       const h = terrainHeight(x, z);
       const p = (j * row + i) * 3;
       positions[p] = x; positions[p + 1] = h; positions[p + 2] = z;
+      const uv = (j * row + i) * 2;
+      uvs[uv] = i / segments; uvs[uv + 1] = j / segments;
       const tint = 0.92 + 0.045 * Math.sin(x * 0.51) * Math.cos(z * 0.39);
       colors[p] = 0.74 * tint; colors[p + 1] = 0.62 * tint; colors[p + 2] = 0.46 * tint;
       if (i < segments && j < segments) {
@@ -162,6 +166,7 @@ function buildTerrain() {
   const geo = new THREE.BufferGeometry();
   geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
   geo.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+  geo.setAttribute("uv", new THREE.BufferAttribute(uvs, 2));
   geo.setIndex(new THREE.BufferAttribute(indices, 1));
   geo.computeVertexNormals();
   const mat = new THREE.MeshStandardMaterial({ map: makeGroundTexture(), vertexColors: true, roughness: 0.98 });
@@ -312,11 +317,16 @@ function buildWorld() {
   addMapMarkers();
 }
 function showLoadError(err) {
-  const box = document.getElementById("load-error");
-  box.style.display = "block";
-  box.textContent = "The 3D models did not load. Refresh the page to try again.";
-  document.getElementById("start-btn").disabled = true;
+  fallbackActive = true;
   console.error("Gobustan asset loading failed", err);
+  import("./fallback.js").then(function(fallback) {
+    fallback.initFallback("asset-error");
+  }).catch(function(error) {
+    const box = document.getElementById("load-error");
+    box.style.display = "block";
+    box.textContent = "The experience could not start. Please refresh the page or try another browser.";
+    console.error("Fallback could not start", error);
+  });
 }
 function setLanguage() {
   const t = copy[language];
@@ -514,6 +524,7 @@ function fixedUpdate(dt) {
   sceneClock.elapsed += dt;
 }
 function animate(ts) {
+  if (fallbackActive) return;
   requestAnimationFrame(animate);
   const dt = lastFrame ? Math.min(0.05, Math.max(0, (ts - lastFrame) / 1000)) : 0;
   lastFrame = ts; accumulator += dt;

@@ -12,7 +12,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#b99360;fon
 #game{display:block;width:100vw;height:100vh;height:100dvh;touch-action:none;cursor:grab}
 #hud{position:fixed;inset:0;pointer-events:none;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
 .panel{background:var(--panel);border:1px solid var(--line);backdrop-filter:blur(12px);box-shadow:0 16px 48px rgba(0,0,0,.18)}
-.topbar{position:absolute;left:22px;right:22px;top:17px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.topbar{position:absolute;left:22px;right:22px;top:17px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;z-index:20}
 .brand{display:flex;gap:12px;align-items:center;text-transform:uppercase;letter-spacing:.13em;font-size:10px;color:#e8ddc8}
 .brand-mark{width:34px;height:34px;border:1px solid rgba(233,185,92,.7);border-radius:50%;display:grid;place-items:center;color:var(--gold);font-size:15px}
 .brand strong{display:block;color:#fff7e6;font-size:12px;letter-spacing:.17em}
@@ -40,13 +40,13 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#b99360;fon
 #joy{position:absolute;left:24px;bottom:26px;width:104px;height:104px;border:1px solid rgba(255,246,226,.35);border-radius:50%;background:rgba(22,32,30,.28);pointer-events:auto;touch-action:none}
 #knob{position:absolute;left:31px;top:31px;width:40px;height:40px;border-radius:50%;background:rgba(233,185,92,.62);border:1px solid rgba(255,249,230,.72);transform:translate(0,0)}
 #inspect{position:absolute;right:26px;bottom:38px;width:72px;height:72px;border-radius:50%;pointer-events:auto;touch-action:none;background:rgba(20,32,29,.86);border:1px solid rgba(233,185,92,.65);color:var(--gold);font-size:10px;letter-spacing:.1em}
-#info{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(470px,calc(100vw - 34px));padding:22px 23px 18px;border-radius:18px;display:none;pointer-events:auto}
+#info{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(470px,calc(100vw - 34px));padding:22px 23px 18px;border-radius:18px;display:none;pointer-events:auto;z-index:12}
 #info h2{font-size:24px;line-height:1.12;margin:7px 0 10px;font-weight:550}
 #info p{font-size:13px;line-height:1.65;color:#ded6c5;margin:0 0 12px}
 #info .source{font-size:10px;color:#b9ae98}
 #info a{color:#f1c875;text-decoration:none;border-bottom:1px solid rgba(241,200,117,.45)}
 #close-info{margin-top:16px;border:0;background:var(--gold);color:#1b2725;border-radius:999px;padding:9px 15px;font:600 11px/1.2 system-ui,sans-serif;cursor:pointer}
-#start{position:absolute;inset:0;display:grid;place-items:center;padding:20px;pointer-events:auto;background:linear-gradient(90deg,rgba(13,22,22,.75),rgba(13,22,22,.28) 55%,rgba(13,22,22,.12))}
+#start{position:absolute;inset:0;display:grid;place-items:center;padding:20px;pointer-events:auto;z-index:10;background:linear-gradient(90deg,rgba(13,22,22,.75),rgba(13,22,22,.28) 55%,rgba(13,22,22,.12))}
 .start-card{width:min(560px,100%);padding:clamp(24px,5vw,42px);border-radius:20px;margin-right:auto;margin-left:min(7vw,82px)}
 .start-card .eyebrow{font-size:10px}
 .start-card h1{font-size:clamp(35px,6vw,58px);line-height:.98;letter-spacing:-.04em;margin:13px 0 15px;font-weight:560}
@@ -58,6 +58,29 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#b99360;fon
 #disclaimer{font-size:10px;color:#c6bca7;margin-top:15px;max-width:470px}
 #disclaimer a{color:#f1c875}
 #load-error{display:none;color:#ffc7a6;background:#3c201c;padding:10px;border-radius:8px;margin-top:12px;font-size:12px}
+#fallback-view{display:none;position:absolute;inset:0;overflow:auto;pointer-events:auto;z-index:25;background:radial-gradient(circle at 70% 8%,#78613f 0,#29372f 44%,#172420 100%);padding:clamp(22px,5vw,60px) max(20px,env(safe-area-inset-right,0px)) max(28px,env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px))}
+.fb-wrap{max-width:1060px;margin:0 auto}
+.fb-header{display:flex;justify-content:space-between;align-items:center;gap:14px}
+.fb-brand{letter-spacing:.16em;text-transform:uppercase;font-size:10px;color:#eac777}
+.fb-brand strong{display:block;color:#fff7e6;font-size:14px;margin-bottom:3px}
+.fb-headline{margin:42px 0 24px;max-width:720px}
+.fb-headline h1{font-size:clamp(34px,5.5vw,58px);line-height:1.02;letter-spacing:-.04em;font-weight:560;margin:10px 0 12px}
+.fb-headline p{color:#ddd4c1;max-width:660px;margin:0;line-height:1.65}
+.fb-layout{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}
+.fb-map,.fb-note{border-radius:18px;padding:22px}
+.fb-map{min-height:355px;position:relative;overflow:hidden;background:linear-gradient(145deg,rgba(187,143,87,.34),rgba(33,49,40,.8)),radial-gradient(ellipse at 30% 70%,#9e7b4d,#43503b 60%,#25372d)}
+.fb-map svg{position:absolute;inset:45px 30px 25px;width:calc(100% - 60px);height:calc(100% - 70px);opacity:.8}
+.fb-map-title{position:relative;font-size:10px;color:#f1d99e;letter-spacing:.15em;text-transform:uppercase}
+.fb-point{position:absolute;width:52px;height:52px;border-radius:50%;border:1px solid #f7dfaa;background:#253a31;color:#f6d993;font:700 13px system-ui;cursor:pointer;box-shadow:0 5px 18px rgba(0,0,0,.28)}
+.fb-point:hover,.fb-point[aria-pressed="true"]{background:#e9b95c;color:#1b2725}
+.fb-point.one{left:20%;top:23%}.fb-point.two{left:64%;top:42%}.fb-point.three{left:28%;top:70%}
+.fb-note{min-height:355px;display:flex;flex-direction:column}
+.fb-note h2{font-size:28px;line-height:1.12;letter-spacing:-.025em;margin:14px 0}
+.fb-note p{color:#ded6c5;line-height:1.7;margin:0}
+.fb-note a,.fb-footer a{color:#f1c875}
+.fb-source{margin-top:auto;padding-top:22px;font-size:11px}
+.fb-progress{margin-top:18px;color:#d9c9a6;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.fb-footer{margin-top:22px;font-size:11px;color:#c3b9a4;line-height:1.6}
 @media(max-width:700px){
  .topbar{left:12px;right:12px;top:12px}.brand{gap:8px;font-size:8px}.brand-mark{width:30px;height:30px}.brand strong{font-size:10px}
  #stats{left:12px;top:57px;min-width:144px;padding:8px 10px}.stat-line strong{font-size:15px}
@@ -66,6 +89,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#b99360;fon
  .start-card{margin:0;width:min(510px,100%);background:rgba(18,29,28,.74);padding:25px;border-radius:18px}
  #near-prompt{bottom:125px;max-width:85vw;white-space:normal}
  #info{top:46%}
+ .fb-headline{margin:32px 0 20px}.fb-layout{grid-template-columns:1fr}.fb-map{min-height:280px}.fb-note{min-height:230px}.fb-point{width:48px;height:48px}
 }
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
@@ -109,6 +133,38 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#b99360;fon
     <div class="source" id="info-source"></div>
     <button id="close-info">CONTINUE ROUTE</button>
   </div>
+  <div id="fallback-view">
+    <main class="fb-wrap">
+      <div class="fb-header">
+        <div class="fb-brand"><strong>GOBUSTAN</strong><span id="fb-mode">2D STORY MAP</span></div>
+        <button class="small-btn" id="fb-lang">EN / AZ</button>
+      </div>
+      <div class="fb-headline">
+        <div class="eyebrow" id="fb-eyebrow">AZERBAIJAN · CULTURAL LANDSCAPE</div>
+        <h1 id="fb-headline">Layers of the Landscape</h1>
+        <p id="fb-intro">Explore the heritage of Gobustan through three interpretive stops.</p>
+      </div>
+      <div class="fb-layout">
+        <div class="fb-map panel">
+          <div class="fb-map-title" id="fb-map-title">SCHEMATIC ROUTE · SELECT A STOP</div>
+          <svg viewBox="0 0 480 300" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M95 50 C170 25 250 95 340 115 S300 220 145 245" fill="none" stroke="#f3d18b" stroke-width="3" stroke-dasharray="7 9"/>
+          </svg>
+          <button class="fb-point one" id="fb-point-0" aria-label="Rock engravings" aria-pressed="false">01</button>
+          <button class="fb-point two" id="fb-point-1" aria-label="The resonant stone" aria-pressed="false">02</button>
+          <button class="fb-point three" id="fb-point-2" aria-label="A landscape in layers" aria-pressed="false">03</button>
+        </div>
+        <section class="fb-note panel">
+          <div class="eyebrow" id="fb-kicker">FIELD NOTES</div>
+          <h2 id="fb-title">Choose a stop</h2>
+          <p id="fb-copy">Select a numbered marker to discover the story behind it.</p>
+          <div class="fb-progress" id="fb-progress">0 / 3 stops explored</div>
+          <div class="fb-source"><a id="fb-source" href="https://whc.unesco.org/en/list/1076/" target="_blank" rel="noopener">UNESCO World Heritage Centre ↗</a></div>
+        </section>
+      </div>
+      <div class="fb-footer" id="fb-footer">This is an illustrative route, not an official visitor trail or survey-accurate GIS map. 3D models generated with <a href="https://www.thrixel.com/" target="_blank" rel="noopener">Thrixel</a>.</div>
+    </main>
+  </div>
   <div id="start">
     <div class="start-card panel">
       <div class="eyebrow" id="start-eyebrow">AZERBAIJAN · CULTURAL LANDSCAPE</div>
@@ -121,6 +177,6 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#b99360;fon
     </div>
   </div>
 </div>
-<script type="module" src="./js/main.js"></script>
+<script type="module" src="./js/boot.js"></script>
 </body>
 </html>

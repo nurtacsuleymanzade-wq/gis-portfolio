@@ -12,3 +12,4 @@ The terrain, rock-art imagery, route and local grid are illustrative. They are n
 - Built with [Three.js](https://threejs.org/).
 
 Use a web server to view the files; the application loads Three.js from jsDelivr and the models from the `models` directory.
+If WebGL 2 is unavailable or the 3D scene fails to load, an interactive 2D story map remains available.
