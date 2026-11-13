@@ -92,6 +92,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#b99360;fon
  .fb-headline{margin:32px 0 20px}.fb-layout{grid-template-columns:1fr}.fb-map{min-height:280px}.fb-note{min-height:230px}.fb-point{width:48px;height:48px}
 }
 </style>
+<link rel="stylesheet" href="./css/gis.css">
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
 </head>
 <body>
@@ -99,11 +100,11 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#b99360;fon
 <div id="hud">
   <div class="topbar">
     <div class="brand"><div class="brand-mark">◉</div><div><strong>Gobustan</strong>Geoheritage fieldnotes</div></div>
-    <div class="top-actions"><button class="small-btn" id="lang">EN / AZ</button><button class="small-btn" id="reset">RESTART</button></div>
+    <div class="top-actions"><button class="small-btn geo-open" id="geo-open" aria-haspopup="dialog" aria-controls="geo-overlay">GIS MAP</button><button class="small-btn" id="lang">EN / AZ</button><button class="small-btn" id="reset">RESTART</button></div>
   </div>
   <div id="stats" class="panel">
     <div class="eyebrow" id="stats-label">FIELD LOG · ROUTE SKETCH</div>
-    <div class="stat-line"><strong id="progress">0 / 3</strong><span id="progress-label">stops explored</span></div>
+    <div class="stat-line"><strong id="progress" aria-live="polite">0 / 3</strong><span id="progress-label">stops explored</span></div>
     <div id="coords">LOCAL GRID · E 050m · N 050m</div>
   </div>
   <div id="map-card" class="panel">
@@ -119,6 +120,14 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#b99360;fon
     </svg>
     <div class="map-note" id="map-note">Concept route · illustrative, not an official trail</div>
   </div>
+  <div id="quick-stops" class="panel">
+    <div class="eyebrow" id="quick-label">GO TO A STOP</div>
+    <div class="quick-buttons">
+      <button type="button" data-stop="0" aria-label="Go to rock engravings">01</button>
+      <button type="button" data-stop="1" aria-label="Go to the resonant stone">02</button>
+      <button type="button" data-stop="2" aria-label="Go to the landscape viewpoint">03</button>
+    </div>
+  </div>
   <div id="crosshair"></div>
   <div id="near-prompt" class="panel">SPACE · INSPECT SITE</div>
   <div id="controls" class="panel"><b>WASD</b> move · <b>drag</b> look · <b>SPACE</b> inspect</div>
@@ -126,7 +135,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#b99360;fon
     <div id="joy"><div id="knob"></div></div>
     <button id="inspect" class="action-btn">EXPLORE</button>
   </div>
-  <div id="info" class="panel">
+  <div id="info" class="panel" role="dialog" aria-labelledby="info-title">
     <div class="eyebrow" id="info-kicker">FIELD NOTE 01 · ROCK ART</div>
     <h2 id="info-title"></h2>
     <p id="info-copy"></p>
@@ -137,12 +146,14 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#b99360;fon
     <main class="fb-wrap">
       <div class="fb-header">
         <div class="fb-brand"><strong>GOBUSTAN</strong><span id="fb-mode">2D STORY MAP</span></div>
-        <button class="small-btn" id="fb-lang">EN / AZ</button>
+        <div class="top-actions"><button class="small-btn geo-open" id="fb-geo-open" aria-haspopup="dialog" aria-controls="geo-overlay">GIS MAP</button><button class="small-btn" id="fb-lang">EN / AZ</button><button class="small-btn" id="fb-reset" aria-label="Restart">↺</button></div>
       </div>
       <div class="fb-headline">
         <div class="eyebrow" id="fb-eyebrow">AZERBAIJAN · CULTURAL LANDSCAPE</div>
         <h1 id="fb-headline">Layers of the Landscape</h1>
         <p id="fb-intro">Explore the heritage of Gobustan through three interpretive stops.</p>
+        <div class="fb-facts"><span id="fb-fact-sites">3 UNESCO areas</span><span>537.22 ha</span><span id="fb-fact-year">Listed 2007</span></div>
+        <button type="button" class="geo-cta geo-open" id="fb-geo-cta" data-long="true" aria-haspopup="dialog" aria-controls="geo-overlay">EXPLORE GIS MAP ↗</button>
       </div>
       <div class="fb-layout">
         <div class="fb-map panel">
@@ -171,9 +182,52 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#b99360;fon
       <h1 id="start-title">Layers of<br>the Landscape</h1>
       <p id="start-copy">Follow a short geotourism route through a stylized semi-desert landscape. Discover rock art, the resonant stone, and the spatial story of Gobustan.</p>
       <div class="start-meta"><span class="pill">UNESCO · 2007</span><span class="pill">3 field stops</span><span class="pill">EN / AZ</span></div>
-      <button class="start-btn" id="start-btn" disabled>LOADING LANDSCAPE…</button>
+      <div class="start-actions"><button class="start-btn" id="start-btn" disabled>LOADING LANDSCAPE…</button><button type="button" class="geo-cta geo-open" id="start-geo-cta" data-long="true" aria-haspopup="dialog" aria-controls="geo-overlay">EXPLORE GIS MAP ↗</button></div>
       <div id="disclaimer">Portfolio concept: terrain and route are illustrative, not a surveyed GIS surface or official visitor trail. Facts are sourced to UNESCO and Azerbaijan Travel. 3D models generated with <a href="https://www.thrixel.com/" target="_blank" rel="noopener">Thrixel</a>.</div>
       <div id="load-error"></div>
+    </div>
+  </div>
+  <div id="geo-overlay" role="dialog" aria-modal="true" aria-labelledby="geo-title" aria-hidden="true">
+    <div class="geo-shell">
+      <header class="geo-header">
+        <div><div class="geo-kicker" id="geo-kicker">UNESCO · GEOGRAPHIC OVERVIEW</div><h2 id="geo-title">Gobustan on the map</h2><p id="geo-intro">Explore the three component areas using UNESCO's published reference coordinates.</p></div>
+        <div class="geo-actions"><a class="geo-download" id="geo-download" href="./data/gobustan_unesco_reference_points.geojson" download>GEOJSON ↓</a><button type="button" class="small-btn" id="geo-lang">EN / AZ</button><button type="button" class="small-btn" id="geo-close" aria-label="Close map">CLOSE ✕</button></div>
+      </header>
+      <div class="geo-metrics" aria-label="Site summary">
+        <div><strong>3</strong><span id="geo-metric-sites">component areas</span></div>
+        <div><strong>537.22 <small>ha</small></strong><span id="geo-metric-area">inscribed property</span></div>
+        <div><strong>2007</strong><span id="geo-metric-year">World Heritage listing</span></div>
+      </div>
+      <div class="geo-layout">
+        <section class="geo-map-frame" aria-label="Map of UNESCO component areas">
+          <div id="geo-static" aria-hidden="true">
+            <svg viewBox="0 0 600 460" preserveAspectRatio="xMidYMid meet">
+              <path class="geo-gridline" d="M60 60H550 M60 155H550 M60 250H550 M60 345H550 M60 420H550 M80 40V420 M220 40V420 M360 40V420 M500 40V420"/>
+              <text x="60" y="30">N ↑</text><text x="65" y="447">49.35° E</text><text x="462" y="447">49.40° E</text>
+              <circle cx="150" cy="77" r="11"/><circle cx="305" cy="250" r="11"/><circle cx="420" cy="375" r="11"/>
+              <text x="170" y="82">01</text><text x="325" y="255">02</text><text x="440" y="380">03</text>
+            </svg>
+          </div>
+          <div id="geo-map"></div>
+          <div id="geo-status">Loading geographic map…</div>
+          <button type="button" class="geo-reset" id="geo-reset">SHOW ALL</button>
+        </section>
+        <aside class="geo-aside">
+          <div class="geo-aside-header"><span class="geo-kicker" id="geo-list-label">COMPONENT AREAS</span><span>WGS84</span></div>
+          <div id="geo-list" class="geo-list"></div>
+          <div class="geo-detail">
+            <div class="geo-kicker" id="geo-detail-label">SELECTED AREA</div>
+            <h3 id="geo-name">Boyukdash mountain</h3>
+            <div class="geo-detail-grid">
+              <div><span id="geo-area-label">Property area</span><strong id="geo-area">323.27 ha</strong></div>
+              <div><span id="geo-coordinate-label">Reference coordinate</span><strong id="geo-coordinates">40.11256° N, 49.38190° E</strong></div>
+            </div>
+            <p id="geo-disclaimer">Points are UNESCO reference coordinates, not mapped boundaries or a walking route.</p>
+            <a href="https://whc.unesco.org/en/list/1076/maps/" target="_blank" rel="noopener" id="geo-source">View UNESCO geographic data ↗</a>
+          </div>
+        </aside>
+      </div>
+      <footer class="geo-footer" id="geo-footer">Coordinates and areas: UNESCO World Heritage Centre. The 3D walk is an illustrative interpretation.</footer>
     </div>
   </div>
 </div>

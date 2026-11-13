@@ -39,7 +39,8 @@ let started = false;
 let infoOpen = false;
 let activeInfoIndex = -1;
 let fallbackActive = false;
-let language = "en";
+let mapOpen = false;
+let language = document.documentElement.lang === "az" ? "az" : "en";
 let nearbyIndex = -1;
 let lastFrame = 0;
 let accumulator = 0;
@@ -58,10 +59,10 @@ const sceneClock = { elapsed: 0 };
 
 const copy = {
   en: {
-    stats: "FIELD LOG · ROUTE SKETCH", stops: "stops explored", map: "EXPEDITION MAP",
+    stats: "FIELD LOG · ROUTE SKETCH", stops: "stops explored", map: "EXPEDITION MAP", quick: "GO TO A STOP", quickTo: "Go to",
     mapNote: "Concept route · illustrative, not an official trail", startEyebrow: "AZERBAIJAN · CULTURAL LANDSCAPE",
     startTitle: "Layers of<br>the Landscape",
-    startCopy: "Follow a short geotourism route through a stylized semi-desert landscape. Discover rock art, the resonant stone, and the spatial story of Gobustan.",
+    startCopy: "Explore a stylized geotourism landscape, or open the GIS map for UNESCO's geographic reference points.",
     startButton: "START EXPEDITION", loading: "LOADING LANDSCAPE…", controls: "<b>WASD</b> move · <b>drag</b> look · <b>SPACE</b> inspect",
     explore: "EXPLORE", inspect: "SPACE · INSPECT SITE", continue: "CONTINUE ROUTE", restart: "RESTART",
     near: "SPACE · INSPECT SITE", nearTouch: "TAP EXPLORE", routeDone: "ROUTE COMPLETE · 3 FIELD STOPS",
@@ -76,10 +77,10 @@ const copy = {
     sourceLink: "Open source ↗", loaded: "START EXPEDITION", localGrid: "LOCAL GRID"
   },
   az: {
-    stats: "SAHƏ QEYDİ · MARŞRUT SXEMİ", stops: "dayanacaq araşdırılıb", map: "KƏŞFİYYAT XƏRİTƏSİ",
+    stats: "SAHƏ QEYDİ · MARŞRUT SXEMİ", stops: "dayanacaq araşdırılıb", map: "KƏŞFİYYAT XƏRİTƏSİ", quick: "DAYANACAĞA KEÇ", quickTo: "Keç",
     mapNote: "Konsept marşrutu · sxematikdir, rəsmi cığır deyil", startEyebrow: "AZƏRBAYCAN · MƏDƏNİ LANDŞAFT",
     startTitle: "Landşaftın<br>qatları",
-    startCopy: "Stilizə edilmiş yarımsəhra landşaftında qısa geoturizm marşrutunu izləyin. Qayaüstü təsvirləri, səslənən daşı və Qobustanın məkan hekayəsini kəşf edin.",
+    startCopy: "Stilizə edilmiş geoturizm landşaftını kəşf edin və ya UNESCO-nun coğrafi istinad nöqtələri üçün GIS xəritəsini açın.",
     startButton: "SƏFƏRƏ BAŞLA", loading: "LANDŞAFT YÜKLƏNİR…", controls: "<b>WASD</b> hərəkət · <b>sürüklə</b> baxış · <b>SPACE</b> araşdır",
     explore: "ARAŞDIR", inspect: "SPACE · MƏKANI ARAŞDIR", continue: "MARŞRUTA DAVAM ET", restart: "YENİDƏN",
     near: "SPACE · MƏKANI ARAŞDIR", nearTouch: "ARAŞDIR DÜYMƏSİNƏ TOXUN", routeDone: "MARŞRUT TAMAMLANDI · 3 DAYANACAQ",
@@ -136,6 +137,25 @@ function makeGroundTexture() {
   t.repeat.set(16, 16); t.colorSpace = THREE.SRGBColorSpace;
   t.anisotropy = Math.min(renderer.capabilities.getMaxAnisotropy(), 4);
   return t;
+}
+function addSky() {
+  const c = document.createElement("canvas");
+  c.width = 32; c.height = 512;
+  const g = c.getContext("2d");
+  const gradient = g.createLinearGradient(0, 0, 0, 512);
+  gradient.addColorStop(0, "#698896");
+  gradient.addColorStop(0.42, "#a5b4ac");
+  gradient.addColorStop(0.7, "#d9c39c");
+  gradient.addColorStop(1, "#b99a70");
+  g.fillStyle = gradient; g.fillRect(0, 0, 32, 512);
+  const texture = new THREE.CanvasTexture(c);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  const sky = new THREE.Mesh(
+    new THREE.SphereGeometry(120, 32, 16),
+    new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide, fog: false, depthWrite: false })
+  );
+  sky.renderOrder = -100;
+  scene.add(sky);
 }
 function buildTerrain() {
   const segments = 100, size = 100, half = size * 0.5, row = segments + 1;
@@ -210,8 +230,30 @@ function addTrail() {
     [0, 9], [0, 1], [0, -7], [5, -12], [12, -17], [6, -22], [-10, -26]
   ].map(function(p) { return new THREE.Vector3(p[0], terrainHeight(p[0], p[1]) + 0.09, p[1]); });
   const curve = new THREE.CatmullRomCurve3(points);
+  const count = 120, positions = new Float32Array((count + 1) * 6), indices = new Uint16Array(count * 6);
+  for (let i = 0; i <= count; i++) {
+    const t = i / count, p = curve.getPoint(t), tangent = curve.getTangent(t);
+    const length = Math.max(0.001, Math.hypot(tangent.x, tangent.z));
+    const nx = -tangent.z / length, nz = tangent.x / length, width = 0.9;
+    const ax = p.x + nx * width, az = p.z + nz * width;
+    const bx = p.x - nx * width, bz = p.z - nz * width;
+    const v = i * 6;
+    positions[v] = ax; positions[v + 1] = terrainHeight(ax, az) + 0.045; positions[v + 2] = az;
+    positions[v + 3] = bx; positions[v + 4] = terrainHeight(bx, bz) + 0.045; positions[v + 5] = bz;
+    if (i < count) {
+      const k = i * 6, a = i * 2;
+      indices[k] = a; indices[k + 1] = a + 2; indices[k + 2] = a + 1;
+      indices[k + 3] = a + 1; indices[k + 4] = a + 2; indices[k + 5] = a + 3;
+    }
+  }
+  const ribbon = new THREE.BufferGeometry();
+  ribbon.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+  ribbon.setIndex(new THREE.BufferAttribute(indices, 1));
+  ribbon.computeVertexNormals();
+  const surface = new THREE.Mesh(ribbon, new THREE.MeshStandardMaterial({ color: 0xb08a59, roughness: 1, side: THREE.DoubleSide }));
+  surface.receiveShadow = true; scene.add(surface);
   const path = new THREE.Mesh(
-    new THREE.TubeGeometry(curve, 100, 0.12, 8, false),
+    new THREE.TubeGeometry(curve, 100, 0.045, 8, false),
     new THREE.MeshStandardMaterial({ color: 0xc6843e, roughness: 0.9, emissive: 0x281507, emissiveIntensity: 0.15 })
   );
   path.castShadow = false; scene.add(path);
@@ -286,6 +328,7 @@ async function loadAssets() {
     loader.loadAsync("models/petroglyph-stela.glb"),
     loader.loadAsync("models/qaval-dash.glb")
   ]);
+  if (fallbackActive) return;
   const rockRoot = rock.scene;
   const stelaRoot = stela.scene;
   const soundRoot = sound.scene;
@@ -310,6 +353,7 @@ async function loadAssets() {
 }
 
 function buildWorld() {
+  addSky();
   buildTerrain();
   addHorizon();
   addTrail();
@@ -335,6 +379,11 @@ function setLanguage() {
   document.getElementById("progress-label").textContent = t.stops;
   document.getElementById("map-title").textContent = t.map;
   document.getElementById("map-note").textContent = t.mapNote;
+  document.getElementById("quick-label").textContent = t.quick;
+  document.querySelectorAll("#quick-stops button").forEach(function(button, index) {
+    const label = t.quickTo + " " + t.stopTitles[index];
+    button.setAttribute("aria-label", label); button.title = label;
+  });
   document.getElementById("start-eyebrow").textContent = t.startEyebrow;
   document.getElementById("start-title").innerHTML = t.startTitle;
   document.getElementById("start-copy").textContent = t.startCopy;
@@ -346,6 +395,7 @@ function setLanguage() {
   document.getElementById("lang").textContent = language === "en" ? "EN / AZ" : "AZ / EN";
   if (!started) document.getElementById("start-btn").textContent = t.startButton;
   if (infoOpen && activeInfoIndex >= 0) fillInfo(activeInfoIndex);
+  document.dispatchEvent(new CustomEvent("gobustan:language-changed", { detail: language }));
 }
 function updateProgress() {
   const total = visited.filter(Boolean).length;
@@ -401,7 +451,7 @@ function playStoneTone() {
   } catch (_) {}
 }
 function interact() {
-  if (!started) return;
+  if (!started || mapOpen) return;
   if (infoOpen) { closeInfo(); return; }
   if (nearbyIndex >= 0) openInfo(nearbyIndex);
 }
@@ -411,6 +461,14 @@ document.getElementById("start-btn").addEventListener("click", function() {
 });
 document.getElementById("lang").addEventListener("click", function() {
   language = language === "en" ? "az" : "en"; setLanguage();
+});
+document.addEventListener("gobustan:set-language", function(event) {
+  language = event.detail === "az" ? "az" : "en";
+  setLanguage();
+});
+document.addEventListener("gobustan:map-state", function(event) {
+  mapOpen = Boolean(event.detail && event.detail.open);
+  keys.clear(); touchMove.x = 0; touchMove.y = 0;
 });
 document.getElementById("reset").addEventListener("click", function() {
   player.x = 0; player.z = 9; player.yaw = 0; player.pitch = -0.04;
@@ -424,7 +482,18 @@ document.getElementById("inspect").addEventListener("pointerdown", function(e) {
   e.preventDefault(); interact();
 });
 document.getElementById("close-info").addEventListener("click", closeInfo);
+document.querySelectorAll("#quick-stops button").forEach(function(button) {
+  button.addEventListener("click", function() {
+    if (!started || mapOpen) return;
+    const index = Number(button.dataset.stop), stop = stops[index];
+    if (!stop) return;
+    player.x = stop.x; player.z = stop.z + 3; player.yaw = 0; player.pitch = -0.06;
+    updateCamera(); updateMapAndNearby(); openInfo(index);
+  });
+});
 window.addEventListener("keydown", function(e) {
+  if (mapOpen) return;
+  if (e.code === "Escape" && infoOpen) { e.preventDefault(); closeInfo(); return; }
   if (["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.code)) e.preventDefault();
   keys.add(e.code);
   if (["Space", "KeyE", "Enter"].includes(e.code) && !e.repeat) interact();
@@ -479,20 +548,19 @@ function updateMapAndNearby() {
   document.getElementById("coords").textContent = copy[language].localGrid + " · E " + String(easting).padStart(3,"0") + "m · N " + String(northing).padStart(3,"0") + "m";
   let found = -1, best = 5.2 * 5.2;
   for (let i = 0; i < stops.length; i++) {
-    if (visited[i]) continue;
     const dx = player.x - stops[i].x, dz = player.z - stops[i].z;
     const d2 = dx * dx + dz * dz;
     if (d2 < best) { best = d2; found = i; }
   }
   nearbyIndex = found;
   const prompt = document.getElementById("near-prompt");
-  if (visited.every(Boolean) && !infoOpen) {
-    prompt.style.display = "block";
-    prompt.textContent = copy[language].routeDone;
-  } else if (found >= 0 && !infoOpen) {
+  if (found >= 0 && !infoOpen) {
     prompt.style.display = "block";
     const action = window.matchMedia("(pointer: coarse)").matches ? copy[language].nearTouch : copy[language].near;
     prompt.textContent = action + " · " + copy[language].stopTitles[found].toUpperCase();
+  } else if (visited.every(Boolean) && !infoOpen) {
+    prompt.style.display = "block";
+    prompt.textContent = copy[language].routeDone;
   } else if (!infoOpen) {
     prompt.style.display = "none";
   }
@@ -505,7 +573,7 @@ function updateCamera() {
   camera.lookAt(lookPoint);
 }
 function fixedUpdate(dt) {
-  if (!started || infoOpen) return;
+  if (!started || infoOpen || mapOpen) return;
   const forward = (keys.has("KeyW") ? 1 : 0) - (keys.has("KeyS") ? 1 : 0) - touchMove.y;
   const side = (keys.has("KeyD") ? 1 : 0) - (keys.has("KeyA") ? 1 : 0) + touchMove.x;
   let fx = Math.sin(player.yaw) * forward + Math.cos(player.yaw) * side;
@@ -536,10 +604,15 @@ function animate(ts) {
 function init() {
   buildWorld();
   updateCamera();
-  loadAssets().then(function() {
+  let loadTimer;
+  const timeout = new Promise(function(_, reject) {
+    loadTimer = setTimeout(function() { reject(new Error("3D assets timed out")); }, 30000);
+  });
+  Promise.race([loadAssets(), timeout]).then(function() {
+    clearTimeout(loadTimer);
     document.getElementById("start-btn").disabled = false;
     document.getElementById("start-btn").textContent = copy[language].loaded;
-  }).catch(showLoadError);
+  }).catch(function(error) { clearTimeout(loadTimer); showLoadError(error); });
   setLanguage();
   updateProgress();
   requestAnimationFrame(animate);

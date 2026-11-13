@@ -1,0 +1,44 @@
+{
+  "type": "FeatureCollection",
+  "name": "Gobustan UNESCO component reference points",
+  "description": "Reference coordinates published by UNESCO for the three component areas. Points do not represent property boundaries or an official walking route. Coordinates are WGS84 longitude, latitude.",
+  "source": "https://whc.unesco.org/en/list/1076/maps/",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "unesco_id": "1076rev-001",
+        "name_en": "Jinghindagh mountain – Yazylytepe hill",
+        "name_az": "Cingirdağ – Yazılıtəpə",
+        "area_ha": 17.09,
+        "source_dms": "N40 11 12.1, E49 21 45.21",
+        "source_url": "https://whc.unesco.org/en/list/1076/maps/"
+      },
+      "geometry": {"type": "Point", "coordinates": [49.3625583, 40.1866944]}
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "unesco_id": "1076rev-002",
+        "name_en": "Boyukdash mountain",
+        "name_az": "Böyükdaş dağı",
+        "area_ha": 323.27,
+        "source_dms": "N40 6 45.22, E49 22 54.83",
+        "source_url": "https://whc.unesco.org/en/list/1076/maps/"
+      },
+      "geometry": {"type": "Point", "coordinates": [49.3818972, 40.1125611]}
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "unesco_id": "1076rev-003",
+        "name_en": "Kichikdash mountain",
+        "name_az": "Kiçikdaş dağı",
+        "area_ha": 196.86,
+        "source_dms": "N40 3 30.51, E49 23 46.38",
+        "source_url": "https://whc.unesco.org/en/list/1076/maps/"
+      },
+      "geometry": {"type": "Point", "coordinates": [49.3962167, 40.058475]}
+    }
+  ]
+}

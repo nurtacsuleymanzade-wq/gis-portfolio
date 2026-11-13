@@ -1,3 +1,9 @@
+import("./gis.js").then(function(gis) {
+  gis.initGeoExplorer();
+}).catch(function(error) {
+  console.error("Geographic explorer could not start", error);
+});
+
 async function openFallback(reason) {
   try {
     const fallback = await import("./fallback.js");
@@ -12,14 +18,6 @@ async function openFallback(reason) {
 
 async function boot() {
   try {
-    const probe = document.createElement("canvas");
-    const context = probe.getContext("webgl2");
-    if (!context) {
-      await openFallback("no-webgl");
-      return;
-    }
-    const release = context.getExtension("WEBGL_lose_context");
-    if (release) release.loseContext();
     await import("./main.js");
   } catch (error) {
     console.error("3D experience could not start", error);
